@@ -1,0 +1,46 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+
+  exclude:
+    - "**/app_routes.dart"
+    - "**/app_constants.dart"
+    - "**/app_enums.dart"
+    - "/Android"
+    - "/ios"
+    - "/web"
+
+  errors:
+    included_file_warning: ignore
+    use_key_in_widget_constructors: ignore
+    missing_required_param: warning
+    missing_return: warning
+    native_function_body_in_non_sdk_code: ignore
+    todo: ignore
+    import_internal_library: ignore
+    unnecessary_null_comparison: ignore
+    avoid_print: warning
+
+linter:
+  rules:
+    sort_constructors_first: true
+    cascade_invocations: false
+    prefer_double_quotes: false
+    always_specify_types: false
+    unnecessary_final: false
+    prefer_expression_function_bodies: false
+    always_put_required_named_parameters_first: false
+    avoid_as: false
+    flutter_style_todos: false
+    avoid_catches_without_on_clauses: false
+    lines_longer_than_80_chars: false
+    avoid_annotating_with_dynamic: false
+    public_member_api_docs: false
+    diagnostic_describe_all_properties: false
+    sort_pub_dependencies: false
+    unnecessary_new: true
+    use_key_in_widget_constructors: false
+    always_declare_return_types: true
+    always_use_package_imports: true
+    avoid_empty_else: true
+    avoid_relative_lib_imports: true

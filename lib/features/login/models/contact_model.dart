@@ -22,8 +22,12 @@ class ContactModel extends BorshObject {
   BorshSchema get borshSchema => borshCodec.schema;
 
   static BorshStructCodec get borshCodec => BorshStructCodec({
-        'contacts': borsh.array(Contact.borshCodec, 10),
-  });
+        'contacts': borsh.list(Contact.borshCodec, 10),
+      });
+// BorshListCodec(Contact.borshCodec);
+// {
+//       'contacts': borsh.list(Contact.borshCodec, 10),
+// });
 }
 
 class Contact extends BorshObject {

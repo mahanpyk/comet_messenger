@@ -6,7 +6,7 @@ import io.flutter.plugin.common.MethodChannel
 import android.util.Base64
 
 class MainActivity : FlutterActivity() {
-    private val CHANNEL = "com.example.decrypt"
+    /*private val CHANNEL = "com.example.decrypt"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,5 +58,5 @@ class MainActivity : FlutterActivity() {
             return Borsh.deserialize(ByteArray(2), clazz);
         }
 
-    }
+    }*/
 }

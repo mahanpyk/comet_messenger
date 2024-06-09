@@ -3,13 +3,16 @@ import 'dart:typed_data';
 
 import 'package:comet_messenger/app/core/app_constants.dart';
 import 'package:comet_messenger/app/core/app_utils_mixin.dart';
-import 'package:comet_messenger/features/login/models/borsh_model.dart';
+import 'package:comet_messenger/app/routes/app_routes.dart';
+import 'package:comet_messenger/app/store/user_store_service.dart';
+import 'package:comet_messenger/features/login/models/contact_data_length_model.dart';
 import 'package:comet_messenger/features/login/models/contact_model.dart';
 import 'package:comet_messenger/features/login/models/login_request_model.dart';
 import 'package:comet_messenger/features/login/models/login_response_model.dart';
 import 'package:comet_messenger/features/login/repository/login_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:solana_borsh/borsh.dart';
 
 class LoginController extends GetxController with AppUtilsMixin {
   LoginController(this._repo);
@@ -55,23 +58,23 @@ class LoginController extends GetxController with AppUtilsMixin {
         .then((LoginResponseModel response) {
       if (response.statusCode == 200) {
         var data = base64Decode(response.data!.result!.value!.data![0]);
-
-
         final data2 = Uint8List(4);
         data2.setAll(0, data.sublist(0, 4));
-
-
-
-
-        List<int> accountDataBuffer = data.sublist(4, 0 + data.length);
-
-
-        var borshModel2 = ContactModel();
-        // var decode = Borsh;
-        // var decode = borsh.deserialize(borshModel2.borshSchema, data2, ContactModel.fromJson);
-        debugPrint('*****************');
-        // debugPrint(decode.toString());
-        debugPrint('-----------------');
+        var decode = borsh.deserialize(ContactDataLengthModel().borshSchema, data2, ContactDataLengthModel.fromJson);
+        int length = decode.length!;
+        if (length == 0) {
+          length = 288;
+        }
+        final accountDataBuffer = Uint8List(length);
+        accountDataBuffer.setAll(0, data.sublist(4, length));
+        var decodeContacts = borsh.deserialize(ContactModel().borshSchema, accountDataBuffer, ContactModel.fromJson);
+        for (Contact element in decodeContacts.contacts!) {
+          if (element.user_name == phoneNumberTEC.text) {
+            UserStoreService.to.save(key: AppConstants.USER_ACCOUNT, value: element.toJson());
+            Get.toNamed(AppRoutes.IMPORT_WALLET);
+            break;
+          }
+        }
       }
     });
   }

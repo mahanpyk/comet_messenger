@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pointycastle/export.dart' as pointycastle;
 import 'package:pointycastle/export.dart';
+import 'package:solana_web3/solana_web3.dart';
 
 mixin AppUtilsMixin {
   void removeFocus() => FocusManager.instance.primaryFocus!.unfocus();
@@ -96,6 +97,11 @@ mixin AppUtilsMixin {
     var keyGenerator = RSAKeyGenerator();
     keyGenerator.init(params);
     return keyGenerator.generateKeyPair();
+  }
+
+  //convert BigInt? to String
+  static void importedWalletFromSecretKey(Uint8List bigInt) async{
+    Keypair keypair = await Keypair.fromSeckey(bigInt);
   }
 
   //convert BigInt? to base64

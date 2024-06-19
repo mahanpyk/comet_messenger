@@ -1,9 +1,20 @@
 import 'package:flutter/material.dart';
 
 class TextFormFieldWidget extends StatelessWidget {
-  const TextFormFieldWidget(
-      {Key? key, this.controller, this.keyboardType, this.maxLength, this.onChanged, this.validator, this.label, this.hintText, this.readOnly = false, this.onTap, this.prefixIcon})
-      : super(key: key);
+  const TextFormFieldWidget({
+    super.key,
+    this.controller,
+    this.keyboardType,
+    this.maxLength,
+    this.onChanged,
+    this.validator,
+    this.label,
+    this.hintText,
+    this.readOnly = false,
+    this.onTap,
+    this.prefixIcon,
+    this.maxLines = 1,
+  });
   final TextEditingController? controller;
   final TextInputType? keyboardType;
 
@@ -16,6 +27,7 @@ class TextFormFieldWidget extends StatelessWidget {
   final bool readOnly;
   final VoidCallback? onTap;
   final Widget? prefixIcon;
+  final int? maxLines;
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +37,7 @@ class TextFormFieldWidget extends StatelessWidget {
       maxLength: maxLength,
       onChanged: onChanged,
       validator: validator,
+      maxLines: maxLines,
       onTap: onTap,
       readOnly: readOnly,
       decoration: InputDecoration(
@@ -40,7 +53,7 @@ class TextFormFieldWidget extends StatelessWidget {
         border: const OutlineInputBorder(borderRadius: BorderRadius.zero),
         enabledBorder: const OutlineInputBorder(borderRadius: BorderRadius.zero),
         focusedBorder: const OutlineInputBorder(borderRadius: BorderRadius.zero),
-        disabledBorder:const OutlineInputBorder(borderRadius: BorderRadius.zero),
+        disabledBorder: const OutlineInputBorder(borderRadius: BorderRadius.zero),
         label: label,
         hintText: hintText,
         counterText: '',

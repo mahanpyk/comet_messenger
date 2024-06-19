@@ -1,18 +1,18 @@
 import 'dart:convert';
 
-LoginRequestModel loginRequestModelFromJson(Map<String, dynamic> json) => LoginRequestModel.fromJson(json);
+RequestModel requestModelFromJson(Map<String, dynamic> json) => RequestModel.fromJson(json);
 
-String loginRequestModelToJson(LoginRequestModel data) => json.encode(data.toJson());
+String requestModelToJson(RequestModel data) => json.encode(data.toJson());
 
-class LoginRequestModel {
-  LoginRequestModel({
+class RequestModel {
+  RequestModel({
     this.method,
     this.params,
     this.jsonrpc,
     this.id,
   });
 
-  factory LoginRequestModel.fromJson(Map<String, dynamic> json) => LoginRequestModel(
+  factory RequestModel.fromJson(Map<String, dynamic> json) => RequestModel(
         method: json["method"],
         params: json["params"] == null ? [] : List<dynamic>.from(json["params"]!.map((x) => x)),
         jsonrpc: json["jsonrpc"],

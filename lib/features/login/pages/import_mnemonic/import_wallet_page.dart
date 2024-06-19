@@ -1,5 +1,4 @@
 import 'package:comet_messenger/app/core/base/base_view.dart';
-import 'package:comet_messenger/app/theme/app_colors.dart';
 import 'package:comet_messenger/features/login/pages/import_mnemonic/import_wallet_controller.dart';
 import 'package:comet_messenger/features/widgets/fill_button_widget.dart';
 import 'package:comet_messenger/features/widgets/text_form_field_widget.dart';
@@ -27,6 +26,7 @@ class ImportWalletPage extends BaseView<ImportWalletController> {
               keyboardType: TextInputType.text,
               label: const Text('enter mnemonic'),
               onChanged: (text) => controller.onChanged(text),
+              maxLines: 3,
             ),
           ]),
         ),
@@ -36,18 +36,6 @@ class ImportWalletPage extends BaseView<ImportWalletController> {
           buttonTitle: 'check mnemonic and import',
           enable: controller.enableButton.value,
         ),
-/*        AnimatedCrossFade(
-          duration: const Duration(milliseconds: 200),
-          firstCurve: Curves.linear,
-          crossFadeState: controller.showError.value ? CrossFadeState.showFirst : CrossFadeState.showSecond,
-          firstChild: SizedBox(
-            child: Text(
-              'رمز های امنیتی وارد شده مطابقت ندارند',
-              style: Get.textTheme.bodySmall!.copyWith(color: AppColors.textErrorColor),
-            ),
-          ),
-          secondChild: Container(),
-        )*/
       ]),
     );
   }

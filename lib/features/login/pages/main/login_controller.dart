@@ -3,11 +3,12 @@ import 'dart:typed_data';
 
 import 'package:comet_messenger/app/core/app_constants.dart';
 import 'package:comet_messenger/app/core/app_utils_mixin.dart';
+import 'package:comet_messenger/app/models/request_model.dart';
+import 'package:comet_messenger/app/models/user_model.dart';
 import 'package:comet_messenger/app/routes/app_routes.dart';
 import 'package:comet_messenger/app/store/user_store_service.dart';
 import 'package:comet_messenger/features/login/models/contact_data_length_model.dart';
 import 'package:comet_messenger/features/login/models/contact_model.dart';
-import 'package:comet_messenger/features/login/models/login_request_model.dart';
 import 'package:comet_messenger/features/login/models/login_response_model.dart';
 import 'package:comet_messenger/features/login/repository/login_repository.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,7 @@ class LoginController extends GetxController with AppUtilsMixin {
   RxBool isEnableConfirmButton = false.obs;
   RxBool isValid = false.obs;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  UserModel? userModel;
 
   /// validate user name
   void onChangeUserName({required String? value}) {
@@ -43,7 +45,7 @@ class LoginController extends GetxController with AppUtilsMixin {
   Future<void> onTapLogin() async {
     _repo
         .login(
-            requestModel: LoginRequestModel(
+            requestModel: RequestModel(
       method: "getAccountInfo",
       params: [
         AppConstants.CONTACT_PDA,
@@ -57,6 +59,7 @@ class LoginController extends GetxController with AppUtilsMixin {
     ))
         .then((LoginResponseModel response) {
       if (response.statusCode == 200) {
+        // get response and get length from first 4 bytes
         var data = base64Decode(response.data!.result!.value!.data![0]);
         final data2 = Uint8List(4);
         data2.setAll(0, data.sublist(0, 4));
@@ -70,6 +73,13 @@ class LoginController extends GetxController with AppUtilsMixin {
         var decodeContacts = borsh.deserialize(ContactModel().borshSchema, accountDataBuffer, ContactModel.fromJson);
         for (Contact element in decodeContacts.contacts!) {
           if (element.user_name == phoneNumberTEC.text) {
+            userModel = UserModel(
+              userName: element.user_name,
+              avatar: element.avatar,
+              lastName: element.last_name,
+              basePubKey: element.base_pubkey,
+              login: true,
+            );
             UserStoreService.to.save(key: AppConstants.USER_ACCOUNT, value: element.toJson());
             Get.toNamed(AppRoutes.IMPORT_WALLET);
             break;

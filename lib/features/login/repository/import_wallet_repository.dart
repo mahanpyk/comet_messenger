@@ -2,15 +2,14 @@ import 'package:comet_messenger/app/core/app_enums.dart';
 import 'package:comet_messenger/app/core/base/base_repository.dart';
 import 'package:comet_messenger/app/models/request_model.dart';
 import 'package:comet_messenger/app/models/response_model.dart';
-import 'package:comet_messenger/features/login/models/login_response_model.dart';
 
-abstract class LoginRepository extends BaseRepository {
-  Future<LoginResponseModel> login({required RequestModel requestModel});
+abstract class ImportWalletRepository extends BaseRepository {
+  // Future<dynamic> checkMnemonics({required RequestModel requestModel});
 }
 
-class LoginRepositoryImpl extends LoginRepository {
-  @override
-  Future<LoginResponseModel> login({required RequestModel requestModel}) async {
+class ImportWalletRepositoryImpl extends ImportWalletRepository {
+/*  @override
+  Future<dynamic> checkMnemonics({required RequestModel requestModel}) async {
     final ResponseModel response = await request(
       method: RequestMethodEnum.POST.name(),
       data: requestModel.toJson(),
@@ -32,5 +31,5 @@ class LoginRepositoryImpl extends LoginRepository {
       result.statusCode = 600;
       return result;
     }
-  }
+  }*/
 }

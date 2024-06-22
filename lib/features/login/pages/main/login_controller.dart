@@ -62,6 +62,8 @@ class LoginController extends GetxController with AppUtilsMixin {
         // get response and get length from first 4 bytes
         var data = base64Decode(response.data!.result!.value!.data![0]);
         final data2 = Uint8List(4);
+        //convert to byte array
+
         data2.setAll(0, data.sublist(0, 4));
         var decode = borsh.deserialize(ContactDataLengthModel().borshSchema, data2, ContactDataLengthModel.fromJson);
         int length = decode.length!;

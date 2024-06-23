@@ -37,15 +37,24 @@ class ImportWalletController extends GetxController {
         backgroundColor: AppColors.successColor,
       );
 
+      /// mnemonic obtained from the input
+      /// neck seat salt cotton credit flower first alpha inject hammer unit shield
+
+      // read user info
       var json = UserStoreService.to.get(key: AppConstants.USER_ACCOUNT);
       var user = userResponseModelFromJson(json);
-      var seed = bip39.mnemonicToSeed(importMnemonicTEC.text);
-      // var seedBasePub = bip39.mnemonicToSeed(json['base_pubkey']);
-      // var seedPubKey = bip39.mnemonicToSeed(json['public_key']);
-      var masterKey = BIP32.fromSeed(seed);
-            List<int> intList = seed.toList();
+
+      //create seed from mnemonic
+      Uint8List seed = bip39.mnemonicToSeed(importMnemonicTEC.text);
+
+      //create keyPair with bip32 Package
+      BIP32 masterKey = BIP32.fromSeed(seed);
+
+      //create keyPair with Solana Package
+      Ed25519HDKeyPair solanaWallet = await Wallet.fromMnemonic(importMnemonicTEC.text);
+
+      List<int> intList = seed.toList();
       List<int> intList2 = List<int>.from(seed);
-      print(intList);
       List<int> androidList = [123, 38, 39, -91, 50, -94, -10, -107, -20, -108, -96, 54, -56, -25, -41, -31, -23, -48, 74, 50, -106, -70, -23, -87, -126, -79, 111, -18, 74, 48, 45, 23, -46, -26, -33, 63, 80, -22, 12, -20, -70, -21, 124, 11, -67, 100, -121, 102, -82, -34, 110, 96, -6, -106, 75, -106, -2, -105, 89, 107, -121, -126, 4, -98];
 
       List<int> flutterList = androidList.map((value) => value < 0 ? value + 256 : value).toList();
@@ -53,12 +62,9 @@ class ImportWalletController extends GetxController {
       var masterKey2 = BIP32.fromSeed(Uint8List.fromList(backToAndroid));
 
 
+      /// The byte array is ready from seed creation in Android
       ///[123, 38, 39, -91, 50, -94, -10, -107, -20, -108, -96, 54, -56, -25, -41, -31, -23, -48, 74, 50, -106, -70, -23, -87, -126, -79, 111, -18, 74, 48, 45, 23, -46, -26, -33, 63, 80, -22, 12, -20, -70, -21, 124, 11, -67, 100, -121, 102, -82, -34, 110, 96, -6, -106, 75, -106, -2, -105, 89, 107, -121, -126, 4, -98]
-      // var seedPubKey = BIP32.fromBase58(json['base_pubkey']);
-      // var checkBasePub = BIP32.fromPublicKey(seedBasePub, masterKey.chainCode,);
-      // var checkPubKey = BIP32.fromPublicKey(seedPubKey, masterKey.chainCode,);
-      var test = HEX.encode(masterKey.privateKey ?? []);
-      var solanaWallet = await Wallet.fromMnemonic(importMnemonicTEC.text);
+
 
       // RpcClient rpcClient = RpcClient(AppConstants.BASE_URL);
       // var solanaBalance = await rpcClient.getBalance(solanaWallet.address);
@@ -66,40 +72,33 @@ class ImportWalletController extends GetxController {
       String publicKeyString = base64Encode(masterKey.publicKey);
       String publicKeyString2 = base64Encode(masterKey2.publicKey);
       var base58 = BaseXCodec('123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz');
-///2VtbMeIP9et9F5L7j3zgxG5wwpq50kBvsZNfV8OHr7Y=
+
+      ///
+      ///2VtbMeIP9et9F5L7j3zgxG5wwpq50kBvsZNfV8OHr7Y=
+
+
       debugPrint('*****************************');
-      debugPrint('${masterKey.publicKey.buffer.asUint8List()}');
-      debugPrint('${masterKey.publicKey.buffer.asInt8List()}');
-      debugPrint('${masterKey.publicKey.buffer.asUint8ClampedList()}');
-      debugPrint('${masterKey.publicKey.buffer.asByteData().buffer}');
-      debugPrint('${masterKey.publicKey.buffer.asUint32List()}');
-      debugPrint('${masterKey.publicKey.toList()}');
+      debugPrint('asUint8List ${masterKey.publicKey.buffer.asUint8List()}');
+      debugPrint('asInt8List ${masterKey.publicKey.buffer.asInt8List()}');
       debugPrint('#############################');
 
-      debugPrint('*****************');
-      debugPrint('Master Key: ${base58.encode(masterKey.publicKey)}');
-      debugPrint('Master Key: ${HEX.encode(masterKey.publicKey)}');
-      debugPrint('-----------------');
+      debugPrint('*****************************');
+      debugPrint('Master Key base58 encode: ${base58.encode(masterKey.publicKey)}');
+      debugPrint('Master Key HEX encode: ${HEX.encode(masterKey.publicKey)}');
+      debugPrint('#############################');
 
 
+      ///
+      ///[3, 4, -55, -42, -117, 64, -116, -30, 99, 64, -36, -44, -93, 94, -79, -65, -50, 65, -98, -119, 125, -120, -18, 99, 81, 114, 4, -3, -63, -113, 97, -16, -7]
+      ///
+      ///
       ///[-39, 91, 91, 49, -30, 15, -11, -21, 125, 23, -110, -5, -113, 124, -32, -60, 110, 112, -62, -102, -71, -46, 64, 111, -79, -109, 95, 87, -61, -121, -81, -74]
       List<int> androidListAndroid = [-39, 91, 91, 49, -30, 15, -11, -21, 125, 23, -110, -5, -113, 124, -32, -60, 110, 112, -62, -102, -71, -46, 64, 111, -79, -109, 95, 87, -61, -121, -81, -74];
       List<int> flutterListAndroid = androidListAndroid.map((value) => value < 0 ? value + 256 : value).toList();
-      List<int> backToAndroidAndroid = flutterListAndroid.map((value) => value > 127 ? value - 256 : value).toList();
       debugPrint('*****************************');
       debugPrint(flutterListAndroid.toString());
       debugPrint('#############################');
       // Get.offAllNamed(AppRoutes.HOME);
-
-
-      //todo
-      ///i generate keypair with bip32 in android and flutter
-     ///
-     /// public key different
-     /// in android give me this response
-     /// [217, 91, 91, 49, 226, 15, 245, 235, 125, 23, 146, 251, 143, 124, 224, 196, 110, 112, 194, 154, 185, 210, 64, 111, 177, 147, 95, 87, 195, 135, 175, 182]
-      /// in flutter give me this response
-     /// [2, 116, 73, 220, 192, 148, 210, 62, 221, 129, 147, 191, 244, 168, 180, 108, 198, 231, 228, 124, 174, 231, 110, 162, 6, 184, 94, 248, 92, 83, 102, 187, 141]
 
     } else {
       Get.snackbar(

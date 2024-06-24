@@ -62,17 +62,19 @@ class LoginController extends GetxController with AppUtilsMixin {
         // get response and get length from first 4 bytes
         var data = base64Decode(response.data!.result!.value!.data![0]);
         final data2 = Uint8List(4);
-        //convert to byte array
 
+        //convert to byte array
         data2.setAll(0, data.sublist(0, 4));
-        var decode = borsh.deserialize(ContactDataLengthModel().borshSchema, data2, ContactDataLengthModel.fromJson);
+        var decode = borsh.deserialize(ContactDataLengthModel().borshSchema,
+            data2, ContactDataLengthModel.fromJson);
         int length = decode.length!;
         if (length == 0) {
           length = 288;
         }
         final accountDataBuffer = Uint8List(length);
         accountDataBuffer.setAll(0, data.sublist(4, length));
-        var decodeContacts = borsh.deserialize(ContactModel().borshSchema, accountDataBuffer, ContactModel.fromJson);
+        var decodeContacts = borsh.deserialize(ContactModel().borshSchema,
+            accountDataBuffer, ContactModel.fromJson);
         for (Contact element in decodeContacts.contacts!) {
           if (element.user_name == phoneNumberTEC.text) {
             userModel = UserModel(
@@ -82,7 +84,7 @@ class LoginController extends GetxController with AppUtilsMixin {
               basePubKey: element.base_pubkey,
               login: true,
             );
-            UserStoreService.to.save(key: AppConstants.USER_ACCOUNT, value: element.toJson());
+            UserStoreService.to.saveUserModel(userModel!.toJson());
             Get.toNamed(AppRoutes.IMPORT_WALLET);
             break;
           }

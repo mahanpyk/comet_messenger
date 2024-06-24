@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:comet_messenger/app/core/app_constants.dart';
 import 'package:comet_messenger/app/services/storage_service.dart';
@@ -76,4 +77,19 @@ class UserStoreService {
     String? result = await _secureStorage.read(key: AppConstants.MNEMONIC);
     return result;
   }
+
+  Future<void> saveUserModel(Map<String, dynamic> userModel) async {
+    final jsonString = jsonEncode(userModel);
+    await _secureStorage.write(
+      key: AppConstants.USER_ACCOUNT,
+      value: jsonString,
+    );
+  }
+
+  Future<Map<String, dynamic>?> getUserModel() async {
+    String? result = await _secureStorage.read(key: AppConstants.USER_ACCOUNT);
+    if (result == null) {
+      return null;
+    }
+    return jsonDecode(result) as Map<String, dynamic>;  }
 }

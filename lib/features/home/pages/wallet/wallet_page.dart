@@ -19,7 +19,7 @@ class WalletPage extends BaseView<WalletController> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(children: [
-              const SizedBox(height: 48),
+              const SizedBox(height: 40),
               Text(
                 'wallet_title'.tr,
                 textAlign: TextAlign.center,
@@ -38,28 +38,10 @@ class WalletPage extends BaseView<WalletController> {
                       ),
                     )
                   : Text(
-                      controller.assets.value.toStringAsFixed(5),
+                      '${controller.assets.value.toStringAsFixed(9)} SOL',
                       textAlign: TextAlign.center,
                       style: Get.textTheme.titleMedium!.copyWith(color: AppColors.tertiaryColor),
                     ),
-              const SizedBox(height: 8),
-              GestureDetector(
-                onTap: () => controller.onTapWallets(),
-                child: Row(children: [
-                  Text(
-                    'wallet_wallet'.tr,
-                    style: Get.textTheme.labelMedium!.copyWith(color: AppColors.tertiaryColor),
-                  ),
-                  Text(
-                    ' ${controller.activeWallet.value}',
-                    style: Get.textTheme.labelMedium!.copyWith(color: AppColors.tertiaryColor),
-                  ),
-                  const Icon(
-                    Icons.arrow_drop_down,
-                    color: Colors.white,
-                  ),
-                ]),
-              ),
               const SizedBox(height: 8),
               const Divider(
                 height: 1,

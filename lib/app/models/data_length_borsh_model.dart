@@ -3,11 +3,11 @@ import 'package:solana_borsh/codecs.dart';
 import 'package:solana_borsh/models.dart';
 import 'package:solana_borsh/types.dart';
 
-class ContactDataLengthModel extends BorshObject {
+class DataLengthBorshModel extends BorshObject {
   @override
-  factory ContactDataLengthModel.fromJson(final Map<String, dynamic> json) => ContactDataLengthModel(length: json['length']);
+  factory DataLengthBorshModel.fromJson(final Map<String, dynamic> json) => DataLengthBorshModel(length: json['length']);
 
-  ContactDataLengthModel({this.length});
+  DataLengthBorshModel({this.length});
 
   final int? length;
 

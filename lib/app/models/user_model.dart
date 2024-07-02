@@ -7,33 +7,38 @@ UserModel userResponseModelFromJson(Map<String, dynamic> json) => UserModel.from
 String userResponseModelToJson(UserModel data) => json.encode(data.toJson());
 
 class UserModel {
-  UserModel( {
+  UserModel({
     this.id,
     this.userName,
     this.lastName,
     this.modalCreate,
     this.avatar,
-    this.basePubKey,
+    this.basePublicKey,
+    this.publicKey,
     this.login,
     this.privateKey,
     this.stateAuthLogin,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-    userName: json['user_name'],
-        lastName: json['last_name'],
+        id: json['id'],
+        userName: json['userName'],
+        lastName: json['lastName'],
+        modalCreate: json['modalCreate'],
         avatar: json['avatar'],
-        basePubKey: json['base_pubkey'],
-        login: true,
+        basePublicKey: json['basePublicKey'],
+        publicKey: json['publicKey'],
+        login: json['login'],
         privateKey: json['privateKey'],
-        stateAuthLogin: StateAuthLoginEnum.GET_INDEX,
+        stateAuthLogin: json['stateAuthLogin'],
       );
   final String? id;
   final String? userName;
   final String? lastName;
   final String? modalCreate;
   final String? avatar;
-  final String? basePubKey;
+  final String? basePublicKey;
+  final String? publicKey;
   final bool? login;
   final String? privateKey;
   final StateAuthLoginEnum? stateAuthLogin;
@@ -41,13 +46,15 @@ class UserModel {
   // Mnemonics.MnemonicCode mnemonicCode;
 
   Map<String, dynamic> toJson() => {
-    "userName": userName,
-    "modalCreate": modalCreate,
-    "id": id,
-    "avatar": avatar,
-    "basePubKey": basePubKey,
-    "login": login,
-    "privateKey": privateKey,
-    "stateAuthLogin": stateAuthLogin
-  };
+        "id": id,
+        "userName": userName,
+        "lastName": lastName,
+        "modalCreate": modalCreate,
+        "avatar": avatar,
+        "basePublicKey": basePublicKey,
+        "publicKey": publicKey,
+        "login": login,
+        "privateKey": privateKey,
+        "stateAuthLogin": stateAuthLogin,
+      };
 }

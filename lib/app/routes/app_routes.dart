@@ -7,4 +7,5 @@ abstract class AppRoutes {
   static const PIN = '/PIN';
   static const HOME = '/HOME';
   static const TRANSACTION_DETAIL = '/TRANSACTION_DETAIL';
+  static const CONTACTS = '/CONTACTS';
 }

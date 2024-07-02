@@ -1,3 +1,4 @@
+import 'package:comet_messenger/app/bindings/contacts_binding.dart';
 import 'package:comet_messenger/app/bindings/create_mnemonic_binding.dart';
 import 'package:comet_messenger/app/bindings/home_binding.dart';
 import 'package:comet_messenger/app/bindings/import_wallet_binding.dart';
@@ -7,6 +8,7 @@ import 'package:comet_messenger/app/bindings/pin_binding.dart';
 import 'package:comet_messenger/app/bindings/splash_binding.dart';
 import 'package:comet_messenger/app/bindings/transaction_detail_binding.dart';
 import 'package:comet_messenger/app/routes/app_routes.dart';
+import 'package:comet_messenger/features/constacts/pages/main/contacts_page.dart';
 import 'package:comet_messenger/features/home/pages/main/home_page.dart';
 import 'package:comet_messenger/features/intro/pages/intro_page.dart';
 import 'package:comet_messenger/features/login/pages/create_mnemonic/create_mnemonic_page.dart';
@@ -58,6 +60,11 @@ abstract class AppPages {
       name: AppRoutes.TRANSACTION_DETAIL,
       page: () => const TransactionDetailPage(),
       binding: TransactionDetailBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.CONTACTS,
+      page: () => const ContactsPage(),
+      binding: ContactsBinding(),
     ),
   ];
 }

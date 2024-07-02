@@ -3,11 +3,11 @@ import 'dart:typed_data';
 
 import 'package:comet_messenger/app/core/app_constants.dart';
 import 'package:comet_messenger/app/core/app_utils_mixin.dart';
+import 'package:comet_messenger/app/models/data_length_borsh_model.dart';
 import 'package:comet_messenger/app/models/request_model.dart';
 import 'package:comet_messenger/app/models/user_model.dart';
 import 'package:comet_messenger/app/routes/app_routes.dart';
 import 'package:comet_messenger/app/store/user_store_service.dart';
-import 'package:comet_messenger/features/login/models/contact_data_length_model.dart';
 import 'package:comet_messenger/features/login/models/contact_model.dart';
 import 'package:comet_messenger/features/login/models/login_response_model.dart';
 import 'package:comet_messenger/features/login/repository/login_repository.dart';
@@ -43,6 +43,7 @@ class LoginController extends GetxController with AppUtilsMixin {
 
   /// request login
   Future<void> onTapLogin() async {
+    isLoading(true);
     _repo
         .login(
             requestModel: RequestModel(
@@ -58,6 +59,7 @@ class LoginController extends GetxController with AppUtilsMixin {
       id: "b75758de-e0b2-469b-bd9c-ef366ee1b35a",
     ))
         .then((LoginResponseModel response) {
+      isLoading(false);
       if (response.statusCode == 200) {
         // get response and get length from first 4 bytes
         var data = base64Decode(response.data!.result!.value!.data![0]);
@@ -65,8 +67,7 @@ class LoginController extends GetxController with AppUtilsMixin {
 
         //convert to byte array
         data2.setAll(0, data.sublist(0, 4));
-        var decode = borsh.deserialize(ContactDataLengthModel().borshSchema,
-            data2, ContactDataLengthModel.fromJson);
+        var decode = borsh.deserialize(DataLengthBorshModel().borshSchema, data2, DataLengthBorshModel.fromJson);
         int length = decode.length!;
         if (length == 0) {
           length = 288;
@@ -75,13 +76,15 @@ class LoginController extends GetxController with AppUtilsMixin {
         accountDataBuffer.setAll(0, data.sublist(4, length));
         var decodeContacts = borsh.deserialize(ContactModel().borshSchema,
             accountDataBuffer, ContactModel.fromJson);
+        UserStoreService.to.save(key: AppConstants.CONTACTS, value: decodeContacts.toJson());
         for (Contact element in decodeContacts.contacts!) {
           if (element.user_name == phoneNumberTEC.text) {
             userModel = UserModel(
               userName: element.user_name,
               avatar: element.avatar,
               lastName: element.last_name,
-              basePubKey: element.base_pubkey,
+              basePublicKey: element.base_pubkey,
+              publicKey: element.public_key,
               login: true,
             );
             UserStoreService.to.saveUserModel(userModel!.toJson());
@@ -89,7 +92,7 @@ class LoginController extends GetxController with AppUtilsMixin {
             break;
           }
         }
-      }
+      } else {}
     });
   }
 

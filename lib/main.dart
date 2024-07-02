@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
       locale: AppLocalization.locale,
       fallbackLocale: AppLocalization.fallbackLocale,
       getPages: AppPages.pages,
-      initialRoute: AppRoutes.LOGIN,
+      initialRoute: AppRoutes.SPLASH,
       debugShowCheckedModeBanner: false,
     );
   }

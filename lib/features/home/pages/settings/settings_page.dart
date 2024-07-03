@@ -23,6 +23,11 @@ class SettingsPage extends BaseView<SettingsController> {
           ),
           const SizedBox(height: 48),
           SettingsMenuItemWidget(
+            title: 'profile',
+            icon: AppIcons.icProfileInactive,
+            onTap: () => controller.onTapProfile(),
+          ),
+          SettingsMenuItemWidget(
             title: 'settings_show_mnemonic_item'.tr,
             icon: AppIcons.icAccountsHistory,
             onTap: () => controller.onTapShowMnemonic(),

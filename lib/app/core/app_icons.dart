@@ -14,6 +14,8 @@ class AppIcons {
   static const icAccountsHistory = '$_base/ic_accounts_history.svg';
   static const icSignOut = '$_base/ic_sign_out.svg';
   static const icChatInactive = '$_base/ic_chat_inactive.svg';
+  static const icSettingsActive = '$_base/ic_settings_active.svg';
+  static const icSettingsInactive = '$_base/ic_settings_inactive.svg';
   static const icUserAvatar = '$_base/ic_user_avatar_';
 
 }

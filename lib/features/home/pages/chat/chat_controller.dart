@@ -70,4 +70,8 @@ class ChatController extends GetxController {
   }
 
   void contactsPage() => Get.toNamed(AppRoutes.CONTACTS);
+
+  void onTapTransactionDetail({required ConversationBorshModel item}) {
+    Get.toNamed(AppRoutes.CHAT_PAGE, arguments: item);
+  }
 }

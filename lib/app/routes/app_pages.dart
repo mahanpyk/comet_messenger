@@ -5,6 +5,7 @@ import 'package:comet_messenger/app/bindings/import_wallet_binding.dart';
 import 'package:comet_messenger/app/bindings/intro_binding.dart';
 import 'package:comet_messenger/app/bindings/login_binding.dart';
 import 'package:comet_messenger/app/bindings/pin_binding.dart';
+import 'package:comet_messenger/app/bindings/profile_binding.dart';
 import 'package:comet_messenger/app/bindings/splash_binding.dart';
 import 'package:comet_messenger/app/bindings/transaction_detail_binding.dart';
 import 'package:comet_messenger/app/routes/app_routes.dart';
@@ -15,6 +16,7 @@ import 'package:comet_messenger/features/login/pages/create_mnemonic/create_mnem
 import 'package:comet_messenger/features/login/pages/import_mnemonic/import_wallet_page.dart';
 import 'package:comet_messenger/features/login/pages/main/login_page.dart';
 import 'package:comet_messenger/features/login/pages/pin/pin_page.dart';
+import 'package:comet_messenger/features/profile/pages/profile_page.dart';
 import 'package:comet_messenger/features/splash/pages/splash_page.dart';
 import 'package:comet_messenger/features/transaction_detail/pages/transaction_detail_page.dart';
 import 'package:get/get.dart';
@@ -65,6 +67,11 @@ abstract class AppPages {
       name: AppRoutes.CONTACTS,
       page: () => const ContactsPage(),
       binding: ContactsBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.PROFILE,
+      page: () => const ProfilePage(),
+      binding: ProfileBinding(),
     ),
   ];
 }

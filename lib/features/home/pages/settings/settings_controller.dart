@@ -1,6 +1,5 @@
 import 'package:comet_messenger/app/core/app_utils_mixin.dart';
 import 'package:comet_messenger/app/routes/app_routes.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class SettingsController extends GetxController with AppUtilsMixin {
@@ -10,8 +9,7 @@ class SettingsController extends GetxController with AppUtilsMixin {
     // Get.toNamed(AppRoutes.SHOW_MNEMONIC);
   }
 
-  void onTapSignOut() {
-    logoutFromApp();
-  }
+  void onTapSignOut() => logoutFromApp();
 
+  void onTapProfile() => Get.toNamed(AppRoutes.PROFILE);
 }

@@ -46,7 +46,7 @@ class ChatPage extends BaseView<ChatController> {
 
   Widget chatItemWidget({required ConversationBorshModel item}) {
     return GestureDetector(
-      // onTap: () => controller.onTapTransactionDetail(item.signature!),
+      onTap: () => controller.onTapTransactionDetail(item: item),
       child: Directionality(
         textDirection: TextDirection.rtl,
         child: Card(

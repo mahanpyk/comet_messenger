@@ -27,58 +27,23 @@ class HomePage extends BaseView<HomeController> {
           child: Center(
             child: Text(
               'splash_title'.tr,
-              style: Get.textTheme.titleLarge!.copyWith(color: AppColors.tertiaryColor),
+              style: Get.textTheme.titleLarge!
+                  .copyWith(color: AppColors.tertiaryColor),
             ),
           ),
         ),
       ),
       Expanded(
-        child: PageView(controller: controller.pageController, physics: const NeverScrollableScrollPhysics(), children: const [
-          ChatPage(),
-          ChatPage(),
-          WalletPage(),
-          SettingsPage(),
-        ]),
+        child: PageView(
+            controller: controller.pageController,
+            physics: const NeverScrollableScrollPhysics(),
+            children: const [
+              ChatPage(),
+              ChatPage(),
+              WalletPage(),
+              SettingsPage(),
+            ]),
       ),
-/*      BottomNavigationBar(
-          currentIndex: controller.bottomNavigatorIndex.value,
-          selectedIconTheme: const IconThemeData(
-            color: AppColors.primaryColor,
-          ),
-          unselectedIconTheme: const IconThemeData(color: AppColors.tertiaryColor),
-          onTap: (index) => controller.onTapBottomNavigationItem(index: index),
-          showUnselectedLabels: true,
-          unselectedItemColor: AppColors.tertiaryColor,
-          selectedItemColor: AppColors.primaryColor,
-          selectedLabelStyle: Get.textTheme.labelSmall,
-          unselectedLabelStyle: Get.textTheme.labelSmall,
-          enableFeedback: false,
-          items: [
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset(AppIcons.icDashboardInactive),
-              label: 'assets_title'.tr,
-              activeIcon: SvgPicture.asset(AppIcons.icDashboardActive),
-            ),
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                AppIcons.icChatInactive,
-                width: 24,
-                height: 24,
-              ),
-              label: 'chat_title'.tr,
-              activeIcon: SvgPicture.asset(
-                AppIcons.icChatInactive,
-                color: AppColors.primaryColor,
-                width: 24,
-                height: 24,
-              ),
-            ),
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset(AppIcons.icProfileInactive),
-              label: 'profile_title',
-              activeIcon: SvgPicture.asset(AppIcons.icProfileActive),
-            ),
-          ])*/
       SnakeNavigationBar.color(
         height: 64,
         behaviour: SnakeBarBehaviour.floating,
@@ -87,7 +52,7 @@ class HomePage extends BaseView<HomeController> {
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(32)),
         ),
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.only(bottom: 16, right: 16, left: 16),
         snakeViewColor: Colors.black,
         selectedItemColor: Colors.black,
         unselectedItemColor: AppColors.tertiaryColor,
@@ -136,12 +101,12 @@ class HomePage extends BaseView<HomeController> {
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
-              AppIcons.icProfileInactive,
+              AppIcons.icSettingsInactive,
               color: AppColors.tertiaryColor,
             ),
             label: 'profile_title',
             activeIcon: SvgPicture.asset(
-              AppIcons.icProfileActive,
+              AppIcons.icSettingsActive,
               color: AppColors.primaryColor,
             ),
           ),

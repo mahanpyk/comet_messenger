@@ -1,7 +1,7 @@
 import 'package:comet_messenger/app/core/app_icons.dart';
 import 'package:comet_messenger/app/core/base/base_view.dart';
 import 'package:comet_messenger/app/theme/app_colors.dart';
-import 'package:comet_messenger/features/home/pages/chat/chat_page.dart';
+import 'package:comet_messenger/features/home/pages/chat_list/chat_list_page.dart';
 import 'package:comet_messenger/features/home/pages/main/home_controller.dart';
 import 'package:comet_messenger/features/home/pages/settings/settings_page.dart';
 import 'package:comet_messenger/features/home/pages/wallet/wallet_page.dart';
@@ -38,9 +38,9 @@ class HomePage extends BaseView<HomeController> {
             controller: controller.pageController,
             physics: const NeverScrollableScrollPhysics(),
             children: const [
-              ChatPage(),
-              ChatPage(),
-              WalletPage(),
+          ChatListPage(),
+          ChatListPage(),
+          WalletPage(),
               SettingsPage(),
             ]),
       ),
@@ -103,11 +103,13 @@ class HomePage extends BaseView<HomeController> {
             icon: SvgPicture.asset(
               AppIcons.icSettingsInactive,
               color: AppColors.tertiaryColor,
+              height: 24,
             ),
             label: 'profile_title',
             activeIcon: SvgPicture.asset(
               AppIcons.icSettingsActive,
               color: AppColors.primaryColor,
+              height: 24,
             ),
           ),
         ],

@@ -8,6 +8,7 @@ abstract class AppRoutes {
   static const HOME = '/HOME';
   static const TRANSACTION_DETAIL = '/TRANSACTION_DETAIL';
   static const CONTACTS = '/CONTACTS';
-  static const CHAT_PAGE = '/CHAT_PAGE';
+  static const CHAT = '/CHAT';
   static const PROFILE = '/PROFILE';
+  static const SHOW_MNEMONIC = '/SHOW_MNEMONIC';
 }

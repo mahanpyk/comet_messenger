@@ -5,9 +5,7 @@ import 'package:get/get.dart';
 class SettingsController extends GetxController with AppUtilsMixin {
   RxString test = RxString('');
 
-  void onTapShowMnemonic() {
-    // Get.toNamed(AppRoutes.SHOW_MNEMONIC);
-  }
+  void onTapShowMnemonic() => Get.toNamed(AppRoutes.SHOW_MNEMONIC);
 
   void onTapSignOut() => logoutFromApp();
 

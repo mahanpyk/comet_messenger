@@ -12,8 +12,8 @@ import 'package:comet_messenger/features/home/repository/chat_repository.dart';
 import 'package:get/get.dart';
 import 'package:solana_borsh/borsh.dart';
 
-class ChatController extends GetxController {
-  ChatController(this._repo);
+class ChatListController extends GetxController {
+  ChatListController(this._repo);
 
   final ChatRepository _repo;
   RxString title = RxString('There is nothing here');
@@ -72,6 +72,6 @@ class ChatController extends GetxController {
   void contactsPage() => Get.toNamed(AppRoutes.CONTACTS);
 
   void onTapTransactionDetail({required ConversationBorshModel item}) {
-    Get.toNamed(AppRoutes.CHAT_PAGE, arguments: item);
+    Get.toNamed(AppRoutes.CHAT, arguments: item);
   }
 }

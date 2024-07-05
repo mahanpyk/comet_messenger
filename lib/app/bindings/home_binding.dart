@@ -1,4 +1,4 @@
-import 'package:comet_messenger/features/home/pages/chat/chat_controller.dart';
+import 'package:comet_messenger/features/home/pages/chat_list/chat_list_controller.dart';
 import 'package:comet_messenger/features/home/pages/groups/groups_controller.dart';
 import 'package:comet_messenger/features/home/pages/main/home_controller.dart';
 import 'package:comet_messenger/features/home/pages/settings/settings_controller.dart';
@@ -15,7 +15,7 @@ class HomeBinding implements Bindings {
     Get.put<HomeController>(HomeController(Get.find<HomeRepository>()));
     Get.put<SettingsController>(SettingsController());
     Get.put<ChatRepository>(ChatRepositoryImpl());
-    Get.put<ChatController>(ChatController(Get.find<ChatRepository>()));
+    Get.put<ChatListController>(ChatListController(Get.find<ChatRepository>()));
     Get.put<GroupsController>(GroupsController());
     Get.put<WalletRepository>(WalletRepositoryImpl());
     Get.put<WalletController>(WalletController(Get.find<WalletRepository>()));

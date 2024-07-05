@@ -2,13 +2,13 @@ import 'package:comet_messenger/app/core/app_icons.dart';
 import 'package:comet_messenger/app/core/base/base_view.dart';
 import 'package:comet_messenger/app/theme/app_colors.dart';
 import 'package:comet_messenger/features/home/models/profile_borsh_model.dart';
-import 'package:comet_messenger/features/home/pages/chat/chat_controller.dart';
+import 'package:comet_messenger/features/home/pages/chat_list/chat_list_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
-class ChatPage extends BaseView<ChatController> {
-  const ChatPage({super.key});
+class ChatListPage extends BaseView<ChatListController> {
+  const ChatListPage({super.key});
 
   @override
   Widget body() {
@@ -64,7 +64,7 @@ class ChatPage extends BaseView<ChatController> {
             ),
             leading: Text(
               // just show hour and minute for example 12:00 AM or PM
-              '${DateTime.now().hour}:${DateTime.now().minute}',
+              '${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')} ${DateTime.now().hour > 12 ? 'PM' : 'AM'}',
             ),
             trailing: SvgPicture.asset(
               '${AppIcons.icUserAvatar}${item.avatar ?? '0'}.svg',

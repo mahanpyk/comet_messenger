@@ -140,122 +140,23 @@ mixin AppUtilsMixin {
     return sha256.convert(data).bytes as Uint8List;
   }
 
-
-/*  PublicKey createWithSeed(PublicKey account, String seed, PublicKey programId) {
-    final buffer = BytesBuilder();
-    buffer.add(account.toByteArray());
-    buffer.add(utf8.encode(seed));
-    buffer.add(programId.toByteArray());
-
-    final hash = sha256Hash(buffer.toBytes());
-    return PublicKey(hash);
-  }*/
-}
-
-/*class PublicKey {
-  PublicKey(this.bytes) {
-    if (bytes.length != AppConstants.PUBLIC_KEY_LENGTH) {
-      throw ArgumentError("Invalid public key length");
+  // convert hex to bytes
+  static Uint8List hexToBytes(String hex) {
+    var bytes = <int>[];
+    for (var i = 0; i < hex.length; i += 2) {
+      bytes.add(int.parse(hex.substring(i, i + 2), radix: 16));
     }
+    return Uint8List.fromList(bytes);
   }
 
-  factory PublicKey.fromBase58(String base58Str) {
-    return PublicKey(base58.decode(base58Str));
+  // convert bytes to hex
+  static String bytesToHex(Uint8List bytes) {
+    return bytes.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
   }
 
-  final Uint8List bytes;
-
-  String toBase58() {
-    return base58.encode(bytes);
-  }
-
-  Uint8List toByteArray() {
-    return bytes;
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    if (other is! PublicKey) return false;
-    return bytes == other.bytes;
-  }
-
-  @override
-  int get hashCode {
-    return bytes.hashCode;
-  }
-
-  @override
-  String toString() {
-    return toBase58();
-  }
-
-  static Uint8List sha256Hash(Uint8List data) {
-    return sha256.convert(data).bytes as Uint8List;
-  }
-
-  static PublicKey createWithSeed(PublicKey account, String seed, PublicKey programId) {
-    final buffer = BytesBuilder();
-    buffer.add(account.toByteArray());
-    buffer.add(utf8.encode(seed));
-    buffer.add(programId.toByteArray());
-
-    final hash = sha256Hash(buffer.toBytes());
-    return PublicKey(hash);
-  }
-
-  static PublicKey createProgramAddress(List<Uint8List> seeds, PublicKey programId) {
-    final buffer = BytesBuilder();
-    for (final seed in seeds) {
-      if (seed.length > 32) {
-        throw ArgumentError("Max seed length exceeded");
-      }
-      buffer.add(seed);
-    }
-    buffer.add(programId.toByteArray());
-    buffer.add(utf8.encode("ProgramDerivedAddress"));
-
-    final hash = sha256Hash(buffer.toBytes());
-    if (TweetNaclFast.isOnCurve(hash)) {
-      throw ArgumentError("Invalid seeds, address must fall off the curve");
-    }
-    return PublicKey(hash);
-  }
-
-  static Future<ProgramDerivedAddress> findProgramAddress(List<Uint8List> seeds, PublicKey programId) async {
-    int nonce = 255;
-    while (nonce != 0) {
-      try {
-        final seedsWithNonce = List<Uint8List>.from(seeds)..add(Uint8List.fromList([nonce]));
-        final address = createProgramAddress(seedsWithNonce, programId);
-        return ProgramDerivedAddress(address, nonce);
-      } catch (_) {
-        nonce--;
-      }
-    }
-    throw Exception("Unable to find a viable program address nonce");
-  }
-
-  static Future<ProgramDerivedAddress> associatedTokenAddress(PublicKey walletAddress, PublicKey tokenMintAddress) async {
-    return findProgramAddress(
-        [walletAddress.toByteArray(), TokenProgram.PROGRAM_ID.toByteArray(), tokenMintAddress.toByteArray()], PublicKey.fromBase58("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"));
+  // convert Uint8List to string
+  static String bytesToString(Uint8List bytes) {
+    var chars = bytes.toList();
+    return String.fromCharCodes(bytes);
   }
 }
-
-class ProgramDerivedAddress {
-  ProgramDerivedAddress(this.address, this.nonce);
-
-  final PublicKey address;
-  final int nonce;
-}
-
-class TokenProgram {
-  static final PROGRAM_ID = PublicKey.fromBase58("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
-}
-
-class TweetNaclFast {
-  static bool isOnCurve(Uint8List point) {
-    // Implement the isOnCurve check
-    throw UnimplementedError();
-  }
-}*/

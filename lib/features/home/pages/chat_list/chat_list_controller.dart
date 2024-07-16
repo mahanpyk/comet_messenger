@@ -8,14 +8,14 @@ import 'package:comet_messenger/app/routes/app_routes.dart';
 import 'package:comet_messenger/app/store/user_store_service.dart';
 import 'package:comet_messenger/features/home/models/chat_list_response_model.dart';
 import 'package:comet_messenger/features/home/models/profile_borsh_model.dart';
-import 'package:comet_messenger/features/home/repository/chat_repository.dart';
+import 'package:comet_messenger/features/home/repository/chat_list_repository.dart';
 import 'package:get/get.dart';
 import 'package:solana_borsh/borsh.dart';
 
 class ChatListController extends GetxController {
   ChatListController(this._repo);
 
-  final ChatRepository _repo;
+  final ChatListRepository _repo;
   RxString title = RxString('There is nothing here');
   UserModel? userModel;
   RxList<ConversationBorshModel> chatList = RxList<ConversationBorshModel>([]);
@@ -72,6 +72,6 @@ class ChatListController extends GetxController {
   void contactsPage() => Get.toNamed(AppRoutes.CONTACTS);
 
   void onTapTransactionDetail({required ConversationBorshModel item}) {
-    Get.toNamed(AppRoutes.CHAT, arguments: item);
+    Get.toNamed(AppRoutes.CHAT, arguments: item.toJson());
   }
 }

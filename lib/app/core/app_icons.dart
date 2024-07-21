@@ -18,5 +18,6 @@ class AppIcons {
   static const icSettingsInactive = '$_base/ic_settings_inactive.svg';
   static const icForward = '$_base/ic_forward.svg';
   static const icUserAvatar = '$_base/ic_user_avatar_';
+  static const icLock = '$_base/ic_lock.svg';
 
 }

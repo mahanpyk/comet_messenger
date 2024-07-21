@@ -6,11 +6,11 @@ import 'package:comet_messenger/app/core/app_extension.dart';
 import 'package:comet_messenger/app/routes/app_routes.dart';
 import 'package:comet_messenger/app/store/user_store_service.dart';
 import 'package:crypto/crypto.dart';
+import 'package:encrypt/encrypt.dart' as encrypt_lib;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pointycastle/export.dart' as pointycastle;
+import 'package:pointycastle/asn1.dart';
 import 'package:pointycastle/export.dart';
-import 'package:solana_web3/solana_web3.dart';
 
 mixin AppUtilsMixin {
   void removeFocus() => FocusManager.instance.primaryFocus!.unfocus();
@@ -55,21 +55,7 @@ mixin AppUtilsMixin {
     return base64Encode(encrypted);
   }
 
-  static String rsaSigner(String msg, PrivateKey key) {
-    final signer = RSASigner(SHA256Digest(), '0609608648016503040201');
-    signer.init(true, PrivateKeyParameter<RSAPrivateKey>(key));
-    final sig = signer.generateSignature(base64Decode(msg));
-    return base64Encode(sig.bytes);
-  }
-
-  static bool rsaSignVerifier(pointycastle.PublicKey publicKey, String msg, String signature) {
-    var sig = RSASignature(base64Decode(signature));
-    var verifier = RSASigner(SHA256Digest(), '0609608648016503040201');
-    verifier.init(false, PublicKeyParameter<RSAPublicKey>(publicKey));
-    return verifier.verifySignature(base64Decode(msg), sig);
-  }
-
-  static AsymmetricKeyPair<pointycastle.PublicKey, PrivateKey> generateKeys() {
+  static AsymmetricKeyPair<PublicKey, PrivateKey> generateKeys() {
     final secureRandom = FortunaRandom();
     secureRandom.seed(KeyParameter(
       Uint8List.fromList(
@@ -84,7 +70,7 @@ mixin AppUtilsMixin {
     return keyGenerator.generateKeyPair();
   }
 
-   AsymmetricKeyPair<pointycastle.PublicKey, PrivateKey> generateKeysFromSecure(Uint8List secure) {
+  AsymmetricKeyPair<PublicKey, PrivateKey> generateKeysFromSecure(Uint8List secure) {
     final secureRandom = FortunaRandom();
     secureRandom.seed(KeyParameter(
       Uint8List.fromList(
@@ -97,11 +83,6 @@ mixin AppUtilsMixin {
     var keyGenerator = RSAKeyGenerator();
     keyGenerator.init(params);
     return keyGenerator.generateKeyPair();
-  }
-
-  //convert BigInt? to String
-  static void importedWalletFromSecretKey(Uint8List bigInt) async{
-    Keypair keypair = await Keypair.fromSeckey(bigInt);
   }
 
   //convert BigInt? to base64
@@ -140,23 +121,75 @@ mixin AppUtilsMixin {
     return sha256.convert(data).bytes as Uint8List;
   }
 
-  // convert hex to bytes
-  static Uint8List hexToBytes(String hex) {
-    var bytes = <int>[];
-    for (var i = 0; i < hex.length; i += 2) {
-      bytes.add(int.parse(hex.substring(i, i + 2), radix: 16));
+  //region Convert Message To String
+  static String getUniqueHash(String key) {
+    var bytes = utf8.encode(key);
+    var digest = sha256.convert(bytes);
+    return digest.toString().substring(0, 16);
+  }
+
+  static String decrypt(List<int> encryptedData, String key) {
+    String newKey = getUniqueHash(key);
+    final keyBytes = encrypt_lib.Key.fromUtf8(newKey);
+    final encrypter = encrypt_lib.Encrypter(encrypt_lib.AES(keyBytes));
+
+    final decryptedData = encrypter.decrypt(
+      encrypt_lib.Encrypted(Uint8List.fromList(encryptedData)),
+      iv: encrypt_lib.IV.fromLength(16),
+    );
+
+    return decryptedData;
+  }
+
+  static List<int> hexToBytes(String hex) {
+    int len = hex.length;
+    List<int> bytes = List<int>.filled(len ~/ 2, 0);
+    for (int i = 0; i < len; i += 2) {
+      bytes[i ~/ 2] = (int.parse(hex[i], radix: 16) << 4) + int.parse(hex[i + 1], radix: 16);
     }
-    return Uint8List.fromList(bytes);
+    return bytes;
   }
 
-  // convert bytes to hex
-  static String bytesToHex(Uint8List bytes) {
-    return bytes.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
+  static String generate32ByteKey() {
+    final key = encrypt_lib.Key.fromSecureRandom(32);
+    final keyBytes = key.bytes;
+    String keyHex = bytesToHex(keyBytes);
+    return keyHex;
   }
 
-  // convert Uint8List to string
-  static String bytesToString(Uint8List bytes) {
-    var chars = bytes.toList();
-    return String.fromCharCodes(bytes);
+  static String bytesToHex(List<int> bytes) {
+    return bytes.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join('');
   }
+
+  // endregion
+
+  //region Create KEY For Encryption
+
+  static RSAPrivateKey parsePrivateKeyFromPem(String pem) {
+    final keyData = base64.decode(pem);
+    final asn1Parser = ASN1Parser(Uint8List.fromList(keyData));
+    final topLevelSeq = asn1Parser.nextObject() as ASN1Sequence;
+    final privateKeySeq = topLevelSeq.elements![2] as ASN1Sequence;
+
+    final modulus = privateKeySeq.elements![1] as ASN1Integer;
+    final privateExponent = privateKeySeq.elements![3] as ASN1Integer;
+    final p = privateKeySeq.elements![4] as ASN1Integer;
+    final q = privateKeySeq.elements![5] as ASN1Integer;
+
+    return RSAPrivateKey(
+      modulus.integer!,
+      privateExponent.integer!,
+      p.integer,
+      q.integer,
+    );
+  }
+
+  static String decryptForCipher(String data, String base64PrivateKey) {
+    final privateKey = parsePrivateKeyFromPem(base64PrivateKey);
+    final encrypter = encrypt_lib.Encrypter(encrypt_lib.RSA(privateKey: privateKey, encoding: encrypt_lib.RSAEncoding.OAEP));
+
+    final decrypted = encrypter.decrypt64(data);
+    return decrypted;
+  }
+// endregion
 }

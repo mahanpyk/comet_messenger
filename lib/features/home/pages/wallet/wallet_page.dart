@@ -6,62 +6,44 @@ import 'package:comet_messenger/features/home/pages/wallet/wallet_controller.dar
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:shimmer/shimmer.dart';
 
 class WalletPage extends BaseView<WalletController> {
   const WalletPage({super.key});
 
   @override
   Widget body() {
-    return SingleChildScrollView(
-      child: Stack(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Column(children: [
-              const SizedBox(height: 40),
-              Text(
-                'wallet_title'.tr,
-                textAlign: TextAlign.center,
-                style: Get.textTheme.titleLarge!.copyWith(color: AppColors.tertiaryColor),
-              ),
-              const SizedBox(height: 24),
-              controller.isLoading.value
-                  ? Shimmer.fromColors(
-                      baseColor: AppColors.shimmerBaseColor,
-                      highlightColor: AppColors.shimmerHighlightColor,
-                      direction: ShimmerDirection.rtl,
-                      child: Container(
-                        width: 72,
-                        height: 24,
-                        color: AppColors.primaryColor,
-                      ),
-                    )
-                  : Text(
-                      '${controller.assets.value.toStringAsFixed(9)} SOL',
-                      textAlign: TextAlign.center,
-                      style: Get.textTheme.titleMedium!.copyWith(color: AppColors.tertiaryColor),
-                    ),
-              const SizedBox(height: 8),
-              const Divider(
-                height: 1,
-                color: AppColors.tertiaryColor,
-              ),
-              const SizedBox(height: 24),
-              controller.transactionsList.isEmpty?
-              const Text('No transactions yet!')
-                  :ListView.builder(
-                itemCount: controller.transactionsList.length,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return transactionItem(item: controller.transactionsList[index]);
-                },
-              ),
-            ]),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(children: [
+        SizedBox(
+          height: 48,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('transactions History'),
+              Text('Tab'),
+            ],
           ),
-        ],
-      ),
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                controller.transactionsList.isEmpty ?
+                const Text('No transactions yet!')
+                    : ListView.builder(
+                  itemCount: controller.transactionsList.length,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return transactionItem(item: controller.transactionsList[index]);
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ]),
     );
   }
 

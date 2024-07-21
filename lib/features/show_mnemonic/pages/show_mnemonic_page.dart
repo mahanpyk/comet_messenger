@@ -2,6 +2,7 @@ import 'package:comet_messenger/app/core/base/base_view.dart';
 import 'package:comet_messenger/app/theme/app_colors.dart';
 import 'package:comet_messenger/features/show_mnemonic/pages/show_mnemonic_controller.dart';
 import 'package:comet_messenger/features/widgets/fill_button_widget.dart';
+import 'package:comet_messenger/features/widgets/text_form_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -65,18 +66,43 @@ class ShowMnemonicPage extends BaseView<ShowMnemonicController> {
                     },
                   ),
                 ),
+                const SizedBox(height: 16),
+                FillButtonWidget(
+                  buttonTitle: 'Save Mnemonic to ClipBoard',
+                  onTap: () => controller.onTapCopyAndNext(),
+                  isLoading: false,
+                  enable: true,
+                ),
+                const SizedBox(height: 32),
+                Text(
+                  'private Key',
+                  style: Get.textTheme.titleMedium!.copyWith(
+                    color: AppColors.tertiaryColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.right,
+                ),
+                const SizedBox(height: 16),
+                const Divider(
+                  height: 1,
+                  color: AppColors.tertiaryColor,
+                ),
+                const SizedBox(height: 24),
+                TextFormFieldWidget(
+                  controller: controller.privateKeyTEC,
+                  readOnly: true,
+                  maxLines: 2,
+                ),
+                const SizedBox(height: 32),
+                FillButtonWidget(
+                  buttonTitle: 'Save Private Key to ClipBoard',
+                  onTap: () => controller.onTapPrivateKey(),
+                  isLoading: false,
+                  enable: true,
+                ),
               ]),
             ),
           ]),
-        ),
-      ),
-      Padding(
-        padding: const EdgeInsets.all(16),
-        child: FillButtonWidget(
-          buttonTitle: 'Save to ClipBoard',
-          onTap: () => controller.onTapCopyAndNext(),
-          isLoading: false,
-          enable: true,
         ),
       ),
     ]);

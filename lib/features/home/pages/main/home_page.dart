@@ -39,7 +39,6 @@ class HomePage extends BaseView<HomeController> {
             physics: const NeverScrollableScrollPhysics(),
             children: const [
           ChatListPage(),
-          ChatListPage(),
           WalletPage(),
               SettingsPage(),
             ]),
@@ -56,8 +55,9 @@ class HomePage extends BaseView<HomeController> {
         snakeViewColor: Colors.black,
         selectedItemColor: Colors.black,
         unselectedItemColor: AppColors.tertiaryColor,
-        showUnselectedLabels: false,
-        showSelectedLabels: false,
+        showUnselectedLabels: true,
+        showSelectedLabels: true,
+        selectedLabelStyle: TextStyle(color: AppColors.primaryColor),
         elevation: 4,
         currentIndex: controller.bottomNavigatorIndex.value,
         onTap: (index) => controller.onTapBottomNavigationItem(index: index),
@@ -79,17 +79,6 @@ class HomePage extends BaseView<HomeController> {
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
-              AppIcons.icProfileInactive,
-              color: AppColors.tertiaryColor,
-            ),
-            label: 'profile_title',
-            activeIcon: SvgPicture.asset(
-              AppIcons.icProfileActive,
-              color: AppColors.primaryColor,
-            ),
-          ),
-          BottomNavigationBarItem(
-            icon: SvgPicture.asset(
               AppIcons.icDashboardInactive,
               color: AppColors.tertiaryColor,
             ),
@@ -105,7 +94,7 @@ class HomePage extends BaseView<HomeController> {
               color: AppColors.tertiaryColor,
               height: 24,
             ),
-            label: 'profile_title',
+            label: 'settings_title'.tr,
             activeIcon: SvgPicture.asset(
               AppIcons.icSettingsActive,
               color: AppColors.primaryColor,

@@ -12,7 +12,27 @@ class TransactionDetailPage extends BaseView<TransactionDetailController> {
   Widget body() {
     return Column(
       children: [
-        const SizedBox(height: 48),
+        Container(
+          height: 64,
+          width: Get.width,
+          color: AppColors.primaryColor,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                BackButton(onPressed: () => Get.back()),
+                Center(
+                  child: Text(
+                    'Transaction Details',
+                    style: Get.textTheme.titleLarge!.copyWith(color: AppColors.tertiaryColor),
+                  ),
+                ),
+                const SizedBox(width: 40),
+              ],
+            ),
+          ),
+        ),
         controller.isLoading.value
             ? Padding(
                 padding: const EdgeInsets.all(16),
@@ -37,21 +57,11 @@ class TransactionDetailPage extends BaseView<TransactionDetailController> {
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Column(children: [
-                  Text(
-                    'جزئیات تراکنش',
-                    style: Get.textTheme.titleMedium!.copyWith(color: AppColors.primaryColor),
-                  ),
-                  const SizedBox(height: 16),
-                  const Divider(
-                    height: 1,
-                    color: AppColors.backgroundSecondaryColor,
-                  ),
-                  const SizedBox(height: 24),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'تاریخ تراکنش',
+                        'Transaction Data',
                         style: Get.textTheme.titleMedium!.copyWith(color: AppColors.tertiaryColor),
                       ),
                       Text(
@@ -66,7 +76,7 @@ class TransactionDetailPage extends BaseView<TransactionDetailController> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'موجودی قبل از تراکنش',
+                        'Balance before transaction',
                         style: Get.textTheme.titleMedium!.copyWith(color: AppColors.tertiaryColor),
                       ),
                       Text(
@@ -80,7 +90,7 @@ class TransactionDetailPage extends BaseView<TransactionDetailController> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'موجودی بعد از تراکنش',
+                        'Balance after transaction',
                         style: Get.textTheme.titleMedium!.copyWith(color: AppColors.tertiaryColor),
                       ),
                       Text(
@@ -102,40 +112,6 @@ class TransactionDetailPage extends BaseView<TransactionDetailController> {
                         style: Get.textTheme.titleMedium,
                       ),
                     ],
-                  ),
-                  const SizedBox(height: 16),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 12,
-                      horizontal: 16,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.backgroundSecondaryColor,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            'signature',
-                            style: Get.textTheme.titleMedium!.copyWith(color: AppColors.tertiaryColor),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 80,
-                          child: Text(
-                            controller.signature,
-                            style: Get.textTheme.titleMedium!.copyWith(
-                              color: AppColors.primaryColor,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            textDirection: TextDirection.ltr,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        const Icon(Icons.copy, color: AppColors.primaryColor),
-                      ],
-                    ),
                   ),
                 ]),
               ),

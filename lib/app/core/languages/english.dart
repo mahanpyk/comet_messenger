@@ -1,4 +1,4 @@
-const Map<String, String> enUS = {
+const Map<String, String> faIR = {
   'app_name': 'Chat-SOL',
 
   //region splash
@@ -14,7 +14,6 @@ const Map<String, String> enUS = {
   'login_text_field_label': 'UserName',
   'login_text_field_error': 'This field cannot be empty',
   'login_button': 'Login',
-  'login_avatar_title': 'Pick your avatar',
   //endregion
 
   //region Pin
@@ -24,6 +23,8 @@ const Map<String, String> enUS = {
 
   //region Home
   'home_title': 'Home',
+  'assets_title': 'Assets',
+  'settings_title': 'Settings',
   // endregion
 
   //region Wallet
@@ -32,7 +33,6 @@ const Map<String, String> enUS = {
   // endregion
 
   //region settings
-  'settings_title': 'Profile',
   'settings_show_mnemonic_item': 'Display wallet security phrase',
   'settings_sign_out': 'Sign Out',
   // endregion

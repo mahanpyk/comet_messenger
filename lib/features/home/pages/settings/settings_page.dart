@@ -28,8 +28,12 @@ class SettingsPage extends BaseView<SettingsController> {
             onTap: () => controller.onTapProfile(),
           ),
           SettingsMenuItemWidget(
-            title: 'settings_show_mnemonic_item'.tr,
-            icon: AppIcons.icAccountsHistory,
+            title: 'Security',
+            icon: AppIcons.icLock,
+            onTap: () => controller.onTapShowMnemonic(),
+          ), SettingsMenuItemWidget(
+            title: 'Theme',
+            icon: AppIcons.icLock,
             onTap: () => controller.onTapShowMnemonic(),
           ),
           const Divider(

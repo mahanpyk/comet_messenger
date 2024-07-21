@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:comet_messenger/app/core/app_constants.dart';
 import 'package:comet_messenger/app/core/app_utils_mixin.dart';
 import 'package:comet_messenger/app/models/data_length_borsh_model.dart';
 import 'package:comet_messenger/app/models/request_model.dart';
@@ -55,7 +56,7 @@ class ChatController extends GetxController with AppUtilsMixin {
       id: "b75758de-e0b2-469b-bd9c-ef366ee1b35a",
     ))
         .then(
-      (ChatDetailsResponseModel response) {
+      (ChatDetailsResponseModel response) async {
         if (response.statusCode == 200) {
           // get response and get length from first 4 bytes
           var data = base64Decode(response.data!.result!.value!.data![0]);
@@ -76,10 +77,20 @@ class ChatController extends GetxController with AppUtilsMixin {
 
           // convert hex to string
           var decodeMessages = AppUtilsMixin.hexToBytes(decodeContacts.messages?.first.text ?? '');
+          // تبدیل لیست به Uint8List
+          Uint8List byteArray = Uint8List.fromList(AppConstants.BYTE_PRIVATE.map((e) => e >= 0 ? e : 256 + e).toList());
+
+          // تبدیل به base64
+          String base64String = base64Encode(byteArray);
+
+          print(base64String);
+          final dataSample =
+              'SVIZVn9iOF5tPb+wWoYfV/LbuYOlIW6folmn15r/qDzL+cZCItQm553ih/VTigbLz9iGmaYZDQf5tOXP8KHPgwIAhX/3IvFxlae5DrpQsqFIzMFDVq6oPg4Whefp/s0MwOu95DQzSxBYexe00t04bKK1IjaHNTkHmTodpGzlPyA=';
+          var getKey = await AppUtilsMixin.decryptForCipher(dataSample, AppConstants.PRIVATE_KEY);
           //convert to string
-          String message = AppUtilsMixin.bytesToString(decodeMessages);
+          String message = AppUtilsMixin.decrypt(decodeMessages, getKey);
           debugPrint('*****************');
-          debugPrint('message: $message');
+          // debugPrint('message: $message');
           debugPrint('-----------------');
         }
       },

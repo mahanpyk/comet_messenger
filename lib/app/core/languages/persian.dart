@@ -1,4 +1,4 @@
-const Map<String, String> faIR = {
+const Map<String, String> enUS = {
   'app_name': 'Chat-SOL',
 
   //region splash
@@ -23,6 +23,8 @@ const Map<String, String> faIR = {
 
   //region Home
   'home_title': 'Home',
+  'assets_title': 'Assets',
+  'settings_title': 'Settings',
   // endregion
 
   //region Wallet
@@ -31,7 +33,6 @@ const Map<String, String> faIR = {
   // endregion
 
   //region settings
-  'settings_title': 'Profile',
   'settings_show_mnemonic_item': 'Display wallet security phrase',
   'settings_sign_out': 'Sign Out',
   // endregion

@@ -16,7 +16,6 @@ class ProfileController extends GetxController with AppUtilsMixin {
   RxString test = RxString('');
   Rxn<UserModel> userModel = Rxn();
   TextEditingController publicKeyTEC = TextEditingController();
-  TextEditingController privateKeyTEC = TextEditingController();
   RxBool showQRCode = true.obs;
   RxBool qrAddress = false.obs;
 
@@ -26,14 +25,11 @@ class ProfileController extends GetxController with AppUtilsMixin {
     if (json != null) {
       userModel(UserModel.fromJson(json));
       publicKeyTEC.text = userModel.value?.publicKey ?? "public Key Not Found";
-      privateKeyTEC.text = userModel.value?.privateKey ?? "private Key Not Found";
     }
     super.onInit();
   }
 
-  void onTapShowMnemonic() {
-    // Get.toNamed(AppRoutes.SHOW_MNEMONIC);
-  }
+  void onTapShowMnemonicAndPrivate() => Get.toNamed(AppRoutes.SHOW_MNEMONIC);
 
   void onTapSignOut() => logoutFromApp();
 
@@ -56,7 +52,7 @@ class ProfileController extends GetxController with AppUtilsMixin {
   void sharedQRCode() async {
     showQRCode(true);
     final qrCode = await QrPainter(
-      data: qrAddress.value ? publicKeyTEC.text : privateKeyTEC.text,
+      data: publicKeyTEC.text,
       version: QrVersions.auto,
       eyeStyle: const QrEyeStyle(
         color: Colors.white,

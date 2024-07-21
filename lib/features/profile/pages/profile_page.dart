@@ -14,162 +14,118 @@ class ProfilePage extends BaseView<ProfileController> {
 
   @override
   Widget body() {
-    return Stack(
-      fit: StackFit.expand,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Container(
-                height: 64,
-                width: Get.width,
-                color: AppColors.primaryColor,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      BackButton(onPressed: () => Get.back()),
-                      Center(
-                        child: Text(
-                          'Profile',
-                          style: Get.textTheme.titleLarge!.copyWith(color: AppColors.tertiaryColor),
-                        ),
-                      ),
-                      const SizedBox(width: 40),
-                    ],
+        Container(
+          height: 64,
+          width: Get.width,
+          color: AppColors.primaryColor,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                BackButton(onPressed: () => Get.back()),
+                Center(
+                  child: Text(
+                    'Profile',
+                    style: Get.textTheme.titleLarge!.copyWith(color: AppColors.tertiaryColor),
                   ),
                 ),
-              ),
-              const SizedBox(height: 48),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Container(
-                  width: Get.width,
-                  decoration: BoxDecoration(
-                    color: AppColors.backgroundSecondaryColor,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: AppColors.tertiaryColor,
-                        spreadRadius: 0.1,
-                        blurRadius: 4,
-                      )
-                    ],
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-                        SvgPicture.asset(
-                          '${AppIcons.icUserAvatar}${controller.userModel.value?.avatar ?? '0'}.svg',
-                          height: 120,
-                          width: 120,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          controller.userModel.value?.userName ?? '',
-                          style: Get.textTheme.bodyMedium!.copyWith(
-                            color: AppColors.tertiaryColor,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 32),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Public Key',
-                              style: Get.textTheme.titleMedium!.copyWith(
-                                color: AppColors.tertiaryColor,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.right,
-                            ),
-                            GestureDetector(
-                              onTap: () => controller.showQrCode(isPublicKey: true),
-                              child: Text(
-                                'show QR Code',
-                                style: Get.textTheme.bodySmall!.copyWith(
-                                  color: AppColors.primaryColor,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.right,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        TextFormFieldWidget(
-                          controller: controller.publicKeyTEC,
-                          readOnly: true,
-                          onTap: () => controller.onTapPublicKey(),
-                          maxLines: 2,
-                        ),
-                        const SizedBox(height: 24),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'private Key',
-                              style: Get.textTheme.titleMedium!.copyWith(
-                                color: AppColors.tertiaryColor,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.right,
-                            ),
-                            GestureDetector(
-                              onTap: () => controller.showQrCode(isPublicKey: false),
-                              child: Text(
-                                'show QR Code',
-                                style: Get.textTheme.bodySmall!.copyWith(
-                                  color: AppColors.primaryColor,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.right,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        TextFormFieldWidget(
-                          controller: controller.privateKeyTEC,
-                          readOnly: true,
-                          onTap: () => controller.onTapPublicKey(),
-                          maxLines: 2,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              )
-            ],
+                const SizedBox(width: 40),
+              ],
+            ),
           ),
         ),
-        Offstage(
-          offstage: controller.showQRCode.value,
-          child: GestureDetector(
-            onTap: () => controller.showQRCode.value = !controller.showQRCode.value,
-            child: Container(
-              color: AppColors.tertiaryColor.withOpacity(0.7),
+        const SizedBox(height: 48),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  QrImageView(
-                    data: controller.qrAddress.value ? controller.publicKeyTEC.text : controller.privateKeyTEC.text,
-                    version: QrVersions.auto,
-                    size: 200,
-                    backgroundColor: Colors.white,
-                  ),
-                  const SizedBox(height: 8),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 32),
-                    child: FillButtonWidget(
-                      isLoading: false,
-                      onTap: () => controller.sharedQRCode(),
-                      buttonTitle: 'Share QRCode',
+                  Container(
+                    width: Get.width,
+                    decoration: BoxDecoration(
+                      color: AppColors.backgroundSecondaryColor,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: AppColors.tertiaryColor,
+                          spreadRadius: 0.1,
+                          blurRadius: 4,
+                        )
+                      ],
                     ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          SvgPicture.asset(
+                            '${AppIcons.icUserAvatar}${controller.userModel.value?.avatar ?? '0'}.svg',
+                            height: 120,
+                            width: 120,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            controller.userModel.value?.userName ?? '',
+                            style: Get.textTheme.bodyMedium!.copyWith(
+                              color: AppColors.tertiaryColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 32),
+                          Text(
+                            'Balance',
+                            style: Get.textTheme.bodyMedium!.copyWith(
+                              color: AppColors.tertiaryColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.right,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            '0.0000000000 SOL',
+                            textAlign: TextAlign.center,
+                            style: Get.textTheme.titleMedium!.copyWith(color: AppColors.tertiaryColor),
+                          ),
+                          const SizedBox(height: 32),
+                          Row(
+                            children: [
+                              Text(
+                                'Public Key',
+                                style: Get.textTheme.bodyMedium!.copyWith(
+                                  color: AppColors.tertiaryColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.right,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          TextFormFieldWidget(
+                            controller: controller.publicKeyTEC,
+                            readOnly: true,
+                            onTap: () => controller.onTapPublicKey(),
+                            maxLines: 2,
+                          ),
+                          const SizedBox(height: 16),
+                          QrImageView(
+                            data: controller.publicKeyTEC.text,
+                            version: QrVersions.auto,
+                            size: 200,
+                            backgroundColor: Colors.white,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+                  FillButtonWidget(
+                    isLoading: false,
+                    onTap: () => controller.onTapShowMnemonicAndPrivate(),
+                    buttonTitle: 'Show Mnemonic And Private Key',
                   ),
                 ],
               ),

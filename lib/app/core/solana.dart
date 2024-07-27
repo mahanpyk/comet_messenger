@@ -1,170 +1,218 @@
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:bs58/bs58.dart';
-import 'package:convert/convert.dart';
-import 'package:crypto/crypto.dart';
-import 'package:ed25519_hd_key/ed25519_hd_key.dart';
-import 'package:bip39/bip39.dart' as bip39;
 
-class PublicKey {
+import 'package:asn1lib/asn1lib.dart';
+import 'package:pointycastle/export.dart';
 
-  factory PublicKey.fromBase58(String base58Str) {
-    return PublicKey(base58.decode(base58Str));
+/*class RSAUtil {
+  static const String publicKeyPem = """
+  -----BEGIN PUBLIC KEY-----
+  MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCgFGVfrY4jQSoZQWWygZ83roKX
+  WD4YeT2x2p41dGkPixe73rT2IW04glagN2vgoZoHuOPqa5and6kAmK2ujmCHu6D1
+  auJhE2tXP+yLkpSiYMQucDKmCsWMnW9XlC5K7OSL77TXXcfvTvyZcjObEz6LIBRz
+  s6+FqpFbUO9SJEfh6wIDAQAB
+  -----END PUBLIC KEY-----
+  """;
+
+  static const String privateKeyPem = """
+  -----BEGIN PRIVATE KEY-----
+  MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAKAUZV+tjiNBKhlB
+  ZbKBnzeugpdYPhh5PbHanjV0aQ+LF7vetPYhbTiCVqA3a+Chmge44+prlqd3qQCY
+  ra6OYIe7oPVq4mETa1c/7IuSlKJgxC5wMqYKxYydb1eULkrs5IvvtNddx+9O/Jly
+  M5sTPosgFHOzr4WqkVtQ71IkR+HrAgMBAAECgYAkQLo8kteP0GAyXAcmCAkA2Tql
+  /8wASuTX9ITD4lsws/VqDKO64hMUKyBnJGX/91kkypCDNF5oCsdxZSJgV8owViYW
+  ZPnbvEcNqLtqgs7nj1UHuX9S5yYIPGN/mHL6OJJ7sosOd6rqdpg6JRRkAKUV+tmN
+  /7Gh0+GFXM+ug6mgwQJBAO9/+CWpCAVoGxCA+YsTMb82fTOmGYMkZOAfQsvIV2v6
+  DC8eJrSa+c0yCOTa3tirlCkhBfB08f8U2iEPS+Gu3bECQQCrG7O0gYmFL2RX1O+3
+  7ovyyHTbst4s4xbLW4jLzbSoimL235lCdIC+fllEEP96wPAiqo6dzmdH8KsGmVoz
+  sVRbAkB0ME8AZjp/9Pt8TDXD5LHzo8mlruUdnCBcIo5TMoRG2+3hRe1dHPonNCjg
+  bdZCoyqjsWOiPfnQ2Brigvs7J4xhAkBGRiZUKC92x7QKbqXVgN9xYuq7oIanIM0n
+  z/wq190uq0dh5Qtow7hshC/dSK3kmIEHe8z++tpoLWvQVgM538apAkBoSNfaTkDZ
+  hFavuiVl6L8cWCoDcJBItip8wKQhXwHp0O3HLg10OEd14M58ooNfpgt+8D8/8/2O
+  OFaR0HzA+2Dm
+  -----END PRIVATE KEY-----
+  """;
+
+  static RSAPublicKey getPublicKey(String pem) {
+    final parser = RSAKeyParser();
+    return parser.parse(pem) as RSAPublicKey;
   }
 
-  PublicKey(this.pubkey) {
-    if (pubkey.length > PUBLIC_KEY_LENGTH) {
-      throw ArgumentError('Invalid public key input');
+  static RSAPrivateKey getPrivateKey(String pem) {
+    final parser = RSAKeyParser();
+    return parser.parse(pem) as RSAPrivateKey;
+  }
+
+  static Uint8List encrypt(String data, String publicKeyPem) {
+    final publicKey = getPublicKey(publicKeyPem);
+    final encryptor = OAEPEncoding(RSAEngine())
+      ..init(true, PublicKeyParameter<RSAPublicKey>(publicKey));
+    return _processInBlocks(encryptor, Uint8List.fromList(data.codeUnits));
+  }
+
+  static String decrypt(Uint8List data, String privateKeyPem) {
+    final privateKey = getPrivateKey(privateKeyPem);
+    final decryptor = OAEPEncoding(RSAEngine())
+      ..init(false, PrivateKeyParameter<RSAPrivateKey>(privateKey));
+    return String.fromCharCodes(_processInBlocks(decryptor, data));
+  }
+
+  static Uint8List _processInBlocks(
+      AsymmetricBlockCipher engine, Uint8List input) {
+    final numBlocks =
+        (input.length + engine.inputBlockSize - 1) ~/ engine.inputBlockSize;
+    final output = BytesBuilder();
+    for (var i = 0; i < numBlocks; i++) {
+      final start = i * engine.inputBlockSize;
+      final end = start + engine.inputBlockSize < input.length
+          ? start + engine.inputBlockSize
+          : input.length;
+      output.add(engine.process(input.sublist(start, end)));
+    }
+    return output.toBytes();
+  }
+
+  static String encryptData(String data) {
+    final encryptedData = encrypt(data, publicKeyPem);
+    return base64Encode(encryptedData);
+  }
+
+  static String decryptData(String encryptedData) {
+    final decryptedData = decrypt(base64Decode(encryptedData), privateKeyPem);
+    return decryptedData;
+  }
+}
+
+class RSAKeyParser {
+  /// Parse PEM file
+  RSAAsymmetricKey parse(String pemString) {
+    final bytes = base64.decode(pemString);
+    if (pemString.contains('PUBLIC KEY')) {
+      return _parsePublicKey(bytes);
+    } else if (pemString.contains('PRIVATE KEY')) {
+      return _parsePrivateKey(bytes);
+    } else {
+      throw ArgumentError('Invalid key format.');
     }
   }
 
-  PublicKey.fromString(String pubkeyString)
-      : pubkey = base58.decode(pubkeyString);
-  final Uint8List pubkey;
-  static const int PUBLIC_KEY_LENGTH = 32;
-
-  Uint8List toByteArray() {
-    return pubkey;
+  RSAAsymmetricKey _parsePublicKey(Uint8List bytes) {
+    final asn1Parser = ASN1Parser(bytes);
+    final asn1Seq = asn1Parser.nextObject() as ASN1Sequence;
+    final modulus = asn1Seq.elements[0] as ASN1Integer;
+    final exponent = asn1Seq.elements[1] as ASN1Integer;
+    return RSAPublicKey(modulus.valueAsBigInteger, exponent.valueAsBigInteger);
   }
 
-  String toBase58() {
-    return base58.encode(pubkey);
+  RSAAsymmetricKey _parsePrivateKey(Uint8List bytes) {
+    var asn1Parser = ASN1Parser(bytes);
+    var topLevelSeq = asn1Parser.nextObject() as ASN1Sequence;
+    var privateKey = topLevelSeq.elements[2];
+
+    asn1Parser = ASN1Parser(privateKey.contentBytes());
+    var pkSeq = asn1Parser.nextObject() as ASN1Sequence;
+
+    var modulus = pkSeq.elements[1] as ASN1Integer;
+    var privateExponent = pkSeq.elements[3] as ASN1Integer;
+    var p = pkSeq.elements[4] as ASN1Integer;
+    var q = pkSeq.elements[5] as ASN1Integer;
+
+    RSAPrivateKey rsaPrivateKey = RSAPrivateKey(
+        modulus.valueAsBigInteger,
+        privateExponent.valueAsBigInteger,
+        p.valueAsBigInteger,
+        q.valueAsBigInteger);
+
+    return rsaPrivateKey;
+  }
+}*/
+
+class RSAUtil {
+  static RSAPublicKey getPublicKey(String pem) {
+    final parser = RSAKeyParser();
+    return parser._parsePublicKey(base64Decode(pem)) as RSAPublicKey;
   }
 
-/*  bool equals(PublicKey other) {
-    return const ListEquality().equals(pubkey, other.toByteArray());
+  static RSAPrivateKey getPrivateKey(String pem) {
+    final parser = RSAKeyParser();
+    return parser._parsePrivateKey(base64Decode(pem)) as RSAPrivateKey;
   }
 
-  @override
-  int get hashCode {
-    return const ListEquality().hash(pubkey);
+  static Uint8List encrypt(String data, String publicKeyPem) {
+    final publicKey = getPublicKey(publicKeyPem);
+    final encryptor = OAEPEncoding(RSAEngine())
+      ..init(true, PublicKeyParameter<RSAPublicKey>(publicKey));
+    return _processInBlocks(encryptor, Uint8List.fromList(data.codeUnits));
   }
 
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    if (other is! PublicKey) return false;
-    return equals(other);
-  }*/
-
-  @override
-  String toString() {
-    return toBase58();
+  static String decrypt(Uint8List data, String privateKeyPem) {
+    final privateKey = getPrivateKey(privateKeyPem);
+    final decryptor = OAEPEncoding(RSAEngine())
+      ..init(false, PrivateKeyParameter<RSAPrivateKey>(privateKey));
+    return String.fromCharCodes(_processInBlocks(decryptor, data));
   }
 
-  static PublicKey readPubkey(Uint8List bytes, int offset) {
-    final buf = bytes.sublist(offset, offset + PUBLIC_KEY_LENGTH);
-    return PublicKey(buf);
-  }
+  static Uint8List _processInBlocks(
+      AsymmetricBlockCipher engine, Uint8List input) {
+    final inputBlockSize = engine.inputBlockSize;
+    final numBlocks = (input.length + inputBlockSize - 1) ~/ inputBlockSize;
+    final output = BytesBuilder();
 
-  static Future<PublicKey> createWithSeed(
-      PublicKey account, String seed, PublicKey programId) async {
-    final buffer = BytesBuilder();
-    buffer.add(account.toByteArray());
-    buffer.add(utf8.encode(seed));
-    buffer.add(programId.toByteArray());
-    final hash = sha256.convert(buffer.toBytes()).bytes;
-    return PublicKey(Uint8List.fromList(hash));
-  }
+    for (var i = 0; i < numBlocks; i++) {
+      final start = i * inputBlockSize;
+      final end = start + inputBlockSize < input.length
+          ? start + inputBlockSize
+          : input.length;
+      final block = input.sublist(start, end);
 
-  static Future<PublicKey> createProgramAddress(
-      List<Uint8List> seeds, PublicKey programId) async {
-    final buffer = BytesBuilder();
-    for (var seed in seeds) {
-      if (seed.length > 32) throw ArgumentError('Max seed length exceeded');
-      buffer.add(seed);
-    }
-    buffer.add(programId.toByteArray());
-    buffer.add(utf8.encode('ProgramDerivedAddress'));
-    final hash = sha256.convert(buffer.toBytes()).bytes;
-    // Assuming isOnCurve() is implemented or available in some package
-    if (isOnCurve(Uint8List.fromList(hash))) {
-      throw ArgumentError('Invalid seeds, address must fall off the curve');
-    }
-    return PublicKey(Uint8List.fromList(hash));
-  }
+      // Ensure the block is of the correct length by padding it with zeroes if necessary
+      final paddedBlock = Uint8List(inputBlockSize);
+      paddedBlock.setRange(0, block.length, block);
+      paddedBlock.fillRange(
+          block.length, inputBlockSize, 0); // Fill remaining space with zeroes
 
-  static Future<ProgramDerivedAddress> findProgramAddress(
-      List<Uint8List> seeds, PublicKey programId) async {
-    int nonce = 255;
-    while (nonce != 0) {
       try {
-        final seedsWithNonce = List<Uint8List>.from(seeds)
-          ..add(Uint8List.fromList([nonce]));
-        final address = await createProgramAddress(seedsWithNonce, programId);
-        return ProgramDerivedAddress(address, nonce);
+        output.add(engine.process(paddedBlock));
       } catch (e) {
-        nonce--;
+        throw Exception('Error processing block: $e');
       }
     }
-    throw Exception('Unable to find a viable program address nonce');
+
+    return output.toBytes();
+  }
+}
+
+class RSAKeyParser {
+  RSAAsymmetricKey _parsePublicKey(Uint8List bytes) {
+    final asn1Parser = ASN1Parser(bytes);
+    final asn1Seq = asn1Parser.nextObject() as ASN1Sequence;
+    final modulus = asn1Seq.elements[0] as ASN1Integer;
+    final exponent = asn1Seq.elements[1] as ASN1Integer;
+    return RSAPublicKey(modulus.valueAsBigInteger, exponent.valueAsBigInteger);
   }
 
-  static Future<ProgramDerivedAddress> associatedTokenAddress(
-      PublicKey walletAddress, PublicKey tokenMintAddress) async {
-    return findProgramAddress(
-      [
-        walletAddress.toByteArray(),
-        TokenProgram.PROGRAM_ID.toByteArray(),
-        tokenMintAddress.toByteArray(),
-      ],
-      PublicKey.fromString('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'),
+  RSAAsymmetricKey _parsePrivateKey(Uint8List bytes) {
+    var asn1Parser = ASN1Parser(bytes);
+    var topLevelSeq = asn1Parser.nextObject() as ASN1Sequence;
+    var privateKey = topLevelSeq.elements[2];
+
+    asn1Parser = ASN1Parser(privateKey.contentBytes());
+    var pkSeq = asn1Parser.nextObject() as ASN1Sequence;
+
+    var modulus = pkSeq.elements[1] as ASN1Integer;
+    var publicExponent = pkSeq.elements[2] as ASN1Integer;
+    var privateExponent = pkSeq.elements[3] as ASN1Integer;
+    var p = pkSeq.elements[4] as ASN1Integer;
+    var q = pkSeq.elements[5] as ASN1Integer;
+
+    RSAPrivateKey rsaPrivateKey = RSAPrivateKey(
+      modulus.valueAsBigInteger,
+      privateExponent.valueAsBigInteger,
+      p.valueAsBigInteger,
+      q.valueAsBigInteger,
+      publicExponent.valueAsBigInteger,
     );
-  }
 
-  static PublicKey valueOf(String publicKey) {
-    return PublicKey.fromString(publicKey);
-  }
-}
-
-class ProgramDerivedAddress {
-
-  ProgramDerivedAddress(this.address, this.nonce);
-  final PublicKey address;
-  final int nonce;
-}
-
-// Placeholder for the TokenProgram.PROGRAM_ID
-class TokenProgram {
-  static PublicKey PROGRAM_ID = PublicKey.fromString('SomeTokenProgramID');
-}
-
-// Placeholder function to simulate the curve check, replace with actual implementation
-bool isOnCurve(Uint8List hash) {
-  // Implement the actual curve check logic here
-  return false; // Assuming this returns false if not on curve
-}
-
-
-
-class Account {
-
-
-  Account._(this.keyPair);
-  final KeyData keyPair;
-
-  static Future<Account> create() async {
-    final mnemonic = bip39.generateMnemonic();
-    final seed = bip39.mnemonicToSeed(mnemonic);
-    final keyPair = await ED25519_HD_KEY.getMasterKeyFromSeed(seed);
-    return Account._(keyPair);
-  }
-
-  static Future<Account> fromSecretKey(Uint8List secretKey) async {
-    final keyPair = await ED25519_HD_KEY.getMasterKeyFromSeed(secretKey);
-    return Account._(keyPair);
-  }
-
-  static Future<Account> fromPublicKey(Uint8List publicKey) async {
-    return Account._(KeyData(key: publicKey, chainCode: Uint8List(0)));
-  }
-  Uint8List get publicKey => Uint8List.fromList(keyPair.key);
-  Uint8List get secretKey => Uint8List.fromList(keyPair.chainCode);
-
-  static Future<Account> fromMnemonic(List<String> words, String passphrase) async {
-    final mnemonic = words.join(' ');
-    final seed = bip39.mnemonicToSeedHex(mnemonic, passphrase: passphrase);
-    final keyPair = await ED25519_HD_KEY.getMasterKeyFromSeed(Uint8List.fromList(hex.decode(seed)));
-    return Account._(keyPair);
+    return rsaPrivateKey;
   }
 }

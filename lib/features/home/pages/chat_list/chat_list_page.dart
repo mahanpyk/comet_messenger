@@ -13,7 +13,7 @@ class ChatListPage extends BaseView<ChatListController> {
   @override
   Widget body() {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: SingleChildScrollView(
         child: Column(
           children: [
@@ -53,14 +53,21 @@ class ChatListPage extends BaseView<ChatListController> {
           color: AppColors.backgroundSecondaryColor,
           child: ListTile(
             title: Text(
-              item.conversationName?.replaceAll('moshtagh2&_#', '').replaceAll('&_#moshtagh2', '') ?? 'No title',
+              item.conversationName
+                      ?.replaceAll(
+                          '${controller.userModel?.userName ?? ''}&_#', '')
+                      .replaceAll(
+                          '&_#${controller.userModel?.userName ?? ''}', '') ??
+                  'No title',
               textAlign: TextAlign.left,
-              style: Get.textTheme.titleLarge!.copyWith(color: AppColors.tertiaryColor),
+              style: Get.textTheme.titleLarge!
+                  .copyWith(color: AppColors.tertiaryColor),
             ),
             subtitle: Text(
               'Last message',
               textAlign: TextAlign.left,
-              style: Get.textTheme.bodySmall!.copyWith(color: AppColors.tertiaryColor),
+              style: Get.textTheme.bodySmall!
+                  .copyWith(color: AppColors.tertiaryColor),
             ),
             leading: Text(
               // just show hour and minute for example 12:00 AM or PM

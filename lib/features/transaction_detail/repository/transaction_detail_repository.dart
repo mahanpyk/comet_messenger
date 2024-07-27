@@ -11,7 +11,6 @@ class TransactionDetailRepositoryImpl extends TransactionDetailRepository {
   @override
   Future<TransactionDetailsResponseModel> getTransactionDetailsRequest({required String signature}) async {
     final ResponseModel response = await request(
-      url: 'https://api.mainnet-beta.solana.com',
       method: RequestMethodEnum.POST.name(),
       requiredToken: false,
       data: {

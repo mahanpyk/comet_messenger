@@ -34,9 +34,9 @@ class ChatDetailsBorshModel extends BorshObject {
   Map<String, dynamic> toJson() => {
         'conversation_name': conversationName,
         'createdTime': createdTime,
-        'messages': messages,
-        'members': members,
-        'admin': admin,
+        'messages': messages?.map((final e) => e.toJson()).toList(),
+        'members': members?.map((final e) => e.toJson()).toList(),
+        'admin': admin?.toJson(),
         'is_private': isPrivate,
       };
 

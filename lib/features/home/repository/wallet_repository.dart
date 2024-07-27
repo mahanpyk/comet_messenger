@@ -35,7 +35,6 @@ class WalletRepositoryImpl extends WalletRepository {
   @override
   Future<TransactionsResponseModel> getTransactionsRequest({required String walletAddress}) async {
     final ResponseModel response = await request(
-      url: 'https://api.mainnet-beta.solana.com',
       method: RequestMethodEnum.POST.name(),
       requiredToken: false,
       data: {
@@ -44,7 +43,6 @@ class WalletRepositoryImpl extends WalletRepository {
         "method": "getConfirmedSignaturesForAddress2",
         "params": [
           walletAddress,
-          {"limit": 10}
         ]
       },
     );

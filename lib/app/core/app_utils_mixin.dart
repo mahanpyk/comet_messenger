@@ -23,7 +23,8 @@ mixin AppUtilsMixin {
   static Uint8List pad(Uint8List src, blockSize) {
     var pad = PKCS7Padding();
     pad.init(null);
-    int padLength = src.length % blockSize == 0 ? 16 : blockSize - (src.length % blockSize);
+    int padLength =
+        src.length % blockSize == 0 ? 16 : blockSize - (src.length % blockSize);
     var out = Uint8List(src.length + padLength)..setAll(0, src);
     if (padLength != 0) {
       pad.addPadding(out, src.length);
@@ -70,7 +71,8 @@ mixin AppUtilsMixin {
     return keyGenerator.generateKeyPair();
   }
 
-  AsymmetricKeyPair<PublicKey, PrivateKey> generateKeysFromSecure(Uint8List secure) {
+  AsymmetricKeyPair<PublicKey, PrivateKey> generateKeysFromSecure(
+      Uint8List secure) {
     final secureRandom = FortunaRandom();
     secureRandom.seed(KeyParameter(
       Uint8List.fromList(
@@ -128,26 +130,32 @@ mixin AppUtilsMixin {
     return digest.toString().substring(0, 16);
   }
 
-  static String decrypt(List<int> encryptedData, String key) {
-    String newKey = getUniqueHash(key);
-    final keyBytes = encrypt_lib.Key.fromUtf8(newKey);
-    final encrypter = encrypt_lib.Encrypter(encrypt_lib.AES(keyBytes));
+  static String decrypt(Uint8List encryptedData, String key) {
+    final newKey = _getUniqueHash(key);
+    final secretKey = encrypt_lib.Key(Uint8List.fromList(newKey.codeUnits));
+    final encrypter = encrypt_lib.Encrypter(
+        encrypt_lib.AES(secretKey, mode: encrypt_lib.AESMode.ecb));
 
-    final decryptedData = encrypter.decrypt(
-      encrypt_lib.Encrypted(Uint8List.fromList(encryptedData)),
-      iv: encrypt_lib.IV.fromLength(16),
-    );
-
-    return decryptedData;
+    final decrypted =
+        encrypter.decryptBytes(encrypt_lib.Encrypted(encryptedData));
+    return utf8.decode(decrypted);
   }
 
-  static List<int> hexToBytes(String hex) {
+  static String _getUniqueHash(String input) {
+    final bytes = utf8.encode(input);
+    final digest = sha256.convert(bytes);
+    final truncatedHash =
+        digest.bytes.sublist(0, 8); // 8 bytes = 16 hexadecimal characters
+    return base64Url.encode(truncatedHash);
+  }
+
+  static Uint8List hexToBytes(String hex) {
     int len = hex.length;
-    List<int> bytes = List<int>.filled(len ~/ 2, 0);
+    List<int> bytes = [];
     for (int i = 0; i < len; i += 2) {
-      bytes[i ~/ 2] = (int.parse(hex[i], radix: 16) << 4) + int.parse(hex[i + 1], radix: 16);
+      bytes.add(int.parse(hex.substring(i, i + 2), radix: 16));
     }
-    return bytes;
+    return utf8.encode(hex);
   }
 
   static String generate32ByteKey() {
@@ -186,10 +194,18 @@ mixin AppUtilsMixin {
 
   static String decryptForCipher(String data, String base64PrivateKey) {
     final privateKey = parsePrivateKeyFromPem(base64PrivateKey);
-    final encrypter = encrypt_lib.Encrypter(encrypt_lib.RSA(privateKey: privateKey, encoding: encrypt_lib.RSAEncoding.OAEP));
+    final encrypter = encrypt_lib.Encrypter(encrypt_lib.RSA(
+        privateKey: privateKey, encoding: encrypt_lib.RSAEncoding.OAEP));
 
     final decrypted = encrypter.decrypt64(data);
     return decrypted;
   }
 // endregion
+
+// static String encryptForCipher(String data, String base64PublicKey) {
+// final Cipher publicKey = ;
+//   final encrypter = encrypt_lib.Encrypter(encrypt_lib.RSA(publicKey: publicKey, encoding: encrypt_lib.RSAEncoding.OAEP));
+//   final encrypted = encrypter.encrypt(data);
+//   return encrypted;
+// }
 }

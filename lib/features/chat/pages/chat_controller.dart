@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
+import 'package:comet_messenger/app/core/app_constants.dart';
 import 'package:comet_messenger/app/core/app_utils_mixin.dart';
 import 'package:comet_messenger/app/models/data_length_borsh_model.dart';
 import 'package:comet_messenger/app/models/request_model.dart';
@@ -11,7 +11,9 @@ import 'package:comet_messenger/features/chat/models/chat_details_response_model
 import 'package:comet_messenger/features/chat/repository/chat_repository.dart';
 import 'package:comet_messenger/features/home/models/profile_borsh_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:solana_borsh/borsh.dart';
 
 class ChatController extends GetxController with AppUtilsMixin {
@@ -22,6 +24,7 @@ class ChatController extends GetxController with AppUtilsMixin {
   UserModel? userModel;
   ConversationBorshModel conversationModel = ConversationBorshModel();
   ChatDetailsBorshModel chatDetailsModel = ChatDetailsBorshModel();
+  RxList<String> chatMessages = RxList([]);
   TextEditingController messageTEC = TextEditingController();
 
   /// sample chat response
@@ -59,7 +62,6 @@ class ChatController extends GetxController with AppUtilsMixin {
     ))
         .then(
       (ChatDetailsResponseModel response) async {
-        isLoading(false);
         if (response.statusCode == 200) {
           // get response and get length from first 4 bytes
           var data = base64Decode(response.data!.result!.value!.data![0]);
@@ -79,32 +81,41 @@ class ChatController extends GetxController with AppUtilsMixin {
               ChatDetailsBorshModel().borshSchema,
               accountDataBuffer,
               ChatDetailsBorshModel.fromJson);
-          // UserStoreService.to.saveUserModel(userModel!.toJson ());
 
-          // convert hex to string
-          var decodeMessages = AppUtilsMixin.hexToBytes(
-              chatDetailsModel.messages?.first.text ?? '');
+          const platform = MethodChannel(AppConstants.PLATFORM_CHANNEL);
 
-          final String dataSample =
-              chatDetailsModel.members?.last.tokenCipher ?? '';
-          var bytes = base64Decode(dataSample);
+          try {
+            final String tokenCipher =
+                chatDetailsModel.members?.last.tokenCipher ?? '';
 
-          // var getKey = RSAUtil.decrypt(
-          //     bytes, AppConstants.PRIVATE_KEY);
+            final String result = await platform.invokeMethod('importCipher', {
+              'tokenCipher': tokenCipher,
+              'base64PrivateKey': AppConstants.PRIVATE_KEY
+            });
+            for (MessageBorshModel element in chatDetailsModel.messages ?? []) {
+              final String decryptMessage = await platform.invokeMethod(
+                  'decryptMessage',
+                  {'massage': element.text, 'privateKey': result});
 
-          var messageListInt = AppUtilsMixin.hexToBytes(dataSample);
-
-          /// convert uint 8 list
-          //convert to string
-          String message = AppUtilsMixin.decrypt(messageListInt,
-              '9676caf7f15015c6b36cffcaedbbaab5b0d85c163666d6634b15500991acade7');
-          debugPrint('*****************');
-          debugPrint('message: $message');
-          debugPrint('-----------------');
+              chatMessages.add(decryptMessage);
+            }
+            isLoading(false);
+          } on PlatformException catch (e) {
+            debugPrint('*****************************');
+            debugPrint("Failed to encrypt data: '${e.message}'.");
+            debugPrint('#############################');
+            return '';
+          }
         }
       },
     );
   }
 
   void sendMessage() {}
+
+  String formatDate(String time) {
+    DateTime utcDateTime = DateTime.parse(time);
+    DateFormat formatter = DateFormat('yyyy-MM-dd hh:mm a');
+    return formatter.format(utcDateTime);
+  }
 }

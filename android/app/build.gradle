@@ -88,4 +88,5 @@ flutter {
 
 dependencies {
     implementation ("org.sol4k:sol4k:0.4.0")
+    implementation("com.diglol.crypto:crypto:0.1.5")
 }

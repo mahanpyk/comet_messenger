@@ -89,7 +89,11 @@ class ChatPage extends BaseView<ChatController> {
                 ),
                 IconButton(
                   onPressed: () => controller.sendMessage(),
-                  icon: const Icon(Icons.send),
+                  icon: Icon(
+                    Icons.send,
+                    color: AppColors.tertiaryColor.withOpacity(
+                        controller.messageTEC.text.isNotEmpty ? 1.0 : 0.5),
+                  ),
                 ),
               ],
             ),

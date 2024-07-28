@@ -27,10 +27,10 @@ class MainActivity : FlutterActivity() {
                 }
 
                 "decryptMessage" -> {
-                    val massage: String = call.argument("massage") ?: ""
+                    val message: String = call.argument("message") ?: ""
                     val privateKey: String = call.argument("privateKey") ?: ""
                     val encryptedData = EncryptdecryptJavaHelper.decrypt(
-                        EncryptdecryptJavaHelper.hexToBytes(massage), privateKey
+                        EncryptdecryptJavaHelper.hexToBytes(message), privateKey
                     )
                     result.success(encryptedData)
                 }

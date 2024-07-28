@@ -90,12 +90,14 @@ class ChatController extends GetxController with AppUtilsMixin {
 
             final String result = await platform.invokeMethod('importCipher', {
               'tokenCipher': tokenCipher,
-              'base64PrivateKey': AppConstants.PRIVATE_KEY
+              'base64PrivateKey': AppConstants.PRIVATE_KEY,
             });
             for (MessageBorshModel element in chatDetailsModel.messages ?? []) {
-              final String decryptMessage = await platform.invokeMethod(
-                  'decryptMessage',
-                  {'massage': element.text, 'privateKey': result});
+              final String decryptMessage =
+                  await platform.invokeMethod('decryptMessage', {
+                'message': element.text,
+                'privateKey': result,
+              });
 
               chatMessages.add(decryptMessage);
             }
@@ -111,7 +113,30 @@ class ChatController extends GetxController with AppUtilsMixin {
     );
   }
 
-  void sendMessage() {}
+  void sendMessage() {
+    if (messageTEC.text.isNotEmpty) {
+      chatMessages.add(messageTEC.text);
+      _repo
+          .sendMessage(
+        requestModel: RequestModel(
+          method: "sendTransaction",
+          params: [
+            conversationModel.conversationId,
+            messageTEC.text,
+            ParamClass(encoding: "base64").toJson(),
+          ],
+          jsonrpc: "2.0",
+          id: "b75758de-e0b2-469b-bd9c-ef366ee1b35a",
+        ),
+      )
+          .then((value) {
+        if (value.statusCode == 200) {
+          messageTEC.clear();
+        }
+      });
+      messageTEC.clear();
+    }
+  }
 
   String formatDate(String time) {
     DateTime utcDateTime = DateTime.parse(time);

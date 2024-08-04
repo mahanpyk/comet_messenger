@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-abstract class BaseView<Controller extends GetxController> extends StatelessWidget {
+abstract class BaseView<Controller extends GetxController>
+    extends StatelessWidget {
   const BaseView({super.key});
 
   Controller get controller => GetInstance().find<Controller>();
@@ -10,6 +11,7 @@ abstract class BaseView<Controller extends GetxController> extends StatelessWidg
   Widget build(BuildContext context) {
     return GetX<Controller>(builder: (Controller controller) {
       return Scaffold(
+        resizeToAvoidBottomInset: resizeToAvoidBottomInset(),
         body: SafeArea(child: body()),
         floatingActionButton: floatingActionButton(),
       );
@@ -18,7 +20,9 @@ abstract class BaseView<Controller extends GetxController> extends StatelessWidg
 
   Widget body();
 
-  Widget? floatingActionButton(){
+  Widget? floatingActionButton() {
     return null;
   }
+
+  bool resizeToAvoidBottomInset() => true;
 }

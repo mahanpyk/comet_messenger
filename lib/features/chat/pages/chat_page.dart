@@ -37,17 +37,18 @@ class ChatPage extends BaseView<ChatController> {
                         const SizedBox(height: 8),
                         Expanded(
                           child: ListView.builder(
-                            itemCount:
-                                controller.chatDetailsModel.messages?.length ??
-                                    0,
+                            controller: controller.scrollController.value,
+                            itemCount: controller
+                                    .chatDetailsModel.value.messages?.length ??
+                                0,
                             itemBuilder: (context, index) {
-                              if (controller
-                                      .chatDetailsModel.messages?[index].name ==
+                              if (controller.chatDetailsModel.value
+                                      .messages?[index].name ==
                                   controller.userModel?.userName) {
                                 return massageItem(
                                   message: controller.chatMessages[index],
                                   isMe: true,
-                                  time: controller.chatDetailsModel
+                                  time: controller.chatDetailsModel.value
                                           .messages?[index].time ??
                                       '',
                                 );
@@ -55,7 +56,7 @@ class ChatPage extends BaseView<ChatController> {
                                 return massageItem(
                                   message: controller.chatMessages[index],
                                   isMe: false,
-                                  time: controller.chatDetailsModel
+                                  time: controller.chatDetailsModel.value
                                           .messages?[index].time ??
                                       '',
                                 );
@@ -85,14 +86,26 @@ class ChatPage extends BaseView<ChatController> {
                       hintText: 'Message',
                       border: InputBorder.none,
                     ),
+                    onFieldSubmitted: (value) => controller.isTyping.value
+                        ? controller.sendMessage()
+                        : null,
+                    onChanged: (value) {
+                      if (value.isNotEmpty) {
+                        controller.isTyping.value = true;
+                      } else {
+                        controller.isTyping.value = false;
+                      }
+                    },
                   ),
                 ),
                 IconButton(
-                  onPressed: () => controller.sendMessage(),
+                  onPressed: () => controller.isTyping.value
+                      ? controller.sendMessage()
+                      : null,
                   icon: Icon(
                     Icons.send,
-                    color: AppColors.tertiaryColor.withOpacity(
-                        controller.messageTEC.text.isNotEmpty ? 1.0 : 0.5),
+                    color: AppColors.tertiaryColor
+                        .withOpacity(controller.isTyping.value ? 1.0 : 0.5),
                   ),
                 ),
               ],
@@ -121,7 +134,13 @@ class ChatPage extends BaseView<ChatController> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Text(
                 message,
-                style: Get.textTheme.bodyMedium,
+                style: Get.textTheme.bodyMedium!.copyWith(
+                  fontSize: 16,
+                ),
+                textAlign: TextAlign.justify,
+                textDirection: message.contains(RegExp(r'[a-zA-Z]'))
+                    ? TextDirection.ltr
+                    : TextDirection.rtl,
               ),
             ),
           ),

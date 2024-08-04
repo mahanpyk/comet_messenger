@@ -1,0 +1,26 @@
+package com.solana.api
+
+import android.util.Log
+import com.solana.models.RecentBlockhash
+import java.lang.RuntimeException
+
+fun Api.getRecentBlockhash(onComplete: ((Result<String>) -> Unit)) {
+    val params: MutableList<Any> = ArrayList()
+    val parameterMap: MutableMap<String, Any?> = HashMap()
+    parameterMap["commitment"] = "finalized"
+    params.add(parameterMap)
+    return router.request<RecentBlockhash>(
+        "getRecentBlockhash",
+        params,
+        RecentBlockhash::class.java
+    ) { result ->
+        result.onSuccess { recentBlockHash ->
+            Log.d("Lasemi", "getRecentBlockhash--------------: ${recentBlockHash.value.blockhash}")
+            onComplete(Result.success(recentBlockHash.value.blockhash))
+            return@request
+        }.onFailure {
+            onComplete(Result.failure(RuntimeException(it)))
+            return@request
+        }
+    }
+}

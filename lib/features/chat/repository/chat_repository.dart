@@ -5,7 +5,8 @@ import 'package:comet_messenger/app/models/response_model.dart';
 import 'package:comet_messenger/features/chat/models/chat_details_response_model.dart';
 
 abstract class ChatRepository extends BaseRepository {
-  Future<ChatDetailsResponseModel> chatDetailsRequest({required RequestModel requestModel});
+  Future<ChatDetailsResponseModel> chatDetailsRequest(
+      {required RequestModel requestModel});
 
   Future<ChatDetailsResponseModel> sendMessage(
       {required RequestModel requestModel});
@@ -13,7 +14,8 @@ abstract class ChatRepository extends BaseRepository {
 
 class ChatRepositoryImpl extends ChatRepository {
   @override
-  Future<ChatDetailsResponseModel> chatDetailsRequest({required RequestModel requestModel}) async {
+  Future<ChatDetailsResponseModel> chatDetailsRequest(
+      {required RequestModel requestModel}) async {
     final ResponseModel response = await request(
       method: RequestMethodEnum.POST.name(),
       data: requestModel.toJson(),

@@ -16,7 +16,7 @@ class ChatPage extends BaseView<ChatController> {
         AppBarWidget(
             title: controller.conversationModel.conversationName
                     ?.replaceAll(
-                        '${controller.userModel?.userName ?? ''}&_#', '')
+                '${controller.userModel?.userName ?? ''}&_#', '')
                     .replaceAll(
                         '&_#${controller.userModel?.userName ?? ''}', '') ??
                 'No title'),

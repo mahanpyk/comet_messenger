@@ -63,7 +63,7 @@ class ProfilePage extends BaseView<ProfileController> {
                       child: Column(
                         children: [
                           SvgPicture.asset(
-                            '${AppIcons.icUserAvatar}${controller.userModel.value?.avatar ?? '0'}.svg',
+                            '${AppIcons.icUserAvatar}${controller.userModel.value?.avatar != "" ? controller.userModel.value?.avatar ?? '0' : '0'}.svg',
                             height: 120,
                             width: 120,
                           ),

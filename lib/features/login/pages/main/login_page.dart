@@ -87,7 +87,7 @@ class LoginPage extends BaseView<LoginController> {
                 )
               : null,
         ),
-        child: SvgPicture.asset('${AppIcons.icUserAvatar}$index.svg'),
+        child: SvgPicture.asset('${AppIcons.icUserAvatar + index.toString()}.svg'),
       ),
     );
   }

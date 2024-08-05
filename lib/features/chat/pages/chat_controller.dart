@@ -147,14 +147,18 @@ class ChatController extends GetxController with AppUtilsMixin {
           'key': tokenCipher,
         });
 
-        var id = userModel?.id ?? '';
+        var basePublicKey = userModel?.basePublicKey ?? '';
         var privateKey = userModel?.privateKey ?? '';
+        var publicKey = userModel?.publicKey ?? '';
+        var userName = userModel?.userName ?? '';
 
         final String sendTransaction =
             await platform.invokeMethod('sendTransaction', {
           'message': result,
           'privateKey': privateKey,
-          'publicKey': id,
+              'basePublicKey': basePublicKey,
+              'userName': userName,
+              'publicKey': publicKey,
         });
 
         debugPrint('*****************************');

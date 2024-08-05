@@ -52,7 +52,7 @@ object SolanaHelper {
         return solana as Solana
     }
 
-    private fun getSolana_dev(): Solana {
+    fun getSolana_dev(): Solana {
         if (solana_dev == null) {
 
             val httpClient = OkHttpClient.Builder()

@@ -9,6 +9,7 @@ import 'package:comet_messenger/app/store/user_store_service.dart';
 import 'package:comet_messenger/app/theme/app_colors.dart';
 import 'package:cryptography/cryptography.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class ImportWalletController extends GetxController {
@@ -27,11 +28,29 @@ class ImportWalletController extends GetxController {
 
       /// mnemonic obtained from the input
       /// neck seat salt cotton credit flower first alpha inject hammer unit shield
+      const platform = MethodChannel(AppConstants.PLATFORM_CHANNEL);
+      String publicKeyBase58 = '', privateKeyBase58 = '';
+      try {
+        final String result = await platform.invokeMethod('keypairFromPhrase', {
+          'phrase': importMnemonicTEC.text,
+        });
+
+        var splitResult = result.split('*********');
+        publicKeyBase58 = splitResult[0];
+        privateKeyBase58 = splitResult[1];
+        debugPrint('*****************************');
+        debugPrint(result.toString());
+        debugPrint('#############################');
+      } on PlatformException catch (e) {
+        debugPrint('*****************************');
+        debugPrint("Failed to encrypt data: '${e.message}'.");
+        debugPrint('#############################');
+      }
 
       // read user info
       var json = await UserStoreService.to.getUserModel();
       userModel = UserModel.fromJson(json!);
-      // Convert mnemonic phrase to seed
+/*      // Convert mnemonic phrase to seed
       final seed = bip39.mnemonicToSeed(importMnemonicTEC.text);
 
       // Use the first 32 bytes of the seed as the secret key
@@ -43,12 +62,9 @@ class ImportWalletController extends GetxController {
 
       // Extract the public key
       final publicKey = await keyPair.extractPublicKey();
-      final privateKey = await keyPair.extractPrivateKeyBytes();
+      final privateKey = await keyPair.extractPrivateKeyBytes();*/
 
       // Convert publicKey to base58
-      var base58 = BaseXCodec(AppConstants.BASE58_CODEC);
-      String publicKeyBase58 = base58.encode(Uint8List.fromList(publicKey.bytes));
-      String privateKeyBase58 = base58.encode(Uint8List.fromList(privateKey));
       if (userModel!.basePublicKey == publicKeyBase58) {
         var newUserModel = UserModel(
           avatar: userModel!.avatar,

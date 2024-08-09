@@ -10,7 +10,6 @@ sealed class Network(val name: String) {
     object mainnetBeta : Network(MAINNETBETA)
     object devnet : Network(DEVNET)
     object testnet : Network(TESTNET)
-
     var cluster: String = this.name
 }
 

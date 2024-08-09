@@ -35,7 +35,6 @@ fun Action.findSPLTokenDestinationAddress(
         )
     }
 }
-
 private fun Action.checkSPLTokenAccountExistence(
     mintAddress: PublicKey,
     destinationAddress: PublicKey,

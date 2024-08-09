@@ -93,7 +93,6 @@ class Account {
                     words,
                     passphrase
                 )
-
                 is DerivationPath.BIP44_M_44H_501H_0H -> fromBip44Mnemonic(words, passphrase)
                 is DerivationPath.BIP44_M_44H_501H_0H_OH -> fromBip44MnemonicWithChange(
                     words,
@@ -114,11 +113,9 @@ class Account {
         fun fromByteArray(byteArray: ByteArray): Account {
             return Account(byteArray)
         }
-
         fun fromPublicKey(byteArray: ByteArray): Account {
             return Account(byteArray, true)
         }
-
         fun fromSeed(str: String): Account {
             return Account(TweetNaclFast.Signature.keyPair_fromSeed(str.toByteArray()))
         }

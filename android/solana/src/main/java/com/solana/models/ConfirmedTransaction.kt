@@ -23,7 +23,6 @@ data class ConfirmedTransaction(
         val data: String?,
         val programIdIndex: Long
     )
-
     @JsonClass(generateAdapter = true)
     data class Message(
         val accountKeys: List<String>,

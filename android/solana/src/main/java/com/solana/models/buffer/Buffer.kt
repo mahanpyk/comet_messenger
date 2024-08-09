@@ -25,12 +25,10 @@ data class Buffer<T>(val value: T?) {
                     val decodedBytes = Base64.getDecoder().decode(serializedData)
                     Buffer(borsh.deserialize(decodedBytes, clazz))
                 }
-
                 RpcSendTransactionConfig.Encoding.base58.toString() -> {
                     //Base58.decode(serializedData)
                     return Buffer(null)
                 }
-
                 else -> {
                     return Buffer(null)
                 }

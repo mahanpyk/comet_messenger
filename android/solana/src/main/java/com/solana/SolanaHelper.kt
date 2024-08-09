@@ -314,7 +314,6 @@ object SolanaHelper {
         str: PublicKey,
         onComplete: OnResponseData<ProfileModel>,
     ) {
-        Log.d("Lasemi", "getConversations: ${Config.network}")
         if (Config.network == "Main") {
             getSolana().api.getAccountInfo(
                 str,
@@ -323,7 +322,6 @@ object SolanaHelper {
                     onComplete.onFailure(RuntimeException("Invalid data"))
                 } else {
                     try {
-                        Log.d("Lasemi", "getConversations: Main try-SUCCESS")
                         val getInfoAccountModel: GetInfoAccountModel =
                             gson!!.fromJson(
                                 result,
@@ -340,7 +338,6 @@ object SolanaHelper {
                             )
                         onComplete.onSuccess(contactListModel)
                     } catch (error: Exception) {
-                        Log.d("Lasemi", "getConversations: Main Exception-SUCCESS")
                         onComplete.onSuccess(null)
                         return@getAccountInfo
                     }
@@ -355,7 +352,6 @@ object SolanaHelper {
                     onComplete.onFailure(RuntimeException("Invalid data"))
                 } else {
                     try {
-                        Log.d("Lasemi", "getConversations: Dev try-SUCCESS")
                         val getInfoAccountModel: GetInfoAccountModel =
                             gson_dev!!.fromJson(
                                 result,
@@ -372,7 +368,6 @@ object SolanaHelper {
                             )
                         onComplete.onSuccess(contactListModel)
                     } catch (error: Exception) {
-                        Log.d("Lasemi", "getConversations: Dev Exception-SUCCESS")
                         onComplete.onSuccess(null)
                         return@getAccountInfo
                     }
@@ -380,15 +375,6 @@ object SolanaHelper {
                 }
             }
         }
-    }
-
-    fun createAccountWithString1(
-        customSecretKey: String
-    ): Account {
-        val secByte: ByteArray = Base58.decode(customSecretKey);
-        val datass = getkeyPair_fromSecretKey(secByte)
-        val account1 = Account(datass)
-        return account1;
     }
 
     fun getOrCreateAccount(
@@ -404,7 +390,7 @@ object SolanaHelper {
         }
     }
 
-    private fun createAccount(
+    public fun createAccount(
         key1: PublicKey,
         key: PublicKey,
         programId: PublicKey,
@@ -609,7 +595,7 @@ object SolanaHelper {
         account: Account,
         conversationName: String,
         contacts: List<UserModel>,
-        is_private: Boolean,
+        is_public: Boolean,
         indexProfile: String,
         onComplete: OnResponseStr,
     ) {
@@ -619,7 +605,7 @@ object SolanaHelper {
                 account,
                 conversationName,
                 contacts,
-                is_private,
+                is_public,
 
                 ) { result ->
                 result.onSuccess { res ->
@@ -664,7 +650,7 @@ object SolanaHelper {
                 account,
                 conversationName,
                 contacts,
-                is_private,
+                is_public,
 
                 ) { result ->
                 result.onSuccess { res ->
@@ -706,13 +692,33 @@ object SolanaHelper {
         }
     }
 
+    fun sendWithdraw(
+        from: String,
+        to: PublicKey,
+        amount: Long,
+        onComplete: OnResponseE,
+    ) {
+        val signer = createAccountWithString(from)
+        if (Config.network == "Main") {
+            getSolana().action.sendSOL(signer, to, amount) { result ->
+                result.onSuccess { onComplete.onSuccess() }
+                    .onFailure { error -> onComplete.onFailure(RuntimeException(error)) }
+            }
+        } else {
+            getSolana_dev().action.sendSOL(signer, to, amount) { result ->
+                result.onSuccess { onComplete.onSuccess() }
+                    .onFailure { error -> onComplete.onFailure(RuntimeException(error)) }
+            }
+        }
+    }
+
     fun sendMessage(
-        userPrivateKey: String,
+        userpublicKey: String,
         conversationId: PublicKey,
         message: MessageModel,
         onComplete: OnResponseE,
     ) {
-        val accountUser1 = createAccountWithString1(userPrivateKey)
+        val accountUser1 = createAccountWithString(userpublicKey)
         if (Config.network == "Main") {
             getSolana().action.sendMessage(
                 conversationId,
@@ -918,14 +924,15 @@ object SolanaHelper {
 
     }
 
-    fun getkeyPair_fromSecretKey(seed: ByteArray): TweetNaclFast.Signature.KeyPair {
-        return TweetNaclFast.Signature.keyPair_fromSecretKey(seed)
+    public fun createAccountWithString(customSecretKey: String): Account {
+        val secByte: ByteArray = Base58.decode(customSecretKey);
+        val datass = TweetNaclFast.Signature.keyPair_fromSecretKey(secByte)
+        val account = Account(datass)
+        return account;
     }
-
 
     //     A3mnyMyVrNkAfyF8oFii9tmzxkYZ874U3ydm98eHBF8g
     var account = Account(
-
         byteArrayOf(
             5,
             35,
@@ -1001,10 +1008,6 @@ object SolanaHelper {
         seed: String,
     ): PublicKey {
         return PublicKey.createWithSeed(account.publicKey, seed, programId)
-    }
-
-    fun getPrivateKey(seed: ByteArray): TweetNaclFast.Signature.KeyPair {
-        return TweetNaclFast.Signature.keyPair_fromSeed(seed)
     }
 
     fun getTimes(): String {

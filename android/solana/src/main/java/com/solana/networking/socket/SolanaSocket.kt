@@ -52,7 +52,6 @@ class SolanaSocket(
         borsh.setRules(listOf(PublicKeyRule(), AccountInfoRule(), MintRule(), TokenSwapInfoRule()))
         return borsh
     }
-
     private val moshi: Moshi by lazy {
         Moshi.Builder()
             .add(PublicKeyJsonAdapter())
@@ -183,7 +182,6 @@ class SolanaSocket(
                             delegate?.accountNotification(it)
                         }
                     }
-
                     SocketMethod.signatureNotification.string -> {
                         val subscriptionAdapter: JsonAdapter<RpcResponse<SignatureNotification>> =
                             moshi.adapter(
@@ -196,7 +194,6 @@ class SolanaSocket(
                             delegate?.signatureNotification(it)
                         }
                     }
-
                     SocketMethod.logsNotification.string -> {
                         val subscriptionAdapter: JsonAdapter<RpcResponse<LogsNotification>> =
                             moshi.adapter(
@@ -209,7 +206,6 @@ class SolanaSocket(
                             delegate?.logsNotification(it)
                         }
                     }
-
                     SocketMethod.programNotification.string -> {
                         val subscriptionAdapter: JsonAdapter<RpcResponse<ProgramAccount<AccountInfo>>> =
                             moshi.adapter(

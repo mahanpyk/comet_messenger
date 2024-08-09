@@ -28,8 +28,7 @@ class ChatController extends GetxController with AppUtilsMixin {
   Rx<ChatDetailsBorshModel> chatDetailsModel = Rx(ChatDetailsBorshModel());
   RxList<String> chatMessages = RxList([]);
   TextEditingController messageTEC = TextEditingController();
-  Rx<ScrollController> scrollController =
-      Rx(ScrollController(initialScrollOffset: 0));
+  Rx<ScrollController> scrollController = Rx(ScrollController(initialScrollOffset: 0));
   String tokenCipher = '';
 
   /// sample chat response
@@ -74,38 +73,45 @@ class ChatController extends GetxController with AppUtilsMixin {
 
           //convert to byte array
           data2.setAll(0, data.sublist(0, 4));
-          var decode = borsh.deserialize(DataLengthBorshModel().borshSchema,
-              data2, DataLengthBorshModel.fromJson);
+          var decode = borsh.deserialize(DataLengthBorshModel().borshSchema, data2, DataLengthBorshModel.fromJson);
           int length = decode.length!;
           if (length == 0) {
             length = 288;
           }
           final accountDataBuffer = Uint8List(length);
           accountDataBuffer.setAll(0, data.sublist(4, length));
-          chatDetailsModel(borsh.deserialize(
-              ChatDetailsBorshModel().borshSchema,
-              accountDataBuffer,
-              ChatDetailsBorshModel.fromJson));
+          chatDetailsModel(borsh.deserialize(ChatDetailsBorshModel().borshSchema, accountDataBuffer, ChatDetailsBorshModel.fromJson));
 
           const platform = MethodChannel(AppConstants.PLATFORM_CHANNEL);
 
           try {
-            tokenCipher =
-                chatDetailsModel.value.members?.last.tokenCipher ?? '';
+            tokenCipher = chatDetailsModel.value.members?.last.tokenCipher ?? '';
 
-            final String result = await platform.invokeMethod('importCipher', {
+            if (tokenCipher == "") {
+              tokenCipher = await platform.invokeMethod('generateCipher', {
+                'tokenCipher': tokenCipher,
+                'base64PrivateKey': AppConstants.PRIVATE_KEY,
+              });
+            }
+
+            tokenCipher = await platform.invokeMethod('importCipher', {
               'tokenCipher': tokenCipher,
               'base64PrivateKey': AppConstants.PRIVATE_KEY,
             });
-            for (MessageBorshModel element
-                in chatDetailsModel.value.messages ?? []) {
-              final String decryptMessage =
-                  await platform.invokeMethod('decryptMessage', {
-                'message': element.text,
-                'privateKey': result,
-              });
-
-              chatMessages.add(decryptMessage);
+            for (MessageBorshModel element in chatDetailsModel.value.messages ?? []) {
+              try {
+                final String decryptMessage = await platform.invokeMethod('decryptMessage', {
+                  'message': element.text,
+                  'privateKey': tokenCipher,
+                });
+                chatMessages.add(decryptMessage);
+              } on Exception catch (e) {
+                final String decryptMessage = await platform.invokeMethod('decryptMessage', {
+                  'message': element.text,
+                  'privateKey': "",
+                });
+                chatMessages.add(decryptMessage);
+              }
             }
             isLoading(false);
             scrollToBottom();
@@ -122,13 +128,15 @@ class ChatController extends GetxController with AppUtilsMixin {
 
   void sendMessage() async {
     if (messageTEC.text.isNotEmpty) {
+      var time = setTimeFormat(DateTime.now().toUtc().toIso8601String());
+
       chatDetailsModel(ChatDetailsBorshModel(
         admin: chatDetailsModel.value.admin,
         messages: [
           ...chatDetailsModel.value.messages ?? [],
           MessageBorshModel(
             text: messageTEC.text,
-            time: setTimeFormat(DateTime.now().toUtc().toIso8601String()),
+            time: time,
           ),
         ],
         conversationName: chatDetailsModel.value.conversationName,
@@ -146,19 +154,20 @@ class ChatController extends GetxController with AppUtilsMixin {
           'message': messageTEC.text,
           'key': tokenCipher,
         });
+        messageTEC.clear();
 
-        var basePublicKey = userModel?.basePublicKey ?? '';
+        var conversationId = conversationModel.conversationId ?? '';
         var privateKey = userModel?.privateKey ?? '';
         var publicKey = userModel?.publicKey ?? '';
         var userName = userModel?.userName ?? '';
 
-        final String sendTransaction =
-            await platform.invokeMethod('sendTransaction', {
+        final String sendTransaction = await platform.invokeMethod('sendTransaction', {
           'message': result,
           'privateKey': privateKey,
-              'basePublicKey': basePublicKey,
-              'userName': userName,
-              'publicKey': publicKey,
+          'conversationId': conversationId,
+          'userName': userName,
+          'publicKey': publicKey,
+          'time': time,
         });
 
         debugPrint('*****************************');
@@ -166,11 +175,11 @@ class ChatController extends GetxController with AppUtilsMixin {
         debugPrint('#############################');
       } on PlatformException catch (e) {
         debugPrint('*****************************');
-        debugPrint("Failed to encrypt data: '${e.message}'.");
+        debugPrint("Failed to encrypt data: ${e.message}.");
         debugPrint('#############################');
       }
 
-      _repo
+/*      _repo
           .sendMessage(
         requestModel: RequestModel(
           method: "sendTransaction",
@@ -187,8 +196,7 @@ class ChatController extends GetxController with AppUtilsMixin {
         if (value.statusCode == 200) {
           messageTEC.clear();
         }
-      });
-      messageTEC.clear();
+      });*/
     }
   }
 
@@ -200,8 +208,7 @@ class ChatController extends GetxController with AppUtilsMixin {
 
   String setTimeFormat(String iso8601string) {
     DateTime utcDateTime = DateTime.parse(iso8601string);
-    utcDateTime =
-        utcDateTime.toUtc().add(const Duration(hours: 3, minutes: 30));
+    utcDateTime = utcDateTime.toUtc().add(const Duration(hours: 3, minutes: 30));
     DateFormat formatter = DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     String formatted = formatter.format(utcDateTime);
     return formatted;
@@ -209,17 +216,14 @@ class ChatController extends GetxController with AppUtilsMixin {
 
   void scrollToBottom() {
     Future.delayed(const Duration(milliseconds: 300), () {
-      scrollController.value
-          .jumpTo(scrollController.value.position.maxScrollExtent);
+      scrollController.value.jumpTo(scrollController.value.position.maxScrollExtent);
     });
   }
 
   String uuid() {
     // create random uuid manually
     final Random random = Random.secure();
-    const String chars =
-        'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
-    return List.generate(16, (index) => chars[random.nextInt(chars.length)])
-        .join();
+    const String chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+    return List.generate(16, (index) => chars[random.nextInt(chars.length)]).join();
   }
 }

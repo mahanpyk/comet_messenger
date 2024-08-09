@@ -29,13 +29,10 @@ class Transaction {
 
     fun sign2(signers: List<Account>) {
         require(signers.size != 0) { "No signers" }
-        // Fee payer defaults to first signer if not set
         message.feePayer ?: let {
-//            message.feePayer = PublicKey("ESvRkn45sLLVd74pCckQdNqF4a9W3SUvGrTY7rtXsupW")
             message.feePayer = PublicKey("ExA2JMUhRBsnoPViTFqzsmZr4gEL8at3vcsJqeKgwSEi")
         }
         serializedMessage = message.serialize()
-
         val signatureProvider = TweetNaclFast.Signature(ByteArray(0), signers[0].secretKey)
         val signature = signatureProvider.detached(serializedMessage)
         signatures.add(Base58.encode(signature))
@@ -44,10 +41,7 @@ class Transaction {
 
     fun sign(signers: List<Account>) {
         require(signers.size != 0) { "No signers" }
-        // Fee payer defaults to first signer if not set
-        message.feePayer ?: let {
-            message.feePayer = signers[0].publicKey
-        }
+        message.feePayer ?: let { message.feePayer = signers[0].publicKey }
         serializedMessage = message.serialize()
         for (signer in signers) {
             val signatureProvider = TweetNaclFast.Signature(ByteArray(0), signer.secretKey)
@@ -82,7 +76,6 @@ class Transaction {
         out.put(serializedMessage)
         return out.array()
     }
-
     private fun convertJsonStringToByteArray(characters: String): ByteArray {
         // Create resulting byte array
         val buffer = ByteBuffer.allocate(64)
@@ -98,7 +91,6 @@ class Transaction {
         }
         return buffer.array()
     }
-
     override fun toString(): String {
         return """Transaction(
             |  signatures: [${signatures.joinToString()}],

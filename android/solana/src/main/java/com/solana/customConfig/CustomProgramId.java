@@ -6,8 +6,10 @@ public class CustomProgramId {
 
     public static String getContactProgramId(){
         if (Config.network.equals("Main")){
+//            return "7Rt2exuf4pE4jZjvH8KHSpJjxFCxFWUsRWaUuUs9s83e";//(new)
             return "CUdVSkaXMoAnr7NLSKjD25Zk5gpTrhtuXJ4Fxaw7nxRA";
         } else {
+//            return "38Xxqe3uSBSRPp771ja4tLFCQKn6CeNhh7YbuQhQd5E2";//(new)
             return "2qwWoMoPvxKfypbujTNwqWqmuriMkXMPZV21YCvd8BdU";
         }
     }

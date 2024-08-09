@@ -85,7 +85,6 @@ class SocketTests {
         borsh.setRules(listOf(PublicKeyRule(), AccountInfoRule(), MintRule(), TokenSwapInfoRule()))
         return borsh
     }
-
     val moshi: Moshi by lazy {
         Moshi.Builder()
             .add(PublicKeyJsonAdapter())

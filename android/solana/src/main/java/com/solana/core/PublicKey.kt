@@ -38,7 +38,6 @@ data class PublicKey(val pubkey: ByteArray) : BorshCodable {
     init {
         require(pubkey.size <= PUBLIC_KEY_LENGTH) { "Invalid public key input" }
     }
-
     constructor(pubkeyString: String) : this(Base58.decode(pubkeyString))
 
     fun toByteArray(): ByteArray {
@@ -79,7 +78,6 @@ data class PublicKey(val pubkey: ByteArray) : BorshCodable {
             val buf = ByteUtils.readBytes(bytes, offset, PUBLIC_KEY_LENGTH)
             return PublicKey(buf)
         }
-
         @Throws(IOException::class)
         fun createWithSeed(
             account: PublicKey,
@@ -93,7 +91,6 @@ data class PublicKey(val pubkey: ByteArray) : BorshCodable {
             val hash = Sha256Hash.hash(buffer.toByteArray())
             return PublicKey(hash)
         }
-
         fun createProgramAddress(seeds: List<ByteArray>, programId: PublicKey): PublicKey {
             val buffer = ByteArrayOutputStream()
             for (seed in seeds) {

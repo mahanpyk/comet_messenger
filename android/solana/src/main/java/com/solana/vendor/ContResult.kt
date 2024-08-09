@@ -73,7 +73,6 @@ class ContResult<out A, out E : ResultError>(val cont: Cont<Result<A, E>>) {
                         attempts - 1,
                         operation
                     ) else failure(it.exception)
-
                     is Retry.doNotRetry -> failure(it.exception)
                 }
             }

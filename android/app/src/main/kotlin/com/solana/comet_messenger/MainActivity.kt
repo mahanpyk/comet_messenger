@@ -3,11 +3,9 @@ package com.solana.comet_messenger
 import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toSeed
 import com.solana.Config
-import com.solana.SolanaHelper.createAccountWithString1
-import com.solana.SolanaHelper.getSolana_dev
+import com.solana.SolanaHelper
 import com.solana.actions.sendMessage
 import com.solana.core.PublicKey
-import com.solana.core.PublicKey.Companion.createWithSeed
 import com.solana.models.buffer.MessageModel
 import com.solana.models.buffer.MessageState
 import com.solana.models.buffer.MessageStatus
@@ -77,19 +75,30 @@ class MainActivity : FlutterActivity() {
                     val message: String = call.argument("message") ?: ""
                     val privateKey: String = call.argument("privateKey") ?: ""
                     val basePublicKey: String = call.argument("basePublicKey") ?: ""
+                    val conversationId: String = call.argument("conversationId") ?: ""
                     val userName: String = call.argument("userName") ?: ""
                     val publicKey: String = call.argument("publicKey") ?: ""
+                    val time: String = call.argument("time") ?: ""
 
                     Config.network = "Dev"
-                    val accountUser1 = createAccountWithString1(privateKey)
-                    val id = createWithSeed(
-                        PublicKey(basePublicKey),
-                        userName,
-                        PublicKey("2qT2bqsFTdD1uDQ1mqLJsnbTumeJAeymUeDC43BSmP8H")
-                    ).toBase58()
+                    val accountUser1 = SolanaHelper.createAccountWithString(privateKey)
+
+//                    val id = createWithSeed(
+//                        PublicKey(basePublicKey),
+//                        userName,
+//                        PublicKey("2qT2bqsFTdD1uDQ1mqLJsnbTumeJAeymUeDC43BSmP8H")
+//                    ).toBase58()
+
+                    val userPublicKey = PublicKey(publicKey).toBase58()
+                    val conversationIdDecrypt = PublicKey(conversationId)
+
+
                     val model = MessageModel(
-                        UUID.randomUUID().toString(), message, "", ArrayList<UserModel>(),
-                        PublicKey(publicKey).toBase58(),
+                        UUID.randomUUID().toString(),
+                        message,
+                        time,
+                        ArrayList<UserModel>(),
+                        userPublicKey,
                         MessageStatus.PENDING.name,
                         MessageState.SEND.name,
                         SendMessageType.text.toString(),
@@ -98,9 +107,8 @@ class MainActivity : FlutterActivity() {
                         "",
                         ""
                     )
-
-                    getSolana_dev().action.sendMessage(
-                        PublicKey(id),
+                    SolanaHelper.getSolana_dev().action.sendMessage(
+                        conversationIdDecrypt,
                         accountUser1,
                         model,
                     ) { response ->

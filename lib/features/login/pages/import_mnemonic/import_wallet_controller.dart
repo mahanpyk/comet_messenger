@@ -1,13 +1,9 @@
-import 'dart:typed_data';
-
-import 'package:base_x/base_x.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:comet_messenger/app/core/app_constants.dart';
 import 'package:comet_messenger/app/models/user_model.dart';
 import 'package:comet_messenger/app/routes/app_routes.dart';
 import 'package:comet_messenger/app/store/user_store_service.dart';
 import 'package:comet_messenger/app/theme/app_colors.dart';
-import 'package:cryptography/cryptography.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -27,7 +23,10 @@ class ImportWalletController extends GetxController {
       UserStoreService.to.saveMnemonic(importMnemonicTEC.text);
 
       /// mnemonic obtained from the input
+      /// MainNet moshtagh2
       /// neck seat salt cotton credit flower first alpha inject hammer unit shield
+      /// DevNet test-1
+      /// allow online pass size blush nephew festival myth behave gift recycle tomato
       const platform = MethodChannel(AppConstants.PLATFORM_CHANNEL);
       String publicKeyBase58 = '', privateKeyBase58 = '';
       try {

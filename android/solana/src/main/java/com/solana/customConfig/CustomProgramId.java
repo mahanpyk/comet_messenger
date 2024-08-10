@@ -10,7 +10,7 @@ public class CustomProgramId {
             return "CUdVSkaXMoAnr7NLSKjD25Zk5gpTrhtuXJ4Fxaw7nxRA";
         } else {
 //            return "38Xxqe3uSBSRPp771ja4tLFCQKn6CeNhh7YbuQhQd5E2";//(new)
-            return "2qwWoMoPvxKfypbujTNwqWqmuriMkXMPZV21YCvd8BdU";
+            return "8jrX8mjgipdGVWJH5o1PeDrEgNJHNyBVTJycbKhm3yc4";
         }
     }
 
@@ -26,7 +26,7 @@ public class CustomProgramId {
         if (Config.network.equals("Main")){
             return "9ANy7cbrSBGFMMjHURsnpKSiqm9rdPFGZokzS62FvLFU";
         } else {
-            return "7jRAvySXHGTJMKBQNfNxmemLnW1gnCPm8Bv1WWwzUN5Y";
+            return "8GF7NPdfb1mvHnAxcB6JtWGccyQiQpKNMyTdq4mvksa3";
         }
     }
 }

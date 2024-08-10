@@ -22,7 +22,7 @@ class AppConstants {
   //region Devnet
   static const String BASE_URL = 'https://api.devnet.solana.com';
   static const String CONTACT_PDA =
-      "J98ZB5pyfqah9xxue6HBYkj2xxsyga43vt3fG772iLoH";
+      "E5eMUoaFrJcPCGfBqythzCnMV99xjc8bR28M6mvgKRvx";
   static const String CHAT_PROGRAM_ID =
       '7jRAvySXHGTJMKBQNfNxmemLnW1gnCPm8Bv1WWwzUN5Y';
   // endregion

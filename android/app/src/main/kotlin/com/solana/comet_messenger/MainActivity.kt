@@ -92,7 +92,6 @@ class MainActivity : FlutterActivity() {
                     val userPublicKey = PublicKey(publicKey).toBase58()
                     val conversationIdDecrypt = PublicKey(conversationId)
 
-
                     val model = MessageModel(
                         UUID.randomUUID().toString(),
                         message,
@@ -107,6 +106,7 @@ class MainActivity : FlutterActivity() {
                         "",
                         ""
                     )
+                    model.setOfflineAdded(false)
                     SolanaHelper.getSolana_dev().action.sendMessage(
                         conversationIdDecrypt,
                         accountUser1,

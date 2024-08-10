@@ -96,22 +96,20 @@ class OkHttpNetworkingRouter(
     override fun <T> request(
         method: String,
         params: List<Any>?,
+        /// AXq855P5vnnZisCL7hicVkGEc/SGzvQo280d1PKhgkcQwqHEEX3oFOdeEP9DxXqc7QfqE78xeIKHcMIu+QTbawABAAIE2VtbMeIP9et9F5L7j3zgxG5wwpq50kBvsZNfV8OHr7bWvs/E8Zoj+1HqDm8BfE4fre+Xog3282ZuI1CAVrU+QXlEj7g9skin5ZAkfeYTn8JCqr9sCTMIr3RLt8KSvth7AwZGb+UhFzL/7K26csOb57yM5bvF9xJrLEObOkAAAACZ3IOJZ5vcnT2Rpmo9e7aD/bfBZKqVhASyylbDkjcXdwMDAAUCwFwVAAMACQMBAAAAAAAAAAIBAaUBAiQAAAAxMThkYzE2ZS1hYjljLTRmNTQtYjNkYi01OTI4ZmJhMzA5MmUgAAAAMzRlODI0NTYxYzYwYTI3OWVmMzNhODc3MmQ1MGRkNDIYAAAAMjAyNC0wNy0yOFQyMzoxMDozMS4wMDBaAAAAACwAAABHQVdZRjdUem9xM3VFNFhLdGJDdjNiZEtiYW5rczc1cHdOM0RFNlIxQUM1UwQAAAB0ZXh0
+        ///
         clazz: Type?,
         onComplete: (Result<T>) -> Unit
     ) {
         val url = endpoint.url
         val rpcRequest = RpcRequest(method, params)
-        Log.e("TAG", "rpcRequest: $rpcRequest")
         val rpcRequestJsonAdapter: JsonAdapter<RpcRequest> = moshi.adapter(RpcRequest::class.java)
         val jsonParams = rpcRequestJsonAdapter.toJson(rpcRequest)
-        Log.e("TAG", "jsonParams: $jsonParams")
 //        if (method.equals("sendTransaction")){
 //            Log.d("Lasemi", "request: $jsonParams")
 //        } else {
         val request: Request = Request.Builder().url(url)
             .post(RequestBody.create(JSON, jsonParams)).build()
-        Log.e("TAG", "request: $request")
-
         call(request, clazz, onComplete, method)
 //        }
     }

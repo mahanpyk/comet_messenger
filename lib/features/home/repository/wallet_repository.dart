@@ -2,8 +2,8 @@ import 'package:comet_messenger/app/core/app_enums.dart';
 import 'package:comet_messenger/app/core/base/base_repository.dart';
 import 'package:comet_messenger/app/models/request_model.dart';
 import 'package:comet_messenger/app/models/response_model.dart';
+import 'package:comet_messenger/features/authentication/models/balance_response_model.dart';
 import 'package:comet_messenger/features/home/models/transactions_response_model.dart';
-import 'package:comet_messenger/features/login/models/balance_response_model.dart';
 
 abstract class WalletRepository extends BaseRepository {
   Future<double> getSolanaPrice();

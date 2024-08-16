@@ -75,8 +75,8 @@ class BaseRepository with AppUtilsMixin {
               AppDialog dialog = AppDialog(
                 title: 'مشکلی پیش آمده',
                 subTitle: 'مدت زمان حضور در برنامه به پایان رسیده است.\nلطفا جهت استفاده از برنامه، دوباره وارد شوید',
-                mainTaskTitle: 'ورود به برنامه',
-                mainTask: () => logoutFromApp(),
+                mainButtonTitle: 'ورود به برنامه',
+                mainButtonOnTap: () => logoutFromApp(),
               );
               dialog.showAppDialog();
             }
@@ -100,8 +100,8 @@ class BaseRepository with AppUtilsMixin {
         AppDialog dialog = AppDialog(
           title: 'خطا در اتصال به اینترنت',
           subTitle: 'اتصال اینترنت خود را بررسی نمایید',
-          mainTaskTitle: 'تلاش مجدد',
-          mainTask: () {
+          mainButtonTitle: 'تلاش مجدد',
+          mainButtonOnTap: () {
             request(
               url: url,
               method: method,

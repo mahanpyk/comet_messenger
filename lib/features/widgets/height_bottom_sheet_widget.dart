@@ -63,8 +63,8 @@ class HeightBottomSheetWidget extends StatelessWidget {
                             ),
                           ]),
                     ),
-                    Divider(
-                      height: 32,
+                const Divider(
+                  height: 32,
                       thickness: 1,
                       color: AppColors.tertiaryColor,
                     ),

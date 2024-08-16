@@ -5,7 +5,7 @@ import 'package:comet_messenger/app/routes/app_routes.dart';
 import 'package:comet_messenger/app/store/user_store_service.dart';
 import 'package:comet_messenger/features/home/models/transactions_response_model.dart' as transactions_model;
 import 'package:comet_messenger/features/home/repository/wallet_repository.dart';
-import 'package:comet_messenger/features/login/models/balance_response_model.dart';
+import 'package:comet_messenger/features/authentication/models/balance_response_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

@@ -1,7 +1,7 @@
 
 import 'package:comet_messenger/app/core/base/base_view.dart';
-import 'package:comet_messenger/features/login/pages/pin/pin_controller.dart';
-import 'package:comet_messenger/features/login/widgets/pin_widget.dart';
+import 'package:comet_messenger/features/authentication/pages/pin/pin_controller.dart';
+import 'package:comet_messenger/features/authentication/widgets/pin_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

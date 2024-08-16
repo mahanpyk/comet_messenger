@@ -6,9 +6,9 @@ import 'package:get/get.dart';
 class FillButtonWidget extends StatelessWidget {
   const FillButtonWidget({
     super.key,
-    required this.isLoading,
     required this.onTap,
     required this.buttonTitle,
+    this.isLoading = false,
     this.buttonColor = AppColors.primaryColor,
     this.enable = true,
     this.height = 48,
@@ -58,7 +58,7 @@ class FillButtonWidget extends StatelessWidget {
                   child: Text(
                     buttonTitle,
                     style: Get.textTheme.labelLarge!.copyWith(
-                      color: enable ?  AppColors.tertiaryColor : AppColors.backgroundSecondaryColor,
+                      color: enable ? AppColors.tertiaryColor : AppColors.backgroundSecondaryColor,
                       fontWeight: FontWeight.w900,
                     ),
                   ),

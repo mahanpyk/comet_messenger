@@ -2,24 +2,24 @@ import 'package:comet_messenger/app/core/app_enums.dart';
 import 'package:comet_messenger/app/core/base/base_repository.dart';
 import 'package:comet_messenger/app/models/request_model.dart';
 import 'package:comet_messenger/app/models/response_model.dart';
-import 'package:comet_messenger/features/login/models/login_response_model.dart';
+import 'package:comet_messenger/features/authentication/models/authentication_response_model.dart';
 
-abstract class LoginRepository extends BaseRepository {
-  Future<LoginResponseModel> login({required RequestModel requestModel});
+abstract class AuthenticationRepository extends BaseRepository {
+  Future<AuthenticationResponseModel> login({required RequestModel requestModel});
 }
 
-class LoginRepositoryImpl extends LoginRepository {
+class AuthenticationRepositoryImpl extends AuthenticationRepository {
   @override
-  Future<LoginResponseModel> login({required RequestModel requestModel}) async {
+  Future<AuthenticationResponseModel> login({required RequestModel requestModel}) async {
     final ResponseModel response = await request(
       method: RequestMethodEnum.POST.name(),
       data: requestModel.toJson(),
       requiredToken: false,
     );
-    LoginResponseModel result = LoginResponseModel();
+    AuthenticationResponseModel result = AuthenticationResponseModel();
     try {
       if (response.success) {
-        result = loginResponseModelFromJson({'data':response.body});
+        result = authenticationResponseModelFromJson({'data': response.body});
         result.statusCode = response.statusCode;
         return result;
       } else {

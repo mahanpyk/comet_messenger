@@ -11,43 +11,40 @@ class AppDialog {
     required this.title,
     required this.subTitle,
     this.icon = AppIcons.icWarning,
-    this.mainTask,
+    this.mainButtonOnTap,
     this.otherTask,
     this.otherTaskTitle,
-    this.mainTaskTitle,
+    this.mainButtonTitle,
   });
 
   String title;
   String subTitle;
   String icon;
-  VoidCallback? mainTask;
+  VoidCallback? mainButtonOnTap;
   VoidCallback? otherTask;
-  String? mainTaskTitle;
+  String? mainButtonTitle;
   String? otherTaskTitle;
 
   Future<void> showAppDialog() async {
     return Get.dialog(
       barrierDismissible: true,
-      WillPopScope(
-        onWillPop: () async => false,
+      PopScope(
+        canPop: false,
         child: AlertDialog(
           content: SingleChildScrollView(
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SvgPicture.asset(icon),
-                  const SizedBox(height: 10),
-                  Text(
-                    title,
-                    style: Get.textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    subTitle,
-                    style: Get.textTheme.bodyMedium!
-                        .copyWith(color: AppColors.tertiaryColor),
-                  ),
-                ]),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+              SvgPicture.asset(icon),
+              const SizedBox(height: 10),
+              Text(
+                title,
+                style: Get.textTheme.titleMedium,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                subTitle,
+                style: Get.textTheme.bodyMedium!.copyWith(color: AppColors.tertiaryColor),
+              ),
+            ]),
           ),
           actions: [
             ConstrainedBox(
@@ -73,17 +70,16 @@ class AppDialog {
                         child: FillButtonWidget(
                           height: 36,
                           isLoading: false,
-                          onTap: () =>
-                              mainTask == null ? Get.back() : mainTask!(),
-                          buttonTitle: mainTaskTitle ?? 'باشه',
+                          onTap: () => mainButtonOnTap == null ? Get.back() : mainButtonOnTap!(),
+                          buttonTitle: mainButtonTitle ?? 'باشه',
                         ),
                       ),
                     ])
                   : FillButtonWidget(
                       height: 36,
                       isLoading: false,
-                      onTap: () => mainTask == null ? Get.back() : mainTask!(),
-                      buttonTitle: mainTaskTitle ?? 'باشه',
+                onTap: () => mainButtonOnTap == null ? Get.back() : mainButtonOnTap!(),
+                buttonTitle: mainButtonTitle ?? 'باشه',
                     ),
             ),
           ],

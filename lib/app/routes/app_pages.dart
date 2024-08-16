@@ -4,7 +4,7 @@ import 'package:comet_messenger/app/bindings/create_mnemonic_binding.dart';
 import 'package:comet_messenger/app/bindings/home_binding.dart';
 import 'package:comet_messenger/app/bindings/import_wallet_binding.dart';
 import 'package:comet_messenger/app/bindings/intro_binding.dart';
-import 'package:comet_messenger/app/bindings/login_binding.dart';
+import 'package:comet_messenger/app/bindings/authentication_binding.dart';
 import 'package:comet_messenger/app/bindings/pin_binding.dart';
 import 'package:comet_messenger/app/bindings/profile_binding.dart';
 import 'package:comet_messenger/app/bindings/show_mnemonic_binding.dart';
@@ -15,10 +15,10 @@ import 'package:comet_messenger/features/chat/pages/chat_page.dart';
 import 'package:comet_messenger/features/constacts/pages/main/contacts_page.dart';
 import 'package:comet_messenger/features/home/pages/main/home_page.dart';
 import 'package:comet_messenger/features/intro/pages/intro_page.dart';
-import 'package:comet_messenger/features/login/pages/create_mnemonic/create_mnemonic_page.dart';
-import 'package:comet_messenger/features/login/pages/import_mnemonic/import_wallet_page.dart';
-import 'package:comet_messenger/features/login/pages/main/login_page.dart';
-import 'package:comet_messenger/features/login/pages/pin/pin_page.dart';
+import 'package:comet_messenger/features/authentication/pages/create_mnemonic/create_mnemonic_page.dart';
+import 'package:comet_messenger/features/authentication/pages/import_mnemonic/import_wallet_page.dart';
+import 'package:comet_messenger/features/authentication/pages/main/authentication_page.dart';
+import 'package:comet_messenger/features/authentication/pages/pin/pin_page.dart';
 import 'package:comet_messenger/features/profile/pages/profile_page.dart';
 import 'package:comet_messenger/features/show_mnemonic/pages/show_mnemonic_page.dart';
 import 'package:comet_messenger/features/splash/pages/splash_page.dart';
@@ -39,8 +39,8 @@ abstract class AppPages {
     ),
     GetPage(
       name: AppRoutes.LOGIN,
-      page: () => const LoginPage(),
-      binding: LoginBinding(),
+      page: () => const AuthenticationPage(),
+      binding: AuthenticationBinding(),
     ),
     GetPage(
       name: AppRoutes.IMPORT_WALLET,

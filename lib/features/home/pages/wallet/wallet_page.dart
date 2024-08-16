@@ -15,7 +15,7 @@ class WalletPage extends BaseView<WalletController> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(children: [
-        SizedBox(
+        const SizedBox(
           height: 48,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -2,7 +2,7 @@ import 'package:comet_messenger/app/core/app_icons.dart';
 import 'package:comet_messenger/app/core/base/base_view.dart';
 import 'package:comet_messenger/app/theme/app_colors.dart';
 import 'package:comet_messenger/features/constacts/pages/main/contacts_controller.dart';
-import 'package:comet_messenger/features/login/models/contact_model.dart';
+import 'package:comet_messenger/features/authentication/models/contact_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';

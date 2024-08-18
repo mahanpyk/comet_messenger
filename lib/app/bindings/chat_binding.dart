@@ -1,4 +1,4 @@
-import 'package:comet_messenger/features/chat/pages/chat_controller.dart';
+import 'package:comet_messenger/features/chat/pages/main/chat_controller.dart';
 import 'package:comet_messenger/features/chat/repository/chat_repository.dart';
 import 'package:get/get.dart';
 

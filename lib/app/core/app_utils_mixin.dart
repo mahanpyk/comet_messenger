@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:comet_messenger/app/core/app_dialog.dart';
 import 'package:comet_messenger/app/core/app_extension.dart';
+import 'package:comet_messenger/app/core/app_icons.dart';
 import 'package:comet_messenger/app/routes/app_routes.dart';
 import 'package:comet_messenger/app/store/user_store_service.dart';
 import 'package:crypto/crypto.dart';
@@ -16,8 +18,19 @@ mixin AppUtilsMixin {
   void removeFocus() => FocusManager.instance.primaryFocus!.unfocus();
 
   void logoutFromApp() {
-    UserStoreService.to.deleteAll();
-    Get.offAndToNamed(AppRoutes.LOGIN);
+    AppDialog dialog = AppDialog(
+      title: 'Logout',
+      subTitle: 'Are you sure you want to logout?',
+      mainButtonTitle: 'Logout',
+      icon: AppIcons.icSignOut,
+      mainButtonOnTap: () {
+        UserStoreService.to.deleteAll();
+        Get.offAndToNamed(AppRoutes.LOGIN);
+      },
+      otherTask: () => Get.back(),
+      otherTaskTitle: 'Cancel',
+    );
+    dialog.showAppDialog();
   }
 
   static Uint8List pad(Uint8List src, blockSize) {
@@ -85,6 +98,11 @@ mixin AppUtilsMixin {
     var keyGenerator = RSAKeyGenerator();
     keyGenerator.init(params);
     return keyGenerator.generateKeyPair();
+  }
+
+  generateKeysFromMnemonic(String mnemonic) {
+    var secure = utf8.encode(mnemonic);
+    return generateKeysFromSecure(secure);
   }
 
   //convert BigInt? to base64

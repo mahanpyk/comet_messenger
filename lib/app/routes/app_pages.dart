@@ -1,24 +1,26 @@
+import 'package:comet_messenger/app/bindings/authentication_binding.dart';
 import 'package:comet_messenger/app/bindings/chat_binding.dart';
+import 'package:comet_messenger/app/bindings/chat_profile_binding.dart';
 import 'package:comet_messenger/app/bindings/contacts_binding.dart';
 import 'package:comet_messenger/app/bindings/create_mnemonic_binding.dart';
 import 'package:comet_messenger/app/bindings/home_binding.dart';
 import 'package:comet_messenger/app/bindings/import_wallet_binding.dart';
 import 'package:comet_messenger/app/bindings/intro_binding.dart';
-import 'package:comet_messenger/app/bindings/authentication_binding.dart';
 import 'package:comet_messenger/app/bindings/pin_binding.dart';
 import 'package:comet_messenger/app/bindings/profile_binding.dart';
 import 'package:comet_messenger/app/bindings/show_mnemonic_binding.dart';
 import 'package:comet_messenger/app/bindings/splash_binding.dart';
 import 'package:comet_messenger/app/bindings/transaction_detail_binding.dart';
 import 'package:comet_messenger/app/routes/app_routes.dart';
-import 'package:comet_messenger/features/chat/pages/chat_page.dart';
-import 'package:comet_messenger/features/constacts/pages/main/contacts_page.dart';
-import 'package:comet_messenger/features/home/pages/main/home_page.dart';
-import 'package:comet_messenger/features/intro/pages/intro_page.dart';
 import 'package:comet_messenger/features/authentication/pages/create_mnemonic/create_mnemonic_page.dart';
 import 'package:comet_messenger/features/authentication/pages/import_mnemonic/import_wallet_page.dart';
 import 'package:comet_messenger/features/authentication/pages/main/authentication_page.dart';
 import 'package:comet_messenger/features/authentication/pages/pin/pin_page.dart';
+import 'package:comet_messenger/features/chat/pages/chat_profile/chat_profile_page.dart';
+import 'package:comet_messenger/features/chat/pages/main/chat_page.dart';
+import 'package:comet_messenger/features/constacts/pages/main/contacts_page.dart';
+import 'package:comet_messenger/features/home/pages/main/home_page.dart';
+import 'package:comet_messenger/features/intro/pages/intro_page.dart';
 import 'package:comet_messenger/features/profile/pages/profile_page.dart';
 import 'package:comet_messenger/features/show_mnemonic/pages/show_mnemonic_page.dart';
 import 'package:comet_messenger/features/splash/pages/splash_page.dart';
@@ -86,6 +88,11 @@ abstract class AppPages {
       name: AppRoutes.CHAT,
       page: () => const ChatPage(),
       binding: ChatBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.CHAT_PROFILE,
+      page: () => const ChatProfilePage(),
+      binding: ChatProfileBinding(),
     ),
   ];
 }

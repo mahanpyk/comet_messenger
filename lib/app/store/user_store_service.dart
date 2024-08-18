@@ -64,7 +64,10 @@ class UserStoreService {
 
   Future<void> delete({required String key}) async => _storage.remove(key);
 
-  void deleteAll() => _storage.removeAll();
+  void deleteAll() async {
+    _storage.removeAll();
+    await _secureStorage.deleteAll();
+  }
 
   Future<void> saveMnemonic(String tokenString) async {
     await _secureStorage.write(
@@ -91,5 +94,6 @@ class UserStoreService {
     if (result == null) {
       return null;
     }
-    return jsonDecode(result) as Map<String, dynamic>;  }
+    return jsonDecode(result) as Map<String, dynamic>;
+  }
 }

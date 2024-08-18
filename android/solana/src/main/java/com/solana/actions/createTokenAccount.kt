@@ -13,7 +13,7 @@ fun Action.createTokenAccount(
     mintAddress: PublicKey,
     onComplete: ((Result<Pair<String, PublicKey>>) -> Unit)
 ) {
-    api.getMinimumBalanceForRentExemption(1000) {
+    api.getMinimumBalanceForRentExemption(500) {
         it.onSuccess { balance ->
             val transaction = Transaction()
             val newAccount = Account()

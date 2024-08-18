@@ -10,8 +10,8 @@ import 'package:comet_messenger/app/models/user_model.dart';
 import 'package:comet_messenger/app/routes/app_routes.dart';
 import 'package:comet_messenger/app/store/user_store_service.dart';
 import 'package:comet_messenger/app/theme/app_colors.dart';
-import 'package:comet_messenger/features/authentication/models/contact_model.dart';
 import 'package:comet_messenger/features/authentication/models/authentication_response_model.dart';
+import 'package:comet_messenger/features/authentication/models/contact_model.dart';
 import 'package:comet_messenger/features/authentication/repository/authentication_repository.dart';
 import 'package:comet_messenger/features/widgets/fill_button_widget.dart';
 import 'package:comet_messenger/features/widgets/outline_button_widget.dart';
@@ -72,15 +72,18 @@ class AuthenticationController extends GetxController with AppUtilsMixin {
 
         //convert to byte array
         data2.setAll(0, data.sublist(0, 4));
-        var decode = borsh.deserialize(DataLengthBorshModel().borshSchema, data2, DataLengthBorshModel.fromJson);
+        var decode = borsh.deserialize(DataLengthBorshModel().borshSchema,
+            data2, DataLengthBorshModel.fromJson);
         int length = decode.length!;
         if (length == 0) {
           length = 288;
         }
         final accountDataBuffer = Uint8List(length);
         accountDataBuffer.setAll(0, data.sublist(4, length));
-        var decodeContacts = borsh.deserialize(ContactModel().borshSchema, accountDataBuffer, ContactModel.fromJson);
-        UserStoreService.to.save(key: AppConstants.CONTACTS, value: decodeContacts.toJson());
+        var decodeContacts = borsh.deserialize(ContactModel().borshSchema,
+            accountDataBuffer, ContactModel.fromJson);
+        UserStoreService.to
+            .save(key: AppConstants.CONTACTS, value: decodeContacts.toJson());
         for (Contact element in decodeContacts.contacts!) {
           if (element.user_name == phoneNumberTEC.text) {
             userModel = UserModel(
@@ -94,11 +97,19 @@ class AuthenticationController extends GetxController with AppUtilsMixin {
             UserStoreService.to.saveUserModel(userModel!.toJson());
             Get.toNamed(AppRoutes.IMPORT_WALLET);
             break;
-          } else {
-            showSelectProfileDialog();
           }
         }
-      } else {}
+        if (userModel == null) {
+          showSelectProfileDialog();
+        }
+      } else {
+        Get.snackbar(
+          "Error",
+          "Something went wrong",
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
     });
   }
 
@@ -115,12 +126,14 @@ class AuthenticationController extends GetxController with AppUtilsMixin {
       PopScope(
         canPop: false,
         child: AlertDialog(
-          content: SingleChildScrollView(
+          content: SizedBox(
+            width: 160,
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  'login_avatar_title'.tr,
+                  "Select Profile Icon",
                   style: Get.textTheme.headlineSmall,
                 ),
                 GridView.builder(
@@ -135,19 +148,22 @@ class AuthenticationController extends GetxController with AppUtilsMixin {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () => onTapAvatar(index: index),
-                      child: Container(
-                        width: 64,
-                        height: 64,
-                        decoration: BoxDecoration(
-                          border: selectedAvatarIndex.value == index
-                              ? Border.all(
-                                  color: AppColors.redColor,
-                                  width: 2,
-                                )
-                              : null,
-                        ),
-                        child: SvgPicture.asset('${AppIcons.icUserAvatar + index.toString()}.svg'),
-                      ),
+                      child: Obx(() {
+                        return Container(
+                          width: 64,
+                          height: 64,
+                          decoration: BoxDecoration(
+                            border: selectedAvatarIndex.value == index
+                                ? Border.all(
+                                    color: AppColors.redColor,
+                                    width: 2,
+                                  )
+                                : null,
+                          ),
+                          child: SvgPicture.asset(
+                              '${AppIcons.icUserAvatar + index.toString()}.svg'),
+                        );
+                      }),
                     );
                   },
                 ),
@@ -165,7 +181,10 @@ class AuthenticationController extends GetxController with AppUtilsMixin {
                   child: OutlineButtonWidget(
                     height: 36,
                     color: AppColors.tertiaryColor,
-                    onTap: () => Get.back(),
+                    onTap: () {
+                      Get.back();
+                      selectedAvatarIndex(-1);
+                    },
                     child: Text(
                       "Cancel",
                       style: Get.textTheme.labelLarge,
@@ -174,15 +193,24 @@ class AuthenticationController extends GetxController with AppUtilsMixin {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: FillButtonWidget(
-                    height: 36,
-                    isLoading: false,
-                    onTap: () {
-                      Get.back();
-                      onTapSetProfile();
-                    },
-                    buttonTitle: "Select",
-                  ),
+                  child: Obx(() {
+                    return FillButtonWidget(
+                      height: 36,
+                      enable: selectedAvatarIndex.value != -1,
+                      isLoading: false,
+                      onTap: () {
+                        Get.back();
+                        Get.toNamed(
+                          AppRoutes.CREATE_MNEMONIC,
+                          arguments: {
+                            "avatar": selectedAvatarIndex.value,
+                            "userName": phoneNumberTEC.text,
+                          },
+                        );
+                      },
+                      buttonTitle: "Select",
+                    );
+                  }),
                 ),
               ]),
             ),
@@ -196,6 +224,4 @@ class AuthenticationController extends GetxController with AppUtilsMixin {
       ),
     );
   }
-
-  void onTapSetProfile() {}
 }

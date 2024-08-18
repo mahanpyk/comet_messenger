@@ -6,6 +6,7 @@ import 'package:comet_messenger/app/core/app_utils_mixin.dart';
 import 'package:comet_messenger/app/models/data_length_borsh_model.dart';
 import 'package:comet_messenger/app/models/request_model.dart';
 import 'package:comet_messenger/app/models/user_model.dart';
+import 'package:comet_messenger/app/routes/app_routes.dart';
 import 'package:comet_messenger/app/store/user_store_service.dart';
 import 'package:comet_messenger/features/chat/models/chat_details_borsh_model.dart';
 import 'package:comet_messenger/features/chat/models/chat_details_response_model.dart';
@@ -238,4 +239,9 @@ class ChatController extends GetxController with AppUtilsMixin {
     return List.generate(16, (index) => chars[random.nextInt(chars.length)])
         .join();
   }
+
+  void onTapChatHeader() => Get.toNamed(
+        AppRoutes.CHAT_PROFILE,
+        arguments: chatDetailsModel.toJson(),
+      );
 }

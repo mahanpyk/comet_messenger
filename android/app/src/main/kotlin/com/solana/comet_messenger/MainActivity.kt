@@ -1,11 +1,14 @@
 package com.solana.comet_messenger
 
+import android.util.Log
 import cash.z.ecc.android.bip39.Mnemonics
+import cash.z.ecc.android.bip39.Mnemonics.WordCount
 import cash.z.ecc.android.bip39.toSeed
 import com.solana.Config
 import com.solana.SolanaHelper
 import com.solana.actions.sendMessage
 import com.solana.core.PublicKey
+import com.solana.models.buffer.AccountInfo
 import com.solana.models.buffer.MessageModel
 import com.solana.models.buffer.MessageState
 import com.solana.models.buffer.MessageStatus
@@ -121,6 +124,52 @@ class MainActivity : FlutterActivity() {
                                 )
                             }
                     }
+                }
+
+                "createAccount" -> {
+                    val avatar: String = call.argument("avatar") ?: ""
+                    val username: String = call.argument("username") ?: ""
+                    val mnemonic: String = call.argument("mnemonic") ?: ""
+
+                    Config.network = "Dev"
+                    val keypair = Keypair.fromSecretKey(
+                        Mnemonics.MnemonicCode(
+                            mnemonic,
+                            Locale.ENGLISH.toString()
+                        ).toSeed()
+                    )
+                    val publicKeyFromUserName: PublicKey =
+                        SolanaHelper.createWithSeed(username)
+                    val userPublicKey = PublicKey(keypair.publicKey.toBase58())
+
+                    val result = object : SolanaHelper.OnResponse {
+                        override fun onSuccess(accountInfo: AccountInfo?) {
+                            // Implement the success logic here
+                            val publicKey = keypair.publicKey.toBase58()
+                            val privateKey = Base58.encode(keypair.secret)
+                            result.success("$publicKey*********$privateKey*********$publicKeyFromUserName")
+                            return
+                        }
+
+                        override fun onFailure(e: Exception?) {
+                            // Implement the failure logic here
+                            result.error(
+                                e.toString(),
+                                e?.message,
+                                null
+                            )
+                            return
+                        }
+                    }
+
+                    SolanaHelper.getOrCreateAccount(
+                        userPublicKey,
+                        publicKeyFromUserName,
+                        username,
+                        avatar,
+                        avatar,
+                        result,
+                    )
                 }
 
                 else -> result.notImplemented()

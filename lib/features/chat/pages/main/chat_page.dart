@@ -1,7 +1,7 @@
 import 'package:comet_messenger/app/core/app_images.dart';
 import 'package:comet_messenger/app/core/base/base_view.dart';
 import 'package:comet_messenger/app/theme/app_colors.dart';
-import 'package:comet_messenger/features/chat/pages/chat_controller.dart';
+import 'package:comet_messenger/features/chat/pages/main/chat_controller.dart';
 import 'package:comet_messenger/features/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,13 +13,16 @@ class ChatPage extends BaseView<ChatController> {
   Widget body() {
     return Column(
       children: [
-        AppBarWidget(
-            title: controller.conversationModel.conversationName
-                    ?.replaceAll(
-                '${controller.userModel?.userName ?? ''}&_#', '')
-                    .replaceAll(
-                        '&_#${controller.userModel?.userName ?? ''}', '') ??
-                'No title'),
+        InkWell(
+          onTap: () => controller.onTapChatHeader(),
+          child: AppBarWidget(
+              title: controller.conversationModel.conversationName
+                      ?.replaceAll(
+                          '${controller.userModel?.userName ?? ''}&_#', '')
+                      .replaceAll(
+                          '&_#${controller.userModel?.userName ?? ''}', '') ??
+                  'No title'),
+        ),
         Expanded(
           child: Stack(
             children: [

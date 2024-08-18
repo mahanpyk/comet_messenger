@@ -6,6 +6,7 @@ import 'package:comet_messenger/features/home/pages/chat_list/chat_list_controll
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ChatListPage extends BaseView<ChatListController> {
   const ChatListPage({super.key});
@@ -19,14 +20,30 @@ class ChatListPage extends BaseView<ChatListController> {
           children: [
             Center(
               child: controller.chatList.isEmpty
-                  ? const Text('No Chat yet!')
-                  : ListView.builder(
-                      itemCount: controller.chatList.length,
+                  ? ListView.builder(
+                      itemCount: 5,
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
-                        return chatItemWidget(item: controller.chatList[index]);
+                        return Shimmer.fromColors(
+                          baseColor: AppColors.shimmerBaseColor,
+                          highlightColor: AppColors.shimmerHighlightColor,
+                          child: const Card(
+                            child: ListTile(),
+                          ),
+                        );
                       },
+                    )
+                  : RefreshIndicator(
+                      onRefresh: () => controller.onRefresh(),
+                      child: ListView.builder(
+                        itemCount: controller.chatList.length,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          return chatItemWidget(
+                              item: controller.chatList[index]);
+                        },
+                      ),
                     ),
             ),
           ],
@@ -45,6 +62,12 @@ class ChatListPage extends BaseView<ChatListController> {
   }
 
   Widget chatItemWidget({required ConversationBorshModel item}) {
+    String icon = item.avatar != null ? item.avatar! : "0";
+    try {
+      var intIcon = int.parse(icon);
+    } catch (e) {
+      icon = "0";
+    }
     return GestureDetector(
       onTap: () => controller.onTapTransactionDetail(item: item),
       child: Directionality(
@@ -74,7 +97,7 @@ class ChatListPage extends BaseView<ChatListController> {
               '${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')} ${DateTime.now().hour > 12 ? 'PM' : 'AM'}',
             ),
             trailing: SvgPicture.asset(
-              '${AppIcons.icUserAvatar}${item.avatar ?? '0'}.svg',
+              '${AppIcons.icUserAvatar}$icon.svg',
               height: 48,
               width: 48,
             ),

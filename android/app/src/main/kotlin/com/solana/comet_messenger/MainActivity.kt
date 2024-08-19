@@ -1,6 +1,5 @@
 package com.solana.comet_messenger
 
-import android.util.Log
 import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.Mnemonics.WordCount
 import cash.z.ecc.android.bip39.toSeed
@@ -129,15 +128,11 @@ class MainActivity : FlutterActivity() {
                 "createAccount" -> {
                     val avatar: String = call.argument("avatar") ?: ""
                     val username: String = call.argument("username") ?: ""
-                    val mnemonic: String = call.argument("mnemonic") ?: ""
 
                     Config.network = "Dev"
-                    val keypair = Keypair.fromSecretKey(
-                        Mnemonics.MnemonicCode(
-                            mnemonic,
-                            Locale.ENGLISH.toString()
-                        ).toSeed()
-                    )
+                    val mnemonic =
+                        Mnemonics.MnemonicCode(WordCount.COUNT_12, Locale.ENGLISH.language)
+                    val keypair = Keypair.fromSecretKey(mnemonic.toSeed())
                     val publicKeyFromUserName: PublicKey =
                         SolanaHelper.createWithSeed(username)
                     val userPublicKey = PublicKey(keypair.publicKey.toBase58())
@@ -147,7 +142,7 @@ class MainActivity : FlutterActivity() {
                             // Implement the success logic here
                             val publicKey = keypair.publicKey.toBase58()
                             val privateKey = Base58.encode(keypair.secret)
-                            result.success("$publicKey*********$privateKey*********$publicKeyFromUserName")
+                            result.success("$mnemonic*********$publicKey*********$privateKey*********$publicKeyFromUserName")
                             return
                         }
 

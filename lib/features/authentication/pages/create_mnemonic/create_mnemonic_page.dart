@@ -12,6 +12,10 @@ class CreateMnemonicPage extends BaseView<CreateMnemonicController> {
   @override
   Widget body() {
     return Column(children: [
+      IgnorePointer(
+        ignoring: true,
+        child: controller.isLoading.value ? SizedBox() : SizedBox(),
+      ),
       Expanded(
         child: Column(children: [
           Container(
@@ -32,19 +36,19 @@ class CreateMnemonicPage extends BaseView<CreateMnemonicController> {
                 color: AppColors.tertiaryColor,
               ),
               const SizedBox(height: 24),
-              SizedBox(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: controller.mnemonicWordsList.length,
-                  itemBuilder: (context, index) {
-                    return Text(
-                      '${index + 1} ${controller.mnemonicWordsList[index]}',
-                      style: Get.textTheme.titleMedium!.copyWith(color: AppColors.tertiaryColor),
-                    );
-                  },
-                ),
-              ),
+              // SizedBox(
+              //   child: ListView.builder(
+              //     shrinkWrap: true,
+              //     physics: const NeverScrollableScrollPhysics(),
+              //     itemCount: controller.mnemonicWordsList.length,
+              //     itemBuilder: (context, index) {
+              //       return Text(
+              //         '${index + 1} ${controller.mnemonicWordsList[index]}',
+              //         style: Get.textTheme.titleMedium!.copyWith(color: AppColors.tertiaryColor),
+              //       );
+              //     },
+              //   ),
+              // ),
             ]),
           ),
         ]),

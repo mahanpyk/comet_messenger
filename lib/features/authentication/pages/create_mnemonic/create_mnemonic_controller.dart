@@ -16,6 +16,7 @@ class CreateMnemonicController extends GetxController with AppUtilsMixin {
   String userName = '';
   RxList<String> mnemonicWordsList = RxList([]);
   ListUserWalletsModel? listUserWalletsModel;
+  RxBool isLoading = RxBool(false);
 
   @override
   void onInit() {
@@ -63,20 +64,18 @@ class CreateMnemonicController extends GetxController with AppUtilsMixin {
 
   void generateMnemonic() async {
     // final mnemonic = await Mnemonic.create(WordCount.Words12);
-    String randomMnemonic = bip39.generateMnemonic();
-    mnemonicText = randomMnemonic;
-    mnemonicWordsList(mnemonicText.split(' '));
+
     const platform = MethodChannel(AppConstants.PLATFORM_CHANNEL);
     try {
       final String result2 = await platform.invokeMethod('createAccount', {
         "userName": userName,
         "avatar": avatar,
-        "mnemonicCode": mnemonicText,
       });
-
-      Get.snackbar('Error', "Failed to receive data from server");
+      // mnemonicWordsList(mnemonicText.split(' '));
+      debugPrint('*****************');
+      debugPrint(result2);
+      debugPrint('-----------------');
     } on PlatformException catch (e) {
-      Get.snackbar('Error', "Failed to receive data from server");
       debugPrint('*****************************');
       debugPrint("Failed to encrypt data: '${e.message}'.");
       debugPrint('#############################');

@@ -10,7 +10,7 @@ public class CustomProgramId {
             return "CUdVSkaXMoAnr7NLSKjD25Zk5gpTrhtuXJ4Fxaw7nxRA";
         } else {
 //            return "38Xxqe3uSBSRPp771ja4tLFCQKn6CeNhh7YbuQhQd5E2";//(new)
-            return "8jrX8mjgipdGVWJH5o1PeDrEgNJHNyBVTJycbKhm3yc4";
+            return "2qwWoMoPvxKfypbujTNwqWqmuriMkXMPZV21YCvd8BdU";
         }
     }
 

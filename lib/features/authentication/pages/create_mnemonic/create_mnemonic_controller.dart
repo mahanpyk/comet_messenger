@@ -1,8 +1,7 @@
-// import 'package:bdk_flutter/bdk_flutter.dart';
-import 'package:bip39/bip39.dart' as bip39;
 import 'package:comet_messenger/app/core/app_constants.dart';
 import 'package:comet_messenger/app/core/app_utils_mixin.dart';
 import 'package:comet_messenger/app/models/list_user_wallets_model.dart';
+import 'package:comet_messenger/app/models/user_model.dart';
 import 'package:comet_messenger/app/routes/app_routes.dart';
 import 'package:comet_messenger/app/store/user_store_service.dart';
 import 'package:comet_messenger/app/theme/app_colors.dart';
@@ -11,12 +10,12 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class CreateMnemonicController extends GetxController with AppUtilsMixin {
-  String mnemonicText = '';
   String avatar = '';
   String userName = '';
-  RxList<String> mnemonicWordsList = RxList([]);
+  RxString mnemonic = RxString('');
+  RxString privateKey = RxString('');
   ListUserWalletsModel? listUserWalletsModel;
-  RxBool isLoading = RxBool(false);
+  RxBool isLoading = RxBool(true);
 
   @override
   void onInit() {
@@ -27,38 +26,32 @@ class CreateMnemonicController extends GetxController with AppUtilsMixin {
     Map<String, dynamic>? data = Get.arguments;
     if (data != null) {
       userName = data['userName'] ?? '';
-      avatar = data['avatar'].toString() ?? '';
+      avatar = (data['avatar'] ?? '').toString();
     }
     generateMnemonic();
     super.onInit();
   }
 
   void onTapCopyAndNext() {
-    Clipboard.setData(ClipboardData(text: mnemonicText));
+    Clipboard.setData(ClipboardData(text: '''
+    Phrase:
+    ${mnemonic.value}
+    
+    Private key:
+    ${privateKey.value}
+    '''));
     Get.snackbar(
       '',
       'Text copied',
       colorText: AppColors.tertiaryColor,
       snackPosition: SnackPosition.BOTTOM,
     );
-    if (listUserWalletsModel != null &&
-        listUserWalletsModel!.listWallets != null) {
+    if (listUserWalletsModel != null && listUserWalletsModel!.listWallets != null) {
       for (UserWalletModel element in listUserWalletsModel!.listWallets!) {
         element.isActive = false;
       }
     }
-    ListUserWalletsModel newListWalletsModel =
-        ListUserWalletsModel(listWallets: [
-      UserWalletModel(
-        id: (listUserWalletsModel?.listWallets?.length ?? 0) + 1,
-        mnemonic: mnemonicText,
-        isActive: true,
-      ),
-      ...?listUserWalletsModel?.listWallets
-    ]);
-    UserStoreService.to
-        .save(key: AppConstants.WALLETS, value: newListWalletsModel.toJson());
-    UserStoreService.to.saveMnemonic(mnemonicText);
+    UserStoreService.to.saveMnemonic(mnemonic.value);
     Get.offAllNamed(AppRoutes.PIN);
   }
 
@@ -67,14 +60,32 @@ class CreateMnemonicController extends GetxController with AppUtilsMixin {
 
     const platform = MethodChannel(AppConstants.PLATFORM_CHANNEL);
     try {
-      final String result2 = await platform.invokeMethod('createAccount', {
+      final String result = await platform.invokeMethod('createAccount', {
         "userName": userName,
         "avatar": avatar,
       });
-      // mnemonicWordsList(mnemonicText.split(' '));
       debugPrint('*****************');
-      debugPrint(result2);
+      debugPrint(result);
       debugPrint('-----------------');
+      var splitResult = result.split('*********');
+      mnemonic(splitResult[0]);
+      String publicKeyBase58 = '', basePubKey = '';
+
+      publicKeyBase58 = splitResult[1];
+      privateKey(splitResult[2]);
+      basePubKey = splitResult[3];
+      isLoading(false);
+      var newUserModel = UserModel(
+        avatar: avatar,
+        basePublicKey: publicKeyBase58,
+        publicKey: basePubKey,
+        privateKey: privateKey.value,
+        login: false,
+        userName: userName,
+        modalCreate: '',
+        id: basePubKey,
+      );
+      UserStoreService.to.saveUserModel(newUserModel.toJson());
     } on PlatformException catch (e) {
       debugPrint('*****************************');
       debugPrint("Failed to encrypt data: '${e.message}'.");

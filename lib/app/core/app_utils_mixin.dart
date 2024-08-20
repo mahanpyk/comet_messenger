@@ -25,7 +25,7 @@ mixin AppUtilsMixin {
       icon: AppIcons.icSignOut,
       mainButtonOnTap: () {
         UserStoreService.to.deleteAll();
-        Get.offAndToNamed(AppRoutes.LOGIN);
+        Get.offAndToNamed(AppRoutes.AUTHENTICATION);
       },
       otherTask: () => Get.back(),
       otherTaskTitle: 'Cancel',

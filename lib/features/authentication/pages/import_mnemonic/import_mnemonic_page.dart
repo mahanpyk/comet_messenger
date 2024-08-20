@@ -1,12 +1,12 @@
 import 'package:comet_messenger/app/core/base/base_view.dart';
-import 'package:comet_messenger/features/authentication/pages/import_mnemonic/import_wallet_controller.dart';
+import 'package:comet_messenger/features/authentication/pages/import_mnemonic/import_mnemonic_controller.dart';
 import 'package:comet_messenger/features/widgets/fill_button_widget.dart';
 import 'package:comet_messenger/features/widgets/text_form_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ImportWalletPage extends BaseView<ImportWalletController> {
-  const ImportWalletPage({super.key});
+class ImportMnemonicPage extends BaseView<ImportMnemonicController> {
+  const ImportMnemonicPage({super.key});
 
   @override
   Widget body() {

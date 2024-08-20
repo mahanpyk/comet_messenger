@@ -12,6 +12,6 @@ class IntroController extends GetxController {
   }
 
   void onTapLoginAppButton() {
-    Get.toNamed(AppRoutes.LOGIN);
+    Get.toNamed(AppRoutes.AUTHENTICATION);
   }
 }

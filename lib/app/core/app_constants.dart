@@ -12,19 +12,17 @@ class AppConstants {
       "5nFHkukP8jGuQEzpMH1H6hk5i6HUt6KamZw2NuSr97Ru";
 
   //region Mainnet
-  // static const String BASE_URL = 'https://api.mainnet-beta.solana.com';
-  // static const String CONTACT_PDA =
-  //     "D4VSz2XZviYv2fH4eR4W12Dv4b1XKRqM5XMaDPvKRALo";
-  // static const String CHAT_PROGRAM_ID =
-  //     '9ANy7cbrSBGFMMjHURsnpKSiqm9rdPFGZokzS62FvLFU';
+  static const String BASE_URL = 'https://api.mainnet-beta.solana.com';
+  static const String CONTACT_PDA = "Ba8AcvH4G6DA1QKJLePQExfh4VzGLffPojGzeW9N6t8u";
+  static const String CHAT_PROGRAM_ID = '7CaaDsKDwQ74HKZhxpozb6n8SxaAPDYRvJPrxkLtm67S';
   // endregion
 
   //region Devnet
-  static const String BASE_URL = 'https://api.devnet.solana.com';
-  static const String CONTACT_PDA =
-      "E5eMUoaFrJcPCGfBqythzCnMV99xjc8bR28M6mvgKRvx";
-  static const String CHAT_PROGRAM_ID =
-      '7jRAvySXHGTJMKBQNfNxmemLnW1gnCPm8Bv1WWwzUN5Y';
+  // static const String BASE_URL = 'https://api.devnet.solana.com';
+  // static const String CONTACT_PDA =
+  //     "E5eMUoaFrJcPCGfBqythzCnMV99xjc8bR28M6mvgKRvx";
+  // static const String CHAT_PROGRAM_ID =
+  //     '7jRAvySXHGTJMKBQNfNxmemLnW1gnCPm8Bv1WWwzUN5Y';
   // endregion
 
   static const String BASE58_CODEC =

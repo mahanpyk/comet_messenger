@@ -48,6 +48,8 @@ class AuthenticationController extends GetxController with AppUtilsMixin {
 
   /// request login
   Future<void> onTapLogin() async {
+    // hide keyboard
+    FocusManager.instance.primaryFocus?.unfocus();
     isLoading(true);
     _repo
         .login(
@@ -95,7 +97,7 @@ class AuthenticationController extends GetxController with AppUtilsMixin {
               login: true,
             );
             UserStoreService.to.saveUserModel(userModel!.toJson());
-            Get.toNamed(AppRoutes.IMPORT_WALLET);
+            Get.toNamed(AppRoutes.IMPORT_MNEMONIC);
             break;
           }
         }

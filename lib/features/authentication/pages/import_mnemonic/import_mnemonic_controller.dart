@@ -8,8 +8,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-class ImportWalletController extends GetxController {
-  ImportWalletController();
+class ImportMnemonicController extends GetxController {
+  ImportMnemonicController();
 
   TextEditingController importMnemonicTEC = TextEditingController();
   RxBool isLoading = RxBool(false);

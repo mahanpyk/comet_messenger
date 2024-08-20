@@ -1,4 +1,3 @@
-
 import 'package:comet_messenger/app/core/base/base_view.dart';
 import 'package:comet_messenger/app/theme/app_colors.dart';
 import 'package:comet_messenger/features/authentication/pages/create_mnemonic/create_mnemonic_controller.dart';
@@ -12,10 +11,6 @@ class CreateMnemonicPage extends BaseView<CreateMnemonicController> {
   @override
   Widget body() {
     return Column(children: [
-      IgnorePointer(
-        ignoring: true,
-        child: controller.isLoading.value ? SizedBox() : SizedBox(),
-      ),
       Expanded(
         child: Column(children: [
           Container(
@@ -28,7 +23,7 @@ class CreateMnemonicPage extends BaseView<CreateMnemonicController> {
             child: Column(children: [
               Text(
                 'Please copy your mnemonic words and store them in a safe place',
-                style: Get.textTheme.titleLarge!.copyWith(color: AppColors.tertiaryColor),
+                style: Get.textTheme.titleMedium!.copyWith(color: AppColors.tertiaryColor),
               ),
               const SizedBox(height: 16),
               const Divider(
@@ -36,19 +31,25 @@ class CreateMnemonicPage extends BaseView<CreateMnemonicController> {
                 color: AppColors.tertiaryColor,
               ),
               const SizedBox(height: 24),
-              // SizedBox(
-              //   child: ListView.builder(
-              //     shrinkWrap: true,
-              //     physics: const NeverScrollableScrollPhysics(),
-              //     itemCount: controller.mnemonicWordsList.length,
-              //     itemBuilder: (context, index) {
-              //       return Text(
-              //         '${index + 1} ${controller.mnemonicWordsList[index]}',
-              //         style: Get.textTheme.titleMedium!.copyWith(color: AppColors.tertiaryColor),
-              //       );
-              //     },
-              //   ),
-              // ),
+              Text(
+                controller.mnemonic.value,
+                style: Get.textTheme.titleMedium!.copyWith(color: AppColors.tertiaryColor),
+              ),
+              const SizedBox(height: 32),
+              Text(
+                'This is your private key. Do not share it with anyone',
+                style: Get.textTheme.titleMedium!.copyWith(color: AppColors.tertiaryColor),
+              ),
+              const SizedBox(height: 16),
+              const Divider(
+                height: 1,
+                color: AppColors.tertiaryColor,
+              ),
+              const SizedBox(height: 24),
+              Text(
+                controller.privateKey.value,
+                style: Get.textTheme.titleMedium!.copyWith(color: AppColors.tertiaryColor),
+              ),
             ]),
           ),
         ]),

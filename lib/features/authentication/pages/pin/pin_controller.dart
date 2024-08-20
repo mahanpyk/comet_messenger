@@ -1,7 +1,3 @@
-import 'dart:io';
-
-
-import 'package:comet_messenger/app/core/app_constants.dart';
 import 'package:comet_messenger/app/routes/app_routes.dart';
 import 'package:comet_messenger/app/store/user_store_service.dart';
 import 'package:flutter/material.dart';
@@ -85,7 +81,7 @@ class PinController extends GetxController {
       if (await UserStoreService.to.getMnemonic() != null) {
         Get.offAndToNamed(AppRoutes.HOME);
       } else {
-        Get.offAndToNamed(AppRoutes.LOGIN);
+        Get.offAndToNamed(AppRoutes.AUTHENTICATION);
       }
     } else {
       onTapPage();
@@ -110,7 +106,7 @@ class PinController extends GetxController {
             if (await UserStoreService.to.getMnemonic() != null) {
               Get.offAndToNamed(AppRoutes.HOME);
             } else {
-              Get.offAndToNamed(AppRoutes.LOGIN);
+              Get.offAndToNamed(AppRoutes.AUTHENTICATION);
             }
           } else {
             incorrectPassword(true);

@@ -1,8 +1,8 @@
 abstract class AppRoutes {
   static const SPLASH = '/SPLASH';
   static const INTRO = '/INTRO';
-  static const LOGIN = '/LOGIN';
-  static const IMPORT_WALLET = '/IMPORT_WALLET';
+  static const AUTHENTICATION = '/AUTHENTICATION';
+  static const IMPORT_MNEMONIC = '/IMPORT_MNEMONIC';
   static const CREATE_MNEMONIC = '/CREATE_MNEMONIC';
   static const PIN = '/PIN';
   static const HOME = '/HOME';

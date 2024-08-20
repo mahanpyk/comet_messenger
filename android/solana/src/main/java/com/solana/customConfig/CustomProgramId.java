@@ -6,11 +6,11 @@ public class CustomProgramId {
 
     public static String getContactProgramId(){
         if (Config.network.equals("Main")){
-//            return "7Rt2exuf4pE4jZjvH8KHSpJjxFCxFWUsRWaUuUs9s83e";//(new)
-            return "CUdVSkaXMoAnr7NLSKjD25Zk5gpTrhtuXJ4Fxaw7nxRA";
+            return "7CaaDsKDwQ74HKZhxpozb6n8SxaAPDYRvJPrxkLtm67S";//(new)
+//            return "CUdVSkaXMoAnr7NLSKjD25Zk5gpTrhtuXJ4Fxaw7nxRA";
         } else {
-//            return "38Xxqe3uSBSRPp771ja4tLFCQKn6CeNhh7YbuQhQd5E2";//(new)
-            return "2qwWoMoPvxKfypbujTNwqWqmuriMkXMPZV21YCvd8BdU";
+            return "38Xxqe3uSBSRPp771ja4tLFCQKn6CeNhh7YbuQhQd5E2";//(new)
+//            return "2qwWoMoPvxKfypbujTNwqWqmuriMkXMPZV21YCvd8BdU";
         }
     }
 
@@ -26,7 +26,7 @@ public class CustomProgramId {
         if (Config.network.equals("Main")){
             return "9ANy7cbrSBGFMMjHURsnpKSiqm9rdPFGZokzS62FvLFU";
         } else {
-            return "8GF7NPdfb1mvHnAxcB6JtWGccyQiQpKNMyTdq4mvksa3";
+            return "7jRAvySXHGTJMKBQNfNxmemLnW1gnCPm8Bv1WWwzUN5Y";
         }
     }
 }

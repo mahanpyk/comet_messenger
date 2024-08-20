@@ -13,7 +13,7 @@ import 'package:comet_messenger/app/bindings/splash_binding.dart';
 import 'package:comet_messenger/app/bindings/transaction_detail_binding.dart';
 import 'package:comet_messenger/app/routes/app_routes.dart';
 import 'package:comet_messenger/features/authentication/pages/create_mnemonic/create_mnemonic_page.dart';
-import 'package:comet_messenger/features/authentication/pages/import_mnemonic/import_wallet_page.dart';
+import 'package:comet_messenger/features/authentication/pages/import_mnemonic/import_mnemonic_page.dart';
 import 'package:comet_messenger/features/authentication/pages/main/authentication_page.dart';
 import 'package:comet_messenger/features/authentication/pages/pin/pin_page.dart';
 import 'package:comet_messenger/features/chat/pages/chat_profile/chat_profile_page.dart';
@@ -40,13 +40,13 @@ abstract class AppPages {
       binding: IntroBinding(),
     ),
     GetPage(
-      name: AppRoutes.LOGIN,
+      name: AppRoutes.AUTHENTICATION,
       page: () => const AuthenticationPage(),
       binding: AuthenticationBinding(),
     ),
     GetPage(
-      name: AppRoutes.IMPORT_WALLET,
-      page: () => const ImportWalletPage(),
+      name: AppRoutes.IMPORT_MNEMONIC,
+      page: () => const ImportMnemonicPage(),
       binding: ImportWalletBinding(),
     ),
     GetPage(

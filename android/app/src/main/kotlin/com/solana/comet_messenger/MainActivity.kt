@@ -82,7 +82,8 @@ class MainActivity : FlutterActivity() {
                     val publicKey: String = call.argument("publicKey") ?: ""
                     val time: String = call.argument("time") ?: ""
 
-                    Config.network = "Main"
+//                    Config.network = "Main"
+                    Config.network = "dev"
                     val accountUser1 = SolanaHelper.createAccountWithString(privateKey)
 
 //                    val id = createWithSeed(
@@ -129,7 +130,8 @@ class MainActivity : FlutterActivity() {
                     val avatar: String = call.argument("avatar") ?: ""
                     val username: String = call.argument("username") ?: ""
 
-                    Config.network = "Main"
+//                    Config.network = "Main"
+                    Config.network = "dev"
                     val mnemonic =
                         Mnemonics.MnemonicCode(WordCount.COUNT_12, Locale.ENGLISH.language)
                     val keypair = Keypair.fromSecretKey(mnemonic.toSeed())

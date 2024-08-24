@@ -51,6 +51,7 @@ class AuthenticationController extends GetxController with AppUtilsMixin {
     // hide keyboard
     FocusManager.instance.primaryFocus?.unfocus();
     isLoading(true);
+    userModel = null;
     _repo
         .login(
             requestModel: RequestModel(

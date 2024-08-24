@@ -6,6 +6,7 @@ import cash.z.ecc.android.bip39.toSeed
 import com.solana.Config
 import com.solana.SolanaHelper
 import com.solana.actions.sendMessage
+import com.solana.core.Account
 import com.solana.core.PublicKey
 import com.solana.models.buffer.AccountInfo
 import com.solana.models.buffer.MessageModel
@@ -76,9 +77,7 @@ class MainActivity : FlutterActivity() {
                 "sendTransaction" -> {
                     val message: String = call.argument("message") ?: ""
                     val privateKey: String = call.argument("privateKey") ?: ""
-                    val basePublicKey: String = call.argument("basePublicKey") ?: ""
                     val conversationId: String = call.argument("conversationId") ?: ""
-                    val userName: String = call.argument("userName") ?: ""
                     val publicKey: String = call.argument("publicKey") ?: ""
                     val time: String = call.argument("time") ?: ""
 
@@ -139,7 +138,7 @@ class MainActivity : FlutterActivity() {
                         SolanaHelper.createWithSeed(username)
                     val userPublicKey = PublicKey(keypair.publicKey.toBase58())
 
-                    val result = object : SolanaHelper.OnResponse {
+                    val onComplete = object : SolanaHelper.OnResponse {
                         override fun onSuccess(accountInfo: AccountInfo?) {
                             // Implement the success logic here
                             val publicKey = keypair.publicKey.toBase58()
@@ -165,7 +164,67 @@ class MainActivity : FlutterActivity() {
                         username,
                         avatar,
                         avatar,
-                        result,
+                        onComplete,
+                    )
+                }
+
+                "createConversation" -> {
+                    val publicKey: String = call.argument("publicKey") ?: ""
+                    val contactPublicKey: String = call.argument("contactPublicKey") ?: ""
+                    val privateKey: String = call.argument("privateKey") ?: ""
+                    val username: String = call.argument("username") ?: ""
+                    val contactUsername: String = call.argument("contactUsername") ?: ""
+                    val indexAvatar: String = call.argument("indexAvatar") ?: ""
+
+//                    Config.network = "Main"
+                    Config.network = "dev"
+                    val tokenCipherUserOne: String
+                    val tokenCipherUserTwo: String
+                    val main32ByteKey = EncryptdecryptJavaHelper.generate32ByteKey()
+                    try {
+                        tokenCipherUserOne = RSAUtil.encrypt(main32ByteKey)
+                        tokenCipherUserTwo = RSAUtil.encrypt(main32ByteKey)
+                    } catch (e: java.lang.Exception) {
+                        throw RuntimeException(e)
+                    }
+                    val users: MutableList<UserModel> = java.util.ArrayList()
+                    users.add(
+                        UserModel(
+                            PublicKey(publicKey).toBase58(),
+                            username,
+                            tokenCipherUserOne
+                        )
+                    )
+                    users.add(
+                        UserModel(
+                            PublicKey(contactPublicKey).toBase58(),
+                            contactUsername,
+                            tokenCipherUserTwo
+                        )
+                    )
+                    val onComplete = object : SolanaHelper.OnResponseStr {
+                        override fun onSuccess(accountInfo: String?) {
+                            result.success(accountInfo)
+                        }
+
+                        override fun onFailure(e: Exception?) {
+                            // Implement the failure logic here
+                            result.error(
+                                e.toString(),
+                                e?.message,
+                                null
+                            )
+                            return
+                        }
+                    }
+                    SolanaHelper.createConversation(
+                        PublicKey(publicKey),
+                        Account(Base58.decode(privateKey)),
+                        "$username&_#$contactUsername",
+                        users,
+                        true,
+                        indexAvatar,
+                        onComplete,
                     )
                 }
 

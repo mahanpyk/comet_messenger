@@ -1,8 +1,8 @@
 import 'package:comet_messenger/app/core/app_icons.dart';
 import 'package:comet_messenger/app/core/base/base_view.dart';
 import 'package:comet_messenger/app/theme/app_colors.dart';
-import 'package:comet_messenger/features/constacts/pages/main/contacts_controller.dart';
 import 'package:comet_messenger/features/authentication/models/contact_model.dart';
+import 'package:comet_messenger/features/constacts/pages/main/contacts_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -31,24 +31,29 @@ class ContactsPage extends BaseView<ContactsController> {
           ),
         ),
         Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: controller.contacts.isEmpty
-                      ? const Text('No Contacts yet!')
-                      : ListView.builder(
-                          itemCount: controller.contacts.length,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            return chatItemWidget(item: controller.contacts[index]);
-                          },
-                        ),
+          child: Stack(
+            children: [
+              if (controller.isLoading.value) const Center(child: CircularProgressIndicator()),
+              SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: controller.contacts.isEmpty
+                          ? const Text('No Contacts yet!')
+                          : ListView.builder(
+                              itemCount: controller.contacts.length,
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                return chatItemWidget(item: controller.contacts[index]);
+                              },
+                            ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ],
@@ -56,8 +61,14 @@ class ContactsPage extends BaseView<ContactsController> {
   }
 
   Widget chatItemWidget({required Contact item}) {
+    String icon = item.avatar != null ? item.avatar! : "0";
+    try {
+      var intIcon = int.parse(icon);
+    } catch (e) {
+      icon = "0";
+    }
     return GestureDetector(
-      // onTap: () => controller.onTapTransactionDetail(item.signature!),
+      onTap: () => controller.showModalConfirmationCreateChat(item),
       child: Directionality(
         textDirection: TextDirection.rtl,
         child: Card(
@@ -69,7 +80,7 @@ class ContactsPage extends BaseView<ContactsController> {
               style: Get.textTheme.titleLarge!.copyWith(color: AppColors.tertiaryColor),
             ),
             trailing: SvgPicture.asset(
-              '${AppIcons.icUserAvatar}${item.avatar ?? '0'}.svg',
+              '${AppIcons.icUserAvatar}$icon.svg',
               height: 48,
               width: 48,
             ),

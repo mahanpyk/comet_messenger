@@ -25,6 +25,8 @@ class ImportMnemonicController extends GetxController {
       /// mnemonic obtained from the input
       /// MainNet moshtagh2
       /// neck seat salt cotton credit flower first alpha inject hammer unit shield
+      /// MainNet lasemi
+      /// picnic canyon worth distance wash blur cancel laundry alien fit prepare unlock
       /// DevNet test-1
       /// allow online pass size blush nephew festival myth behave gift recycle tomato
       const platform = MethodChannel(AppConstants.PLATFORM_CHANNEL);

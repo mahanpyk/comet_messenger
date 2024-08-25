@@ -1,4 +1,6 @@
 import 'package:comet_messenger/app/core/app_constants.dart';
+import 'package:comet_messenger/app/core/app_dialog.dart';
+import 'package:comet_messenger/app/core/app_icons.dart';
 import 'package:comet_messenger/app/models/user_model.dart';
 import 'package:comet_messenger/app/routes/app_routes.dart';
 import 'package:comet_messenger/app/store/user_store_service.dart';
@@ -12,6 +14,7 @@ class ContactsController extends GetxController {
   ContactsController(this._repo);
 
   final ContactsRepository _repo;
+  RxBool isLoading = RxBool(false);
   ContactModel? contactModel;
   RxList<Contact> contacts = RxList([]);
   UserModel? userModel;
@@ -19,18 +22,36 @@ class ContactsController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-    var json = UserStoreService.to.get(key: AppConstants.CONTACTS);
-    if (json != null) {
-      contactModel = ContactModel.fromJson(json);
-      contacts(contactModel!.contacts!);
-    }
     var jsonUserModel = await UserStoreService.to.getUserModel();
     if (jsonUserModel != null) {
       userModel = UserModel.fromJson(jsonUserModel);
     }
+    var json = UserStoreService.to.get(key: AppConstants.CONTACTS);
+    if (json != null) {
+      contactModel = ContactModel.fromJson(json);
+      contactModel!.contacts!.removeWhere((element) => element.user_name == userModel?.userName);
+      contacts(contactModel!.contacts!);
+    }
   }
 
-  void startChat(Contact item) async {
+  void showModalConfirmationCreateChat(Contact item) async {
+    AppDialog dialog = AppDialog(
+      title: 'Create Conversation',
+      subTitle: 'This will cost you. are you sure you want to create this conversation?',
+      mainButtonTitle: 'Yes',
+      icon: AppIcons.icWarning,
+      mainButtonOnTap: () {
+        Get.back();
+        sendCreateConversation(item);
+      },
+      otherTask: () => Get.back(),
+      otherTaskTitle: 'No',
+    );
+    dialog.showAppDialog();
+  }
+
+  void sendCreateConversation(Contact item) async {
+    isLoading(true);
     const platform = MethodChannel(AppConstants.PLATFORM_CHANNEL);
     try {
       var privateKey = userModel?.privateKey ?? '';
@@ -52,16 +73,18 @@ class ContactsController extends GetxController {
       debugPrint(result.toString());
       debugPrint('#############################');
       Get.toNamed(AppRoutes.CHAT);
+      isLoading(false);
     } on PlatformException catch (e) {
       debugPrint('*****************************');
-      debugPrint("Failed to encrypt data: '${e.message}'.");
+      debugPrint("Failed to encrypt data: ${e.message}.");
       debugPrint('#############################');
       Get.snackbar(
         "Error",
-        "Something went wrong",
+        "Something went wrong\n${e.message}",
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
+      isLoading(false);
     }
   }
 }

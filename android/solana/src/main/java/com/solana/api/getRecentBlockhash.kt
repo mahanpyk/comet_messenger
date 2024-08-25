@@ -15,6 +15,7 @@ fun Api.getRecentBlockhash(onComplete: ((Result<String>) -> Unit)) {
         RecentBlockhash::class.java
     ) { result ->
         result.onSuccess { recentBlockHash ->
+            Log.d("Lasemi", "getRecentBlockhash--------------: ${recentBlockHash}")
             Log.d("Lasemi", "getRecentBlockhash--------------: ${recentBlockHash.value.blockhash}")
             onComplete(Result.success(recentBlockHash.value.blockhash))
             return@request

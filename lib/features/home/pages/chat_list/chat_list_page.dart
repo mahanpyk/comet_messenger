@@ -64,7 +64,7 @@ class ChatListPage extends BaseView<ChatListController> {
   Widget chatItemWidget({required ConversationBorshModel item}) {
     String icon = item.avatar != null ? item.avatar! : "0";
     try {
-      var intIcon = int.parse(icon);
+      int.parse(icon);
     } catch (e) {
       icon = "0";
     }

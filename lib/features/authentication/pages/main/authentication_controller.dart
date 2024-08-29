@@ -88,13 +88,13 @@ class AuthenticationController extends GetxController with AppUtilsMixin {
         UserStoreService.to
             .save(key: AppConstants.CONTACTS, value: decodeContacts.toJson());
         for (Contact element in decodeContacts.contacts!) {
-          if (element.user_name == phoneNumberTEC.text) {
+          if (element.userName == phoneNumberTEC.text) {
             userModel = UserModel(
-              userName: element.user_name,
+              userName: element.userName,
               avatar: element.avatar,
-              lastName: element.last_name,
-              basePublicKey: element.base_pubkey,
-              publicKey: element.public_key,
+              lastName: element.lastName,
+              basePublicKey: element.basePubKey,
+              publicKey: element.publicKey,
               login: true,
             );
             UserStoreService.to.saveUserModel(userModel!.toJson());

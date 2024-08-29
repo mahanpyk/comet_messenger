@@ -63,7 +63,7 @@ class ContactsPage extends BaseView<ContactsController> {
   Widget chatItemWidget({required Contact item}) {
     String icon = item.avatar != null ? item.avatar! : "0";
     try {
-      var intIcon = int.parse(icon);
+      int.parse(icon);
     } catch (e) {
       icon = "0";
     }
@@ -75,7 +75,7 @@ class ContactsPage extends BaseView<ContactsController> {
           color: AppColors.backgroundSecondaryColor,
           child: ListTile(
             title: Text(
-              item.user_name ?? '',
+              item.userName ?? '',
               textAlign: TextAlign.left,
               style: Get.textTheme.titleLarge!.copyWith(color: AppColors.tertiaryColor),
             ),

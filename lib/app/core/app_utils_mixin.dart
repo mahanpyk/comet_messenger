@@ -100,7 +100,8 @@ mixin AppUtilsMixin {
     return keyGenerator.generateKeyPair();
   }
 
-  generateKeysFromMnemonic(String mnemonic) {
+  AsymmetricKeyPair<PublicKey, PrivateKey> generateKeysFromMnemonic(
+      String mnemonic) {
     var secure = utf8.encode(mnemonic);
     return generateKeysFromSecure(secure);
   }

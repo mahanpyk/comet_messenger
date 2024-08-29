@@ -30,7 +30,8 @@ class ChatController extends GetxController with AppUtilsMixin {
   Rx<ChatDetailsBorshModel> chatDetailsModel = Rx(ChatDetailsBorshModel());
   RxList<String> chatMessages = RxList([]);
   TextEditingController messageTEC = TextEditingController();
-  Rx<ScrollController> scrollController = Rx(ScrollController(initialScrollOffset: 0));
+  Rx<ScrollController> scrollController =
+      Rx(ScrollController(initialScrollOffset: 0));
   String tokenCipher = '';
 
   /// sample chat response
@@ -80,19 +81,24 @@ class ChatController extends GetxController with AppUtilsMixin {
 
           //convert to byte array
           data2.setAll(0, data.sublist(0, 4));
-          var decode = borsh.deserialize(DataLengthBorshModel().borshSchema, data2, DataLengthBorshModel.fromJson);
+          var decode = borsh.deserialize(DataLengthBorshModel().borshSchema,
+              data2, DataLengthBorshModel.fromJson);
           int length = decode.length!;
           if (length == 0) {
             length = 288;
           }
           final accountDataBuffer = Uint8List(length);
           accountDataBuffer.setAll(0, data.sublist(4, length));
-          chatDetailsModel(borsh.deserialize(ChatDetailsBorshModel().borshSchema, accountDataBuffer, ChatDetailsBorshModel.fromJson));
+          chatDetailsModel(borsh.deserialize(
+              ChatDetailsBorshModel().borshSchema,
+              accountDataBuffer,
+              ChatDetailsBorshModel.fromJson));
 
           const platform = MethodChannel(AppConstants.PLATFORM_CHANNEL);
 
           try {
-            tokenCipher = chatDetailsModel.value.members?.last.tokenCipher ?? '';
+            tokenCipher =
+                chatDetailsModel.value.members?.last.tokenCipher ?? '';
 
             if (tokenCipher == "") {
               tokenCipher = await platform.invokeMethod('createCipher');
@@ -103,19 +109,25 @@ class ChatController extends GetxController with AppUtilsMixin {
               });
             }
 
-            for (MessageBorshModel element in chatDetailsModel.value.messages ?? []) {
+            for (MessageBorshModel element
+                in chatDetailsModel.value.messages ?? []) {
               try {
-                final String decryptMessage = await platform.invokeMethod('decryptMessage', {
+                final String decryptMessage =
+                    await platform.invokeMethod('decryptMessage', {
                   'message': element.text,
                   'privateKey': tokenCipher,
                 });
                 chatMessages.add(decryptMessage);
               } on Exception catch (e) {
-                final String decryptMessage = await platform.invokeMethod('decryptMessage', {
+                final String decryptMessage =
+                    await platform.invokeMethod('decryptMessage', {
                   'message': element.text,
                   'privateKey': "",
                 });
                 chatMessages.add(decryptMessage);
+                debugPrint('*****************************');
+                debugPrint("Failed to decrypt data: $e");
+                debugPrint('#############################');
               }
             }
             isLoading(false);
@@ -166,7 +178,8 @@ class ChatController extends GetxController with AppUtilsMixin {
         var publicKey = userModel?.publicKey ?? '';
         var userName = userModel?.userName ?? '';
 
-        final String sendTransaction = await platform.invokeMethod('sendTransaction', {
+        final String sendTransaction =
+            await platform.invokeMethod('sendTransaction', {
           'message': result,
           'privateKey': privateKey,
           'conversationId': conversationId,
@@ -213,7 +226,8 @@ class ChatController extends GetxController with AppUtilsMixin {
 
   String setTimeFormat(String iso8601string) {
     DateTime utcDateTime = DateTime.parse(iso8601string);
-    utcDateTime = utcDateTime.toUtc().add(const Duration(hours: 3, minutes: 30));
+    utcDateTime =
+        utcDateTime.toUtc().add(const Duration(hours: 3, minutes: 30));
     DateFormat formatter = DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     String formatted = formatter.format(utcDateTime);
     return formatted;
@@ -221,15 +235,18 @@ class ChatController extends GetxController with AppUtilsMixin {
 
   void scrollToBottom() {
     Future.delayed(const Duration(milliseconds: 300), () {
-      scrollController.value.jumpTo(scrollController.value.position.maxScrollExtent);
+      scrollController.value
+          .jumpTo(scrollController.value.position.maxScrollExtent);
     });
   }
 
   String uuid() {
     // create random uuid manually
     final Random random = Random.secure();
-    const String chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
-    return List.generate(16, (index) => chars[random.nextInt(chars.length)]).join();
+    const String chars =
+        'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+    return List.generate(16, (index) => chars[random.nextInt(chars.length)])
+        .join();
   }
 
   void onTapChatHeader() => Get.toNamed(

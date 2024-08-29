@@ -95,7 +95,6 @@ class RSAKeyParser {
     var pkSeq = asn1Parser.nextObject() as ASN1Sequence;
 
     var modulus = pkSeq.elements[1] as ASN1Integer;
-    var publicExponent = pkSeq.elements[2] as ASN1Integer;
     var privateExponent = pkSeq.elements[3] as ASN1Integer;
     var p = pkSeq.elements[4] as ASN1Integer;
     var q = pkSeq.elements[5] as ASN1Integer;
@@ -105,7 +104,6 @@ class RSAKeyParser {
       privateExponent.valueAsBigInteger,
       p.valueAsBigInteger,
       q.valueAsBigInteger,
-      publicExponent.valueAsBigInteger,
     );
 
     return rsaPrivateKey;

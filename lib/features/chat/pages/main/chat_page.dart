@@ -149,7 +149,7 @@ class ChatPage extends BaseView<ChatController> {
           ),
           const SizedBox(height: 8),
           Text(
-            controller.formatDate(time) ?? '',
+            controller.formatDate(time),
             style: Get.textTheme.bodySmall,
           ),
         ],

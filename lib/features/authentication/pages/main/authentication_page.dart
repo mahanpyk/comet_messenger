@@ -1,12 +1,8 @@
-import 'package:comet_messenger/app/core/app_icons.dart';
 import 'package:comet_messenger/app/core/base/base_view.dart';
-import 'package:comet_messenger/app/theme/app_colors.dart';
 import 'package:comet_messenger/features/authentication/pages/main/authentication_controller.dart';
 import 'package:comet_messenger/features/widgets/fill_button_widget.dart';
-import 'package:comet_messenger/features/widgets/outline_button_widget.dart';
 import 'package:comet_messenger/features/widgets/text_form_field_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 class AuthenticationPage extends BaseView<AuthenticationController> {

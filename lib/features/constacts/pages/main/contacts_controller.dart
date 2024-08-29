@@ -29,7 +29,8 @@ class ContactsController extends GetxController {
     var json = UserStoreService.to.get(key: AppConstants.CONTACTS);
     if (json != null) {
       contactModel = ContactModel.fromJson(json);
-      contactModel!.contacts!.removeWhere((element) => element.user_name == userModel?.userName);
+      contactModel!.contacts!
+          .removeWhere((element) => element.userName == userModel?.userName);
       contacts(contactModel!.contacts!);
     }
   }
@@ -58,8 +59,8 @@ class ContactsController extends GetxController {
       var publicKey = userModel?.publicKey ?? '';
       var userName = userModel?.userName ?? '';
       var avatar = userModel?.avatar ?? '';
-      var contactPublicKey = item.public_key ?? '';
-      var contactUsername = item.user_name ?? '';
+      var contactPublicKey = item.publicKey ?? '';
+      var contactUsername = item.userName ?? '';
       final String result = await platform.invokeMethod('createConversation', {
         "publicKey": publicKey,
         "contactPublicKey": contactPublicKey,

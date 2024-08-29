@@ -57,7 +57,7 @@ class HomePage extends BaseView<HomeController> {
         unselectedItemColor: AppColors.tertiaryColor,
         showUnselectedLabels: true,
         showSelectedLabels: true,
-        selectedLabelStyle: TextStyle(color: AppColors.primaryColor),
+        selectedLabelStyle: const TextStyle(color: AppColors.primaryColor),
         elevation: 4,
         currentIndex: controller.bottomNavigatorIndex.value,
         onTap: (index) => controller.onTapBottomNavigationItem(index: index),

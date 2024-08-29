@@ -1,6 +1,5 @@
 
 import 'package:comet_messenger/app/core/app_icons.dart';
-import 'package:comet_messenger/app/core/app_images.dart';
 import 'package:comet_messenger/app/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';

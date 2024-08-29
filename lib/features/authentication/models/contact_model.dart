@@ -33,25 +33,25 @@ class ContactModel extends BorshObject {
 class Contact extends BorshObject {
   @override
   factory Contact.fromJson(final Map<String, dynamic> json) => Contact(
-        user_name: json['user_name'],
-        last_name: json['last_name'],
-        public_key: json['public_key'],
-        base_pubkey: json['base_pubkey'],
+        userName: json['user_name'],
+        lastName: json['last_name'],
+        publicKey: json['public_key'],
+        basePubKey: json['base_pubkey'],
         avatar: json['avatar'],
       );
 
   Contact({
-    this.user_name,
-    this.last_name,
-    this.public_key,
-    this.base_pubkey,
+    this.userName,
+    this.lastName,
+    this.publicKey,
+    this.basePubKey,
     this.avatar,
   });
 
-  final String? user_name;
-  final String? last_name;
-  final String? public_key;
-  final String? base_pubkey;
+  final String? userName;
+  final String? lastName;
+  final String? publicKey;
+  final String? basePubKey;
   final String? avatar;
 
   @override
@@ -67,10 +67,10 @@ class Contact extends BorshObject {
 
   @override
   Map<String, dynamic> toJson() => {
-        'user_name': user_name,
-        'last_name': last_name,
-        'public_key': public_key,
-        'base_pubkey': base_pubkey,
+        'user_name': userName,
+        'last_name': lastName,
+        'public_key': publicKey,
+        'base_pubkey': basePubKey,
         'avatar': avatar,
       };
 }

@@ -50,7 +50,7 @@ class AppFlushBarUtil {
                 Expanded(
                   child: Text(
                     message,
-                    textScaleFactor: 1,
+                    textScaler: const TextScaler.linear(1),
                     style: const TextStyle(color: Colors.white),
                     textDirection: TextDirection.rtl,
                   ),
@@ -66,7 +66,7 @@ class AppFlushBarUtil {
                       padding: const EdgeInsets.all(5.0),
                       child: Text(
                         buttonText ?? '',
-                        textScaleFactor: 1,
+                        textScaler: const TextScaler.linear(1),
                         style: const TextStyle(color: Colors.amber),
                       ),
                     ),

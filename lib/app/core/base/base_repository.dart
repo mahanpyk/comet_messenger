@@ -73,10 +73,13 @@ class BaseRepository with AppUtilsMixin {
             bool isOpenDialog = get_package.Get.isDialogOpen ?? false;
             if (!isOpenDialog) {
               AppDialog dialog = AppDialog(
-                title: 'مشکلی پیش آمده',
-                subTitle: 'مدت زمان حضور در برنامه به پایان رسیده است.\nلطفا جهت استفاده از برنامه، دوباره وارد شوید',
-                mainButtonTitle: 'ورود به برنامه',
-                mainButtonOnTap: () => logoutFromApp(),
+                title: 'Something went wrong',
+                subTitle: 'Please try again',
+                mainButtonTitle: 'Try Again',
+                mainButtonOnTap: () {
+                  get_package.Get.back();
+                  logoutFromApp();
+                },
               );
               dialog.showAppDialog();
             }
@@ -98,10 +101,11 @@ class BaseRepository with AppUtilsMixin {
         }
       } else {
         AppDialog dialog = AppDialog(
-          title: 'خطا در اتصال به اینترنت',
-          subTitle: 'اتصال اینترنت خود را بررسی نمایید',
-          mainButtonTitle: 'تلاش مجدد',
+          title: 'Error to Access Internet',
+          subTitle: 'Please check your internet connection and try again',
+          mainButtonTitle: 'Try Again',
           mainButtonOnTap: () {
+            get_package.Get.back();
             request(
               url: url,
               method: method,

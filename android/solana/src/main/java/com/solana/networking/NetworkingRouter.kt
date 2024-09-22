@@ -174,7 +174,10 @@ class OkHttpNetworkingRouter(
             override fun onResponse(call: Call, response: Response) {
                 response.body?.let { body ->
                     val responses = body.string()
-                    if (method.equals("sendTransaction")) Log.d("Lasemi", "onResponse: $responses")
+                    if (method.equals("sendTransaction")) {
+                        Log.d("Lasemi", "onRequest: $request")
+                        Log.d("Lasemi", "onResponse: $responses")
+                    }
                     fromJsonToResult<T>(responses, clazz)
                         .map { rpcResult ->
                             rpcResult.error?.let { error ->

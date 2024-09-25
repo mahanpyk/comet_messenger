@@ -5,10 +5,8 @@ import com.solana.models.RPC
 import com.solana.models.TokenResultObjects
 import com.squareup.moshi.Types
 
-fun Api.getTokenAccountBalance(
-    tokenAccount: PublicKey,
-    onComplete: (Result<TokenResultObjects.TokenAmountInfo>) -> Unit
-) {
+fun Api.getTokenAccountBalance(tokenAccount: PublicKey,
+                           onComplete: (Result<TokenResultObjects.TokenAmountInfo>) -> Unit)  {
     val params: MutableList<Any> = ArrayList()
     params.add(tokenAccount.toString())
     val type = Types.newParameterizedType(
@@ -19,7 +17,7 @@ fun Api.getTokenAccountBalance(
         "getTokenAccountBalance",
         params,
         type
-    ) { result ->
+    ){ result ->
         result.map {
             it.value!!
         }.onSuccess {

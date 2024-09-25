@@ -91,16 +91,13 @@ class Message {
         for (accountMeta in keysList) {
             accountKeysBuff.put(accountMeta.publicKey.toByteArray())
             if (accountMeta.isSigner) {
-                messageHeader.numRequiredSignatures =
-                    (messageHeader.numRequiredSignatures.plus(1)).toByte()
+                messageHeader.numRequiredSignatures = (messageHeader.numRequiredSignatures.plus(1)).toByte()
                 if (!accountMeta.isWritable) {
-                    messageHeader.numReadonlySignedAccounts =
-                        (messageHeader.numReadonlySignedAccounts.plus(1)).toByte()
+                    messageHeader.numReadonlySignedAccounts = (messageHeader.numReadonlySignedAccounts.plus(1)).toByte()
                 }
             } else {
                 if (!accountMeta.isWritable) {
-                    messageHeader.numReadonlyUnsignedAccounts =
-                        (messageHeader.numReadonlyUnsignedAccounts.plus(1)).toByte()
+                    messageHeader.numReadonlyUnsignedAccounts= (messageHeader.numReadonlyUnsignedAccounts.plus(1)).toByte()
                 }
             }
         }
@@ -127,7 +124,7 @@ class Message {
             val feePayerMeta = keysList[feePayerIndex]
             newList.add(AccountMeta(feePayerMeta.publicKey, true, true))
             keysList.removeAt(feePayerIndex)
-        } catch (e: RuntimeException) { // Fee payer not yet in list
+        } catch(e: RuntimeException) { // Fee payer not yet in list
             newList.add(AccountMeta(feePayer!!, true, true))
         }
         newList.addAll(keysList)

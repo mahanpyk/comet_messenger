@@ -15,33 +15,29 @@ data class Mint(
     var freezeAuthority: PublicKey?
 ) : BorshCodable
 
-class MintRule(override val clazz: Class<Mint> = Mint::class.java) : BorshRule<Mint> {
+class MintRule(override val clazz: Class<Mint> = Mint::class.java): BorshRule<Mint> {
     override fun read(input: BorshInput): Mint {
         val mintAuthorityOption: Int = input.readU32()
-        var mintAuthority: PublicKey? = try {
-            PublicKeyRule().read(input)
-        } catch (e: Exception) {
-            null
-        }
+        var mintAuthority: PublicKey? = try { PublicKeyRule().read(input) } catch (e : Exception) { null }
         val supply: Long = input.readU64()
         val decimals: Int = input.read().toInt()
         val isInitialized: Boolean = decimals != 1
         val freezeAuthorityOption: Int = input.readU32()
         var freezeAuthority: PublicKey? = try {
-            if (input.readFixedArray(32).contentEquals(ByteArray(32))) {
+            if(input.readFixedArray(32).contentEquals(ByteArray(32))){
                 null
             } else {
                 PublicKeyRule().read(input)
             }
-        } catch (e: Exception) {
+        } catch (e : Exception) {
             null
         }
 
-        if (mintAuthorityOption == 0) {
+        if(mintAuthorityOption == 0){
             mintAuthority = null
         }
 
-        if (freezeAuthorityOption == 0) {
+        if(freezeAuthorityOption == 0){
             freezeAuthority = null
         }
 
@@ -56,7 +52,7 @@ class MintRule(override val clazz: Class<Mint> = Mint::class.java) : BorshRule<M
         )
     }
 
-    override fun <Self> write(obj: Any, output: BorshOutput<Self>): Self {
+    override fun <Self>write(obj: Any, output: BorshOutput<Self>): Self {
         val mint = obj as Mint
         output.writeU32(mint.mintAuthorityOption)
         mint.mintAuthority?.let {

@@ -10,6 +10,7 @@ import com.solana.api.getTransactions
 import com.solana.api.requestAirdrop
 import com.solana.core.Account
 import com.solana.core.PublicKey
+import com.solana.customConfig.CustomContactPda
 import com.solana.customConfig.CustomProgramId
 import com.solana.models.buffer.*
 import com.solana.networking.OkHttpNetworkingRouter
@@ -25,9 +26,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class Config {
+class Config{
     companion object {
-        lateinit var network: String
+       lateinit var network : String
     }
 }
 
@@ -37,7 +38,7 @@ object SolanaHelper {
     private var gson: Gson? = null
     private var gson_dev: Gson? = null
 
-    fun getSolana(): Solana {
+    private fun getSolana(): Solana {
         if (solana == null) {
 
             val httpClient = OkHttpClient.Builder()
@@ -71,7 +72,7 @@ object SolanaHelper {
         str: PublicKey,
         onComplete: OnResponse,
     ) {
-        if (Config.network == "Main") {
+        if (Config.network == "Main"){
             getSolana().api.getAccountInfo(
                 str,
                 AccountInfo::class.java
@@ -114,7 +115,7 @@ object SolanaHelper {
         customPublickey: PublicKey,
         onComplete: OnResponseData<GetSignaturesForAddressModel>,
     ) {
-        if (Config.network == "Main") {
+        if (Config.network == "Main"){
             getSolana().api.getSignaturesForAddress(customPublickey) { result ->
                 if (result.equals("error")) {
                     onComplete.onFailure(RuntimeException("Invalid data"))
@@ -155,7 +156,7 @@ object SolanaHelper {
         transaction: String,
         onComplete: OnResponseData<GetTransactionModel>,
     ) {
-        if (Config.network == "Main") {
+        if (Config.network == "Main"){
             getSolana().api.getTransactions(transaction) { result ->
                 if (result.equals("error")) {
                     onComplete.onFailure(RuntimeException("Invalid data"))
@@ -196,7 +197,7 @@ object SolanaHelper {
         str: PublicKey,
         onComplete: OnResponseData<ContactListModel>,
     ) {
-        if (Config.network == "Main") {
+        if (Config.network == "Main"){
             getSolana().api.getAccountInfo(
                 str,
             ) { result ->
@@ -259,7 +260,7 @@ object SolanaHelper {
         str: PublicKey,
         onComplete: OnResponseData<ConversationModel>,
     ) {
-        if (Config.network == "Main") {
+        if (Config.network == "Main"){
             getSolana().api.getAccountInfo(
                 str,
             ) { result ->
@@ -314,7 +315,7 @@ object SolanaHelper {
         str: PublicKey,
         onComplete: OnResponseData<ProfileModel>,
     ) {
-        if (Config.network == "Main") {
+        if (Config.network == "Main"){
             getSolana().api.getAccountInfo(
                 str,
             ) { result ->
@@ -371,7 +372,6 @@ object SolanaHelper {
                         onComplete.onSuccess(null)
                         return@getAccountInfo
                     }
-
                 }
             }
         }
@@ -383,14 +383,14 @@ object SolanaHelper {
         username: String,
         avatar: String,
         indexProfile: String,
-        onComplete: OnResponse,
+        onComplete: OnResponse
     ) {
         if (key != null && key1 != null) {
             createAccount(key1, key, programId, account, username, avatar, indexProfile, onComplete)
         }
     }
 
-    public fun createAccount(
+    private fun createAccount(
         key1: PublicKey,
         key: PublicKey,
         programId: PublicKey,
@@ -398,9 +398,9 @@ object SolanaHelper {
         username: String,
         avatar: String,
         indexProfile: String,
-        onComplete: OnResponse,
+        onComplete: OnResponse
     ) {
-        if (Config.network == "Main") {
+        if (Config.network == "Main"){
             getSolana().action.createAccountWithSeed(
                 acc,
                 key,
@@ -409,7 +409,7 @@ object SolanaHelper {
                 indexProfile
             ) { result ->
                 result.onSuccess { res ->
-                    if (Config.network == "Main") {
+                    if (Config.network == "Main"){
                         getSolana().action.addContact(acc, key, username, avatar, key1) { result2 ->
                             result2.onSuccess { sss ->
                                 getAccountLoop(key, onComplete, 5)
@@ -420,13 +420,7 @@ object SolanaHelper {
                             }
                         }
                     } else {
-                        getSolana_dev().action.addContact(
-                            acc,
-                            key,
-                            username,
-                            avatar,
-                            key1
-                        ) { result2 ->
+                        getSolana_dev().action.addContact(acc, key, username, avatar, key1) { result2 ->
                             result2.onSuccess { sss ->
                                 getAccountLoop(key, onComplete, 5)
                                 Log.e("TAG", "createAccount: " + sss)
@@ -449,7 +443,7 @@ object SolanaHelper {
                 indexProfile
             ) { result ->
                 result.onSuccess { res ->
-                    if (Config.network == "Main") {
+                    if (Config.network == "Main"){
                         getSolana().action.addContact(acc, key, username, avatar, key1) { result2 ->
                             result2.onSuccess { sss ->
                                 getAccountLoop(key, onComplete, 5)
@@ -461,18 +455,11 @@ object SolanaHelper {
 
                         }
                     } else {
-                        getSolana_dev().action.addContact(
-                            acc,
-                            key,
-                            username,
-                            avatar,
-                            key1
-                        ) { result2 ->
+                        getSolana_dev().action.addContact(acc, key, username, avatar, key1) { result2 ->
                             result2.onSuccess { sss ->
                                 getAccountLoop(key, onComplete, 5)
                                 Log.e("TAG", "createAccount: " + sss)
                             }.onFailure { eee ->
-                                Log.e("erfan", "createAccount: " + eee)
                                 onComplete.onFailure(RuntimeException(eee))
                             }
 
@@ -490,7 +477,7 @@ object SolanaHelper {
         onComplete: OnResponse,
         count: Int,
     ) {
-        if (Config.network == "Main") {
+        if (Config.network == "Main"){
             getSolana().api.getAccountInfo(
                 str,
                 AccountInfo::class.java
@@ -509,7 +496,6 @@ object SolanaHelper {
                             onComplete.onFailure(RuntimeException(error))
                         }
                         Thread.sleep(5000)
-                        val newCount = count - 1
                         onComplete.onSuccess(null)
                     } else
                         onComplete.onFailure(RuntimeException(error))
@@ -534,7 +520,6 @@ object SolanaHelper {
                             onComplete.onFailure(RuntimeException(error))
                         }
                         Thread.sleep(5000)
-                        val newCount = count - 1
                         onComplete.onSuccess(null)
                     } else
                         onComplete.onFailure(RuntimeException(error))
@@ -547,7 +532,7 @@ object SolanaHelper {
         customPublickey: PublicKey,
         onComplete: OnResponseStr,
     ) {
-        if (Config.network == "Main") {
+        if (Config.network == "Main"){
             getSolana().api.getBalance(customPublickey) { result ->
                 result.onSuccess { result1 ->
                     onComplete.onSuccess(result1.toString());
@@ -595,21 +580,21 @@ object SolanaHelper {
         account: Account,
         conversationName: String,
         contacts: List<UserModel>,
-        is_public: Boolean,
+        is_private: Boolean,
         indexProfile: String,
         onComplete: OnResponseStr,
     ) {
-        if (Config.network == "Main") {
+        if (Config.network == "Main"){
             getSolana().action.createConversationAction(
                 accountId,
                 account,
                 conversationName,
                 contacts,
-                is_public,
+                is_private,
 
                 ) { result ->
                 result.onSuccess { res ->
-                    if (Config.network == "Main") {
+                    if (Config.network == "Main"){
                         getSolana().action.addConversation(
                             res.second,
                             account,
@@ -650,11 +635,11 @@ object SolanaHelper {
                 account,
                 conversationName,
                 contacts,
-                is_public,
+                is_private,
 
                 ) { result ->
                 result.onSuccess { res ->
-                    if (Config.network == "Main") {
+                    if (Config.network == "Main"){
                         getSolana().action.addConversation(
                             res.second,
                             account,
@@ -699,7 +684,7 @@ object SolanaHelper {
         onComplete: OnResponseE,
     ) {
         val signer = createAccountWithString(from)
-        if (Config.network == "Main") {
+        if (Config.network == "Main"){
             getSolana().action.sendSOL(signer, to, amount) { result ->
                 result.onSuccess { onComplete.onSuccess() }
                     .onFailure { error -> onComplete.onFailure(RuntimeException(error)) }
@@ -713,13 +698,13 @@ object SolanaHelper {
     }
 
     fun sendMessage(
-        userpublicKey: String,
+        userPrivateKey: String,
         conversationId: PublicKey,
         message: MessageModel,
         onComplete: OnResponseE,
     ) {
-        val accountUser1 = createAccountWithString(userpublicKey)
-        if (Config.network == "Main") {
+        val accountUser1 = createAccountWithString(userPrivateKey)
+        if (Config.network == "Main"){
             getSolana().action.sendMessage(
                 conversationId,
                 accountUser1,
@@ -749,14 +734,14 @@ object SolanaHelper {
     ) {
         val members: MutableList<UserModel> = ArrayList()
         members.add(user)
-        if (Config.network == "Main") {
+        if (Config.network == "Main"){
             getSolana().action.addMember(
                 account,
                 conversationId,
                 user
             ) { result ->
                 result.onSuccess { res ->
-                    if (Config.network == "Main") {
+                    if (Config.network == "Main"){
                         getSolana().action.addConversation(
                             conversationId,
                             account,
@@ -799,7 +784,7 @@ object SolanaHelper {
                 user
             ) { result ->
                 result.onSuccess { res ->
-                    if (Config.network == "Main") {
+                    if (Config.network == "Main"){
                         getSolana().action.addConversation(
                             conversationId,
                             account,
@@ -843,7 +828,7 @@ object SolanaHelper {
         userId: PublicKey,
         onComplete: OnResponseE,
     ) {
-        if (Config.network == "Main") {
+        if (Config.network == "Main"){
             getSolana().action.leftUser(
                 account,
                 conversationId,
@@ -902,7 +887,7 @@ object SolanaHelper {
         payer: PublicKey,
         onComplete: OnResponse,
     ) {
-        if (Config.network == "Main") {
+        if (Config.network == "Main"){
             getSolana().action.createTokenAccount(payer, key) { result ->
                 result.onSuccess { res ->
                     Log.i("TAG", "createAccount: " + res.first)
@@ -931,9 +916,8 @@ object SolanaHelper {
         return account;
     }
 
-    //     A3mnyMyVrNkAfyF8oFii9tmzxkYZ874U3ydm98eHBF8g
-    var account = Account(
-        byteArrayOf(
+//     A3mnyMyVrNkAfyF8oFii9tmzxkYZ874U3ydm98eHBF8g
+    var account = Account(byteArrayOf(
             5,
             35,
             220.toByte(),
@@ -998,8 +982,7 @@ object SolanaHelper {
             242.toByte(),
             170.toByte(),
             255.toByte()
-        )
-    )
+        ))
 
     var programId = PublicKey(CustomProgramId.getProfileProgramId());
 

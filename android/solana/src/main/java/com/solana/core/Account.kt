@@ -30,7 +30,7 @@ class Account {
         keyPair = TweetNaclFast.Signature.keyPair_fromSecretKey(secretKey)
     }
 
-    constructor(secretKey: ByteArray, boolean: Boolean) {
+    constructor(secretKey: ByteArray,boolean: Boolean) {
         keyPair = TweetNaclFast.Signature.keyPair_fromPublicKey(secretKey)
     }
 
@@ -77,27 +77,16 @@ class Account {
             val seed = MnemonicCode.toSeed(words, passphrase)
             val masterPrivateKey = HDKeyDerivation.createMasterPrivateKey(seed)
             val deterministicHierarchy = DeterministicHierarchy(masterPrivateKey)
-            val child =
-                deterministicHierarchy[HDUtils.parsePath(DerivationPath.DEPRECATED_M_501H_0H_0_0.path), true, true]
+            val child = deterministicHierarchy[HDUtils.parsePath(DerivationPath.DEPRECATED_M_501H_0H_0_0.path), true, true]
             val keyPair = TweetNaclFast.Signature.keyPair_fromSeed(child.privKeyBytes)
             return Account(keyPair)
         }
 
-        fun fromMnemonic(
-            words: List<String>,
-            passphrase: String,
-            derivationPath: DerivationPath = DerivationPath.BIP44_M_44H_501H_0H_OH
-        ): Account {
-            return when (derivationPath) {
-                is DerivationPath.DEPRECATED_M_501H_0H_0_0 -> fromDeprecatedMnemonic(
-                    words,
-                    passphrase
-                )
+        fun fromMnemonic(words: List<String>, passphrase: String, derivationPath: DerivationPath = DerivationPath.BIP44_M_44H_501H_0H_OH): Account {
+            return when (derivationPath){
+                is DerivationPath.DEPRECATED_M_501H_0H_0_0 -> fromDeprecatedMnemonic(words, passphrase)
                 is DerivationPath.BIP44_M_44H_501H_0H -> fromBip44Mnemonic(words, passphrase)
-                is DerivationPath.BIP44_M_44H_501H_0H_OH -> fromBip44MnemonicWithChange(
-                    words,
-                    passphrase
-                )
+                is DerivationPath.BIP44_M_44H_501H_0H_OH -> fromBip44MnemonicWithChange(words, passphrase)
             }
         }
 
@@ -114,7 +103,7 @@ class Account {
             return Account(byteArray)
         }
         fun fromPublicKey(byteArray: ByteArray): Account {
-            return Account(byteArray, true)
+            return Account(byteArray,true)
         }
         fun fromSeed(str: String): Account {
             return Account(TweetNaclFast.Signature.keyPair_fromSeed(str.toByteArray()))

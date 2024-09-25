@@ -27,8 +27,7 @@ data class TokenSwapInfo(
     val payer: PublicKey
 ) : BorshCodable
 
-class TokenSwapInfoRule(override val clazz: Class<TokenSwapInfo> = TokenSwapInfo::class.java) :
-    BorshRule<TokenSwapInfo> {
+class TokenSwapInfoRule(override val clazz: Class<TokenSwapInfo> = TokenSwapInfo::class.java): BorshRule<TokenSwapInfo> {
     override fun read(input: BorshInput): TokenSwapInfo {
         val version: Int = input.readU8().toInt()
         val isInitialized: Boolean = input.read().toInt() == 1
@@ -36,7 +35,7 @@ class TokenSwapInfoRule(override val clazz: Class<TokenSwapInfo> = TokenSwapInfo
         val tokenProgramId: PublicKey = PublicKeyRule().read(input)
         val tokenAccountA: PublicKey = PublicKeyRule().read(input)
         val tokenAccountB: PublicKey = PublicKeyRule().read(input)
-        val tokenPool: PublicKey = PublicKeyRule().read(input)
+        val tokenPool: PublicKey =  PublicKeyRule().read(input)
         val mintA: PublicKey = PublicKeyRule().read(input)
         val mintB: PublicKey = PublicKeyRule().read(input)
         val feeAccount: PublicKey = PublicKeyRule().read(input)
@@ -74,10 +73,10 @@ class TokenSwapInfoRule(override val clazz: Class<TokenSwapInfo> = TokenSwapInfo
         )
     }
 
-    override fun <Self> write(obj: Any, output: BorshOutput<Self>): Self {
+    override fun <Self>write(obj: Any, output: BorshOutput<Self>): Self {
         val tokenSwapInfo = obj as TokenSwapInfo
         output.writeU8(tokenSwapInfo.version)
-        if (tokenSwapInfo.isInitialized) {
+        if(tokenSwapInfo.isInitialized){
             output.write(1)
         } else {
             output.write(0)

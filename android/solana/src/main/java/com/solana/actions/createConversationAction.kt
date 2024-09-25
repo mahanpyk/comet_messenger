@@ -24,35 +24,25 @@ fun Action.createConversationAction(
     is_private: Boolean,
     onComplete: ((Result<Pair<String, PublicKey>>) -> Unit),
 ) {
-    api.getMinimumBalanceForRentExemption(6000) {
+    api.getMinimumBalanceForRentExemption(1000) {
         it.onSuccess { balance ->
             val transaction = Transaction()
             val programId = PublicKey(CustomProgramId.getConversationProgramId())
-            val conversationId =
-                PublicKey.createWithSeed(acc.publicKey, conversationName, programId)
+            val conversationId = PublicKey.createWithSeed(acc.publicKey, conversationName, programId)
             val createAccountInstruction = SystemProgram.createAccountWithSeed(
                 fromPublicKey = acc.publicKey,
                 basePublicKey = acc.publicKey,
                 seed = conversationName,
                 newAccountPublickey = conversationId,
                 lamports = balance,
-                space = 2000,
+                space = 1000,
                 programId = programId
             )
             transaction.addInstruction(createAccountInstruction)
             val df: DateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
             df.timeZone = TimeZone.getTimeZone("GMT+4:30")
             val nowAsISO: String = df.format(Date())
-            val conversation = Borsh.serialize(
-                ConversationModel(
-                    conversationName,
-                    nowAsISO,
-                    ArrayList(),
-                    members,
-                    members.get(0),
-                    is_private
-                )
-            )
+            val conversation = Borsh.serialize(ConversationModel(conversationName, nowAsISO, ArrayList(), members, members.get(0),is_private))
             val finalData = ByteArray(1 + conversation.size)
             System.arraycopy(conversation, 0, finalData, 1, conversation.size)
             val initializeAccountInstruction = TokenProgram.initializeAccountWithSeed(

@@ -15,19 +15,12 @@ fun Action.addConversation(
     acc: Account,
     conversationName: String,
     members: List<UserModel>,
-    indexProfile: String,
+    indexProfile : String,
     onComplete: ((Result<Pair<String, PublicKey>>) -> Unit),
 ) {
     val transaction = Transaction()
     val programId = PublicKey(CustomProgramId.getProfileProgramId())
-    val conversationItemModel = Borsh.serialize(
-        ConversationItemModel(
-            conversationId.toBase58(),
-            conversationName,
-            indexProfile,
-            false
-        )
-    )
+    val conversationItemModel =Borsh.serialize(ConversationItemModel(conversationId.toBase58(), conversationName, indexProfile, false))
     val keys: MutableList<AccountMeta> = java.util.ArrayList()
     for (member in members) {
         keys.add(AccountMeta(PublicKey(member.user_address), false, true))

@@ -182,22 +182,4 @@ public class MessageModel implements Borsh {
     public void setSender_address(String sender_address) {
         this.sender_address = sender_address;
     }
-
-    @Override
-    public String toString() {
-        return "MessageModel{" +
-                "message_id='" + message_id + '\'' +
-                ", text='" + text + '\'' +
-                ", time='" + time + '\'' +
-                ", seen_by=" + seen_by +
-                ", sender_address='" + sender_address + '\'' +
-                ", status='" + status + '\'' +
-                ", state='" + state + '\'' +
-                ", message_type='" + message_type + '\'' +
-                ", image='" + image + '\'' +
-                ", checkUploadIpfs='" + checkUploadIpfs + '\'' +
-                ", name='" + name + '\'' +
-                ", size='" + size + '\'' +
-                '}';
-    }
 }

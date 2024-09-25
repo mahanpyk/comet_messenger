@@ -1,6 +1,5 @@
 package com.solana.programs
 
-import android.util.Log
 import com.solana.core.AccountMeta
 import com.solana.core.PublicKey
 import com.solana.core.TransactionInstruction
@@ -106,132 +105,42 @@ object TokenProgram : Program() {
         avatar: String,
     ): TransactionInstruction {
         val keys: MutableList<AccountMeta> = ArrayList()
-        keys.add(
-            AccountMeta(
-                PublicKey(CustomContactPda.getContactPda()),
-                false,
-                true
-            )
-        )
+        keys.add(AccountMeta(PublicKey(CustomContactPda.getContactPda()),
+            false,
+            true))
         var testusername = "a"
         var testlastname = "b"
         var basePubKey = accountId
-        val data =
-            ByteArray(
-                5 + username.toByteArray().size +
-                        testlastname.toByteArray().size + 4 +
-                        accountId.toBase58().toByteArray().size + 4 +
-                        accountId1.toBase58().toByteArray().size + 4 +
-                        avatar.toByteArray().size + 4
-            )
+         val data =
+             ByteArray(5 + username.toByteArray().size +
+                     testlastname.toByteArray().size + 4 +
+                     accountId.toBase58().toByteArray().size + 4 +
+                     accountId1.toBase58().toByteArray().size + 4 +
+                     avatar.toByteArray().size + 4
+             )
         //Username
-        Utils.uint32ToByteArrayLE(username.length.toLong(), data, 1)
-        System.arraycopy(username.toByteArray(), 0, data, 4 + 1, username.toByteArray().size)
+         Utils.uint32ToByteArrayLE(username.length.toLong(), data, 1)
+         System.arraycopy(username.toByteArray(), 0, data, 4 + 1, username.toByteArray().size)
 
         //LastName
-        Utils.uint32ToByteArrayLE(
-            testlastname.length.toLong(),
-            data,
-            username.toByteArray().size + 4 + 1
-        )
-        System.arraycopy(
-            testlastname.toByteArray(),
-            0,
-            data,
-            username.toByteArray().size + 4 + 1 + 4,
-            testlastname.toByteArray().size
-        )
+        Utils.uint32ToByteArrayLE(testlastname.length.toLong(), data, username.toByteArray().size + 4 + 1)
+         System.arraycopy(testlastname.toByteArray(), 0, data, username.toByteArray().size + 4 + 1 + 4, testlastname.toByteArray().size)
 
         //publickey
-        data[username.toByteArray().size + 4 + 1 +
+        data[ username.toByteArray().size + 4 + 1 +
                 testlastname.toByteArray().size + 4
         ] = 44
-        System.arraycopy(
-            accountId.toBase58().toByteArray(),
+        System.arraycopy(accountId.toBase58().toByteArray(),
             0,
             data,
             username.toByteArray().size + 4 + 1 + testlastname.toByteArray().size + 8,
-            accountId.toBase58().toByteArray().size
-        )
+            accountId.toBase58().toByteArray().size)
 
         //basePubKey
-        data[username.toByteArray().size + 4 + 1 + testlastname.toByteArray().size + 8 +
-                accountId1.toBase58().toByteArray().size
-        ] = 44
-        System.arraycopy(
-            accountId1.toBase58().toByteArray(),
-            0,
-            data,
-            username.toByteArray().size + 4 + 1 + testlastname.toByteArray().size + 4 +
-                    accountId.toBase58().toByteArray().size + 8,
-            accountId1.toBase58().toByteArray().size
-        )
-        Utils.uint32ToByteArrayLE(
-            avatar.length.toLong(), data, 1 + 4 + username.toByteArray().size +
-                    testlastname.toByteArray().size + 4 + 44 + 4 + 44 + 4
-        )
-        System.arraycopy(
-            avatar.toByteArray(),
-            0,
-            data,
-            1 + 1 + 4 + username.toByteArray().size +
-                    testlastname.toByteArray().size + 4 + 44 + 4 + 44 + 4 + 3,
-            avatar.toByteArray().size
-        )
-
-//        val lastname = "sadegi";
-//        val basePubKey =
-//            PublicKey("Dbi48YnC7cALbigBW5xHfHdcF99TFMibYbdGYRXorJJe");
-//        val data =
-//            ByteArray(
-//                5 + username.toByteArray().size + 4 + accountId.toBase58()
-//                    .toByteArray().size + 4 + lastname.toByteArray().size + 4 + basePubKey.toBase58()
-//                    .toByteArray().size
-//            )
-
-//        Utils.uint32ToByteArrayLE(username.length.toLong(), data, 1)
-//
-//        var si = 5
-//
-//        System.arraycopy(username.toByteArray(), 0, data, si, username.toByteArray().size)
-//
-//        si += username.toByteArray().size;
-//        si++
-//        data[si] = 44;
-//
-//        si += 3;
-//        System.arraycopy(lastname.toByteArray(), 0, data, si, lastname.toByteArray().size)
-//
-//        si += lastname.toByteArray().size;
-//
-//
-//        si++;
-//        data[si] = 44
-//        si += 3
-
-//        System.arraycopy(
-//            accountId.toBase58().toByteArray(),
-//            0,
-//            data,
-//            si,
-//            accountId.toBase58().toByteArray().size
-//        )
-//
-//        si += accountId.toBase58().toByteArray().size;
-//
-//        si++
-//        data[si] = 44
-//        si += 3
-//
-//        System.arraycopy(
-//            basePubKey.toBase58().toByteArray(),
-//            0,
-//            data,
-//            si,
-//            basePubKey.toBase58().toByteArray().size
-//        )
-//        si += basePubKey.toBase58().toByteArray().size;
-
+         data[username.toByteArray().size + 4 + 1 + testlastname.toByteArray().size + 8 + accountId1.toBase58().toByteArray().size] = 44
+         System.arraycopy(accountId1.toBase58().toByteArray(), 0, data, username.toByteArray().size + 4 + 1 + testlastname.toByteArray().size + 4 + accountId.toBase58().toByteArray().size + 8, accountId1.toBase58().toByteArray().size)
+         Utils.uint32ToByteArrayLE(avatar.length.toLong(), data, 1 + 4 +username.toByteArray().size + testlastname.toByteArray().size + 4 + 44 + 4 + 44 + 4)
+         System.arraycopy(avatar.toByteArray(), 0, data, 1 + 1 + 4 +username.toByteArray().size + testlastname.toByteArray().size + 4 + 44 + 4 + 44 + 4 + 3, avatar.toByteArray().size)
 
         return createTransactionInstruction(
             programId,
@@ -252,27 +161,18 @@ object TokenProgram : Program() {
         df.setTimeZone(TimeZone.getTimeZone("GMT+4:30"))
         val nowAsISO: String = df.format(Date())
         val index = indexProfile
-        val data =
-            ByteArray(5 + username.toByteArray().size + nowAsISO.toByteArray().size + 4 + 4 + index.toByteArray().size + 4)
+        val data = ByteArray(5 + username.toByteArray().size + nowAsISO.toByteArray().size + 4 + 4 + index.toByteArray().size + 4)
         Utils.uint32ToByteArrayLE(username.length.toLong(), data, 1)
         System.arraycopy(username.toByteArray(), 0, data, 4 + 1, username.toByteArray().size)
         data[username.toByteArray().size + 4 + 1] = 24
-        System.arraycopy(
-            nowAsISO.toByteArray(),
+        System.arraycopy(nowAsISO.toByteArray(),
             0,
             data,
             username.toByteArray().size + 8 + 1,
-            nowAsISO.toByteArray().size
-        )
-        Utils.uint32ToByteArrayLE(
-            index.length.toLong(),
-            data,
-            username.toByteArray().size + nowAsISO.toByteArray().size + 8 + 1
-        )
-        System.arraycopy(
-            index.toByteArray(), 0, data,
-            username.toByteArray().size + nowAsISO.toByteArray().size + 13, index.toByteArray().size
-        )
+            nowAsISO.toByteArray().size)
+        Utils.uint32ToByteArrayLE(index.length.toLong(), data, username.toByteArray().size + nowAsISO.toByteArray().size + 8 + 1)
+        System.arraycopy(index.toByteArray(), 0, data,
+            username.toByteArray().size + nowAsISO.toByteArray().size + 13, index.toByteArray().size)
 
         return createTransactionInstruction(
             programId,

@@ -12,14 +12,14 @@ android {
     compileSdk 34
 
     defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 30
+        minSdkVersion 19
+        targetSdk 34
         consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             multiDexEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -43,13 +43,13 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-reflect:1.9.0"
     implementation 'com.google.code.gson:gson:2.10'
 
-    implementation("org.sol4k:sol4k:0.4.0")
+    implementation ("org.sol4k:sol4k:0.4.0")
 }
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifact("$buildDir/outputs/aar/solana-release.aar") {
+            artifact("$buildDir/outputs/aar/solana-release.aar")  {
                 builtBy tasks.getByName("assemble")
             }
             artifactId 'solana'

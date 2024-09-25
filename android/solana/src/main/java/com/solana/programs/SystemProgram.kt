@@ -63,10 +63,10 @@ object SystemProgram : Program() {
         Utils.uint32ToByteArrayLE(CreateWithSeed.toLong(), data, 0)
         System.arraycopy(basePublicKey.toByteArray(), 0, data, 4, 32)
         System.arraycopy(Borsh.serialize(DataLengthModel(seed.length)), 0, data, 36, 4)
-        System.arraycopy(seed.toByteArray(), 0, data, 36 + 8, seed.toByteArray().size)
-        Utils.int64ToByteArrayLE(lamports, data, seed.toByteArray().size + 36 + 8)
-        Utils.int64ToByteArrayLE(space, data, seed.toByteArray().size + 44 + 8)
-        System.arraycopy(programId.toByteArray(), 0, data, seed.toByteArray().size + 52 + 8, 32)
+        System.arraycopy(seed.toByteArray(), 0, data, 36+8, seed.toByteArray().size)
+        Utils.int64ToByteArrayLE(lamports, data, seed.toByteArray().size + 36+8)
+        Utils.int64ToByteArrayLE(space, data, seed.toByteArray().size + 44+8)
+        System.arraycopy(programId.toByteArray(), 0, data, seed.toByteArray().size + 52+8, 32)
 
         return createTransactionInstruction(PROGRAM_ID, keys, data)
     }

@@ -11,20 +11,20 @@ data class ConfirmedTransaction(
     val transaction: Transaction?,
 ) {
     @JsonClass(generateAdapter = true)
-    data class Header(
+    data class Header (
         val numReadonlySignedAccounts: Long,
         val numReadonlyUnsignedAccounts: Long,
         val numRequiredSignatures: Long
     )
 
     @JsonClass(generateAdapter = true)
-    data class Instruction(
+    data class Instruction (
         val accounts: List<Long>?,
         val data: String?,
         val programIdIndex: Long
     )
     @JsonClass(generateAdapter = true)
-    data class Message(
+    data class Message (
         val accountKeys: List<String>,
         val header: Header,
         val instructions: List<Instruction>,
@@ -32,19 +32,19 @@ data class ConfirmedTransaction(
     )
 
     @JsonClass(generateAdapter = true)
-    data class Status(
+    data class Status (
         val ok: Any?
     )
 
     @JsonClass(generateAdapter = true)
-    data class TokenBalance(
+    data class TokenBalance (
         val accountIndex: Double,
         val mint: String,
         val uiTokenAmount: TokenAmountInfo
     )
 
     @JsonClass(generateAdapter = true)
-    data class Meta(
+    data class Meta (
         val err: Any?,
         val fee: Long,
         val innerInstructions: List<Any>,
@@ -56,7 +56,7 @@ data class ConfirmedTransaction(
     )
 
     @JsonClass(generateAdapter = true)
-    data class Transaction(
+    data class Transaction (
         val message: ConfirmedTransaction.Message,
         val signatures: List<String>,
     )

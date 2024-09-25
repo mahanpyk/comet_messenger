@@ -49,7 +49,7 @@ interface NetworkingRouter {
         onComplete: (Result<T>) -> Unit
     )
 
-    fun request(
+    fun  request(
         method: String,
         params: List<Any>?,
         onComplete: (String) -> Unit
@@ -96,8 +96,6 @@ class OkHttpNetworkingRouter(
     override fun <T> request(
         method: String,
         params: List<Any>?,
-        /// AXq855P5vnnZisCL7hicVkGEc/SGzvQo280d1PKhgkcQwqHEEX3oFOdeEP9DxXqc7QfqE78xeIKHcMIu+QTbawABAAIE2VtbMeIP9et9F5L7j3zgxG5wwpq50kBvsZNfV8OHr7bWvs/E8Zoj+1HqDm8BfE4fre+Xog3282ZuI1CAVrU+QXlEj7g9skin5ZAkfeYTn8JCqr9sCTMIr3RLt8KSvth7AwZGb+UhFzL/7K26csOb57yM5bvF9xJrLEObOkAAAACZ3IOJZ5vcnT2Rpmo9e7aD/bfBZKqVhASyylbDkjcXdwMDAAUCwFwVAAMACQMBAAAAAAAAAAIBAaUBAiQAAAAxMThkYzE2ZS1hYjljLTRmNTQtYjNkYi01OTI4ZmJhMzA5MmUgAAAAMzRlODI0NTYxYzYwYTI3OWVmMzNhODc3MmQ1MGRkNDIYAAAAMjAyNC0wNy0yOFQyMzoxMDozMS4wMDBaAAAAACwAAABHQVdZRjdUem9xM3VFNFhLdGJDdjNiZEtiYW5rczc1cHdOM0RFNlIxQUM1UwQAAAB0ZXh0
-        ///
         clazz: Type?,
         onComplete: (Result<T>) -> Unit
     ) {
@@ -105,13 +103,10 @@ class OkHttpNetworkingRouter(
         val rpcRequest = RpcRequest(method, params)
         val rpcRequestJsonAdapter: JsonAdapter<RpcRequest> = moshi.adapter(RpcRequest::class.java)
         val jsonParams = rpcRequestJsonAdapter.toJson(rpcRequest)
-//        if (method.equals("sendTransaction")){
-//            Log.d("Lasemi", "request: $jsonParams")
-//        } else {
-        val request: Request = Request.Builder().url(url)
-            .post(RequestBody.create(JSON, jsonParams)).build()
-        call(request, clazz, onComplete, method)
-//        }
+        Log.d("Mahan","jsonParams => $jsonParams method => $method url => $url params => $params")
+            val request: Request = Request.Builder().url(url)
+                .post(RequestBody.create(JSON, jsonParams)).build()
+            call(request, clazz, onComplete, method)
     }
 
     override fun request(
@@ -119,10 +114,8 @@ class OkHttpNetworkingRouter(
         params: List<Any>?,
         onComplete: (String) -> Unit
     ) {
-        if (method.equals("getTime")) {
-            val request: Request =
-                Request.Builder().url("http://worldtimeapi.org/api/timezone/Asia/Tehran").get()
-                    .build()
+        if (method.equals("getTime")){
+            val request: Request = Request.Builder().url("http://worldtimeapi.org/api/timezone/Asia/Tehran") .get().build()
             call(request, onComplete)
             return
         }
@@ -147,10 +140,10 @@ class OkHttpNetworkingRouter(
 
             override fun onResponse(call: Call, response: Response) {
                 response.body?.let { body ->
-                    if (response.isSuccessful) {
+                    if (response.isSuccessful){
                         val responses = body.string()
                         onComplete(responses)
-                    } else {
+                    }else{
                         onComplete("error")
                     }
                 } ?: run {
@@ -174,10 +167,7 @@ class OkHttpNetworkingRouter(
             override fun onResponse(call: Call, response: Response) {
                 response.body?.let { body ->
                     val responses = body.string()
-                    if (method.equals("sendTransaction")) {
-                        Log.d("Lasemi", "onRequest: $request")
-                        Log.d("Lasemi", "onResponse: $responses")
-                    }
+                    if (method.equals("sendTransaction")) Log.d("Lasemi", "onResponse: $responses")
                     fromJsonToResult<T>(responses, clazz)
                         .map { rpcResult ->
                             rpcResult.error?.let { error ->

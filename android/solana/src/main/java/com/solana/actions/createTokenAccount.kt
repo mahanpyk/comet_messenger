@@ -13,7 +13,7 @@ fun Action.createTokenAccount(
     mintAddress: PublicKey,
     onComplete: ((Result<Pair<String, PublicKey>>) -> Unit)
 ) {
-    api.getMinimumBalanceForRentExemption(1000) {
+    api.getMinimumBalanceForRentExemption(1000){
         it.onSuccess { balance ->
             val transaction = Transaction()
             val newAccount = Account()
@@ -31,7 +31,7 @@ fun Action.createTokenAccount(
                 owner = pk
             )
             transaction.addInstruction(initializeAccountInstruction)
-            this.serializeAndSendWithFee(transaction, listOf(newAccount), null) { result ->
+            this.serializeAndSendWithFee(transaction, listOf(newAccount), null){ result ->
                 result.onSuccess { transactionId ->
                     onComplete(Result.success(Pair(transactionId, newAccount.publicKey)))
                 }.onFailure { error ->

@@ -9,13 +9,9 @@ fun Api.getRecentBlockhash(onComplete: ((Result<String>) -> Unit)) {
     val parameterMap: MutableMap<String, Any?> = HashMap()
     parameterMap["commitment"] = "finalized"
     params.add(parameterMap)
-    return router.request<RecentBlockhash>(
-        "getRecentBlockhash",
-        params,
-        RecentBlockhash::class.java
-    ) { result ->
+//    return router.request<RecentBlockhash>("getRecentBlockhash", params, RecentBlockhash::class.java){ result ->
+    return router.request<RecentBlockhash>("getLatestBlockhash", params, RecentBlockhash::class.java){ result ->
         result.onSuccess { recentBlockHash ->
-            Log.d("Lasemi", "getRecentBlockhash--------------: ${recentBlockHash}")
             Log.d("Lasemi", "getRecentBlockhash--------------: ${recentBlockHash.value.blockhash}")
             onComplete(Result.success(recentBlockHash.value.blockhash))
             return@request

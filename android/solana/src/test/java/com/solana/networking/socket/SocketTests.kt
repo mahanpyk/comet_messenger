@@ -27,7 +27,7 @@ import org.junit.Test
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
-class MockSolanaLiveEventsDelegate : SolanaSocketEventsDelegate {
+class MockSolanaLiveEventsDelegate: SolanaSocketEventsDelegate {
     var onConected: (() -> Unit)? = null
     var onDisconnected: (() -> Unit)? = null
     var onAccountNotification: ((RpcResponse<BufferInfo<AccountInfo>>) -> Unit)? = null
@@ -113,8 +113,7 @@ class SocketTests {
         var expected_id: String?
         delegate.onConected = {
             latch.countDown()
-            expected_id =
-                socket.accountSubscribe("9B5XszUGdMaxCZ7uSQhPzdks5ZQSmWxrmzCSvtJ6Ns6g").getOrThrow()
+            expected_id = socket.accountSubscribe("9B5XszUGdMaxCZ7uSQhPzdks5ZQSmWxrmzCSvtJ6Ns6g").getOrThrow()
         }
         delegate.onSubscribed = { socketId: Int, id: String ->
             latch.countDown()
@@ -132,8 +131,7 @@ class SocketTests {
         var expected_id: String?
         delegate.onConected = {
             latch.countDown()
-            expected_id =
-                socket.accountSubscribe("9B5XszUGdMaxCZ7uSQhPzdks5ZQSmWxrmzCSvtJ6Ns6g").getOrThrow()
+            expected_id = socket.accountSubscribe("9B5XszUGdMaxCZ7uSQhPzdks5ZQSmWxrmzCSvtJ6Ns6g").getOrThrow()
         }
         delegate.onSubscribed = { socketId: Int, id: String ->
             latch.countDown()
@@ -156,8 +154,7 @@ class SocketTests {
         var expected_id: String? = null
         delegate.onConected = {
             latch.countDown()
-            expected_id =
-                socket.accountSubscribe("9B5XszUGdMaxCZ7uSQhPzdks5ZQSmWxrmzCSvtJ6Ns6g").getOrThrow()
+            expected_id = socket.accountSubscribe("9B5XszUGdMaxCZ7uSQhPzdks5ZQSmWxrmzCSvtJ6Ns6g").getOrThrow()
         }
 
         delegate.onSubscribed = { socketId: Int, id: String ->
@@ -180,9 +177,7 @@ class SocketTests {
         var expected_id: String?
         delegate.onConected = {
             latch.countDown()
-            expected_id =
-                socket.logsSubscribe(listOf("9B5XszUGdMaxCZ7uSQhPzdks5ZQSmWxrmzCSvtJ6Ns6g"))
-                    .getOrThrow()
+            expected_id = socket.logsSubscribe(listOf("9B5XszUGdMaxCZ7uSQhPzdks5ZQSmWxrmzCSvtJ6Ns6g")).getOrThrow()
         }
         delegate.onSubscribed = { socketId: Int, id: String ->
             latch.countDown()
@@ -200,9 +195,7 @@ class SocketTests {
         var expected_id: String?
         delegate.onConected = {
             latch.countDown()
-            expected_id =
-                socket.logsSubscribe(listOf("9B5XszUGdMaxCZ7uSQhPzdks5ZQSmWxrmzCSvtJ6Ns6g"))
-                    .getOrThrow()
+            expected_id = socket.logsSubscribe(listOf("9B5XszUGdMaxCZ7uSQhPzdks5ZQSmWxrmzCSvtJ6Ns6g")).getOrThrow()
         }
         delegate.onSubscribed = { socketId: Int, id: String ->
             latch.countDown()
@@ -225,9 +218,7 @@ class SocketTests {
         var expected_id: String? = null
         delegate.onConected = {
             latch.countDown()
-            expected_id =
-                socket.logsSubscribe(listOf("9B5XszUGdMaxCZ7uSQhPzdks5ZQSmWxrmzCSvtJ6Ns6g"))
-                    .getOrThrow()
+            expected_id = socket.logsSubscribe(listOf("9B5XszUGdMaxCZ7uSQhPzdks5ZQSmWxrmzCSvtJ6Ns6g")).getOrThrow()
         }
 
         delegate.onSubscribed = { socketId: Int, id: String ->
@@ -250,8 +241,7 @@ class SocketTests {
         var expected_id: String?
         delegate.onConected = {
             latch.countDown()
-            expected_id =
-                socket.programSubscribe("9B5XszUGdMaxCZ7uSQhPzdks5ZQSmWxrmzCSvtJ6Ns6g").getOrThrow()
+            expected_id = socket.programSubscribe("9B5XszUGdMaxCZ7uSQhPzdks5ZQSmWxrmzCSvtJ6Ns6g").getOrThrow()
         }
         delegate.onSubscribed = { socketId: Int, id: String ->
             latch.countDown()
@@ -269,8 +259,7 @@ class SocketTests {
         var expected_id: String?
         delegate.onConected = {
             latch.countDown()
-            expected_id =
-                socket.programSubscribe("9B5XszUGdMaxCZ7uSQhPzdks5ZQSmWxrmzCSvtJ6Ns6g").getOrThrow()
+            expected_id = socket.programSubscribe("9B5XszUGdMaxCZ7uSQhPzdks5ZQSmWxrmzCSvtJ6Ns6g").getOrThrow()
         }
         delegate.onSubscribed = { socketId: Int, id: String ->
             latch.countDown()
@@ -293,8 +282,7 @@ class SocketTests {
         var expected_id: String? = null
         delegate.onConected = {
             latch.countDown()
-            expected_id =
-                socket.programSubscribe("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA").getOrThrow()
+            expected_id = socket.programSubscribe("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA").getOrThrow()
         }
 
         delegate.onSubscribed = { socketId: Int, id: String ->
@@ -317,9 +305,7 @@ class SocketTests {
         var expected_id: String?
         delegate.onConected = {
             latch.countDown()
-            expected_id =
-                socket.signatureSubscribe("Nfq1kEFqe5dBbTnprNZZVfnzvYJAKpUoibhYFBbaBXp37L7bAip89Qbs6mtiybQprY2GucMTgkxWPx81dNWh2Mh")
-                    .getOrThrow()
+            expected_id = socket.signatureSubscribe("Nfq1kEFqe5dBbTnprNZZVfnzvYJAKpUoibhYFBbaBXp37L7bAip89Qbs6mtiybQprY2GucMTgkxWPx81dNWh2Mh").getOrThrow()
         }
         delegate.onSubscribed = { socketId: Int, id: String ->
             latch.countDown()
@@ -337,9 +323,7 @@ class SocketTests {
         var expected_id: String?
         delegate.onConected = {
             latch.countDown()
-            expected_id =
-                socket.signatureSubscribe("Nfq1kEFqe5dBbTnprNZZVfnzvYJAKpUoibhYFBbaBXp37L7bAip89Qbs6mtiybQprY2GucMTgkxWPx81dNWh2Mh")
-                    .getOrThrow()
+            expected_id = socket.signatureSubscribe("Nfq1kEFqe5dBbTnprNZZVfnzvYJAKpUoibhYFBbaBXp37L7bAip89Qbs6mtiybQprY2GucMTgkxWPx81dNWh2Mh").getOrThrow()
         }
         delegate.onSubscribed = { socketId: Int, id: String ->
             latch.countDown()
@@ -403,16 +387,15 @@ class SocketTests {
              }
         """.trimIndent()
 
-        val unSubscriptionAdapter: JsonAdapter<RpcResponse<BufferInfo<AccountInfo>>> =
-            moshi.adapter(
+        val unSubscriptionAdapter: JsonAdapter<RpcResponse<BufferInfo<AccountInfo>>> = moshi.adapter(
+            Types.newParameterizedType(
+                RpcResponse::class.java,
                 Types.newParameterizedType(
-                    RpcResponse::class.java,
-                    Types.newParameterizedType(
-                        BufferInfo::class.java,
-                        AccountInfo::class.java
-                    )
+                    BufferInfo::class.java,
+                    AccountInfo::class.java
                 )
             )
+        )
         val result = unSubscriptionAdapter.fromJson(string)!!
         Assert.assertEquals(result.params?.result?.value?.lamports, 41083620L)
     }
@@ -446,16 +429,15 @@ class SocketTests {
                }
             }
         """.trimIndent()
-        val unSubscriptionAdapter: JsonAdapter<RpcResponse<ProgramAccount<AccountInfo>>> =
-            moshi.adapter(
+        val unSubscriptionAdapter: JsonAdapter<RpcResponse<ProgramAccount<AccountInfo>>> = moshi.adapter(
+            Types.newParameterizedType(
+                RpcResponse::class.java,
                 Types.newParameterizedType(
-                    RpcResponse::class.java,
-                    Types.newParameterizedType(
-                        ProgramAccount::class.java,
-                        AccountInfo::class.java
-                    )
+                    ProgramAccount::class.java,
+                    AccountInfo::class.java
                 )
             )
+        )
         val result = unSubscriptionAdapter.fromJson(string)!!
         Assert.assertEquals(result.params?.subscription, 24040)
     }
@@ -501,16 +483,15 @@ class SocketTests {
            }
         }
         """.trimIndent()
-        val unSubscriptionAdapter: JsonAdapter<RpcResponse<BufferInfoJson<TokenAccountNotificationData>>> =
-            moshi.adapter(
+        val unSubscriptionAdapter: JsonAdapter<RpcResponse<BufferInfoJson<TokenAccountNotificationData>>> = moshi.adapter(
+            Types.newParameterizedType(
+                RpcResponse::class.java,
                 Types.newParameterizedType(
-                    RpcResponse::class.java,
-                    Types.newParameterizedType(
-                        BufferInfoJson::class.java,
-                        TokenAccountNotificationData::class.java
-                    )
+                    BufferInfoJson::class.java,
+                    TokenAccountNotificationData::class.java
                 )
             )
+        )
         val result = unSubscriptionAdapter.fromJson(string)!!
         Assert.assertEquals(result.params?.subscription, 42765)
     }

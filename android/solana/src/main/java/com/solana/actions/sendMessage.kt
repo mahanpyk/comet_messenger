@@ -30,8 +30,7 @@ fun Action.sendMessage(
             date.time = JSONObject(it).getLong("unixtime") * 1000;
             val nowAsISO = df.format(date)
             message.time = nowAsISO;
-        } catch (e: JSONException) {
-        }
+        } catch (e: JSONException) { }
 
         val transaction = Transaction()
         val programId = PublicKey(CustomProgramId.getConversationProgramId());
@@ -50,8 +49,6 @@ fun Action.sendMessage(
         transaction.addInstruction(modifyComputeUnits)
         transaction.addInstruction(addPriorityFee)
         transaction.addInstruction(initializeAccountInstruction)
-        println(message.toString())
-        println(transaction.toString())
         this.serializeAndSendWithFee(transaction, listOf(acc), null) { result ->
             result.onSuccess { transactionId ->
                 onComplete(Result.success(Pair(transactionId, conversationId)))

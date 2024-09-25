@@ -81,8 +81,8 @@ class MainActivity : FlutterActivity() {
                     val publicKey: String = call.argument("publicKey") ?: ""
                     val time: String = call.argument("time") ?: ""
 
-                    Config.network = "Main"
-//                    Config.network = "dev"
+//                    Config.network = "Main"
+                    Config.network = "dev"
                     val accountUser1 = SolanaHelper.createAccountWithString(privateKey)
 
 //                    val id = createWithSeed(
@@ -127,23 +127,25 @@ class MainActivity : FlutterActivity() {
 
                 "createAccount" -> {
                     val avatar: String = call.argument("avatar") ?: ""
-                    val username: String = call.argument("username") ?: ""
+                    val username: String = call.argument("userName") ?: ""
 
-                    Config.network = "Main"
-//                    Config.network = "dev"
+//                    Config.network = "Main"
+                    Config.network = "dev"
                     val mnemonic =
                         Mnemonics.MnemonicCode(WordCount.COUNT_12, Locale.ENGLISH.language)
                     val keypair = Keypair.fromSecretKey(mnemonic.toSeed())
                     val publicKeyFromUserName: PublicKey =
                         SolanaHelper.createWithSeed(username)
                     val userPublicKey = PublicKey(keypair.publicKey.toBase58())
-
                     val onComplete = object : SolanaHelper.OnResponse {
                         override fun onSuccess(accountInfo: AccountInfo?) {
                             // Implement the success logic here
                             val publicKey = keypair.publicKey.toBase58()
                             val privateKey = Base58.encode(keypair.secret)
-                            result.success("$mnemonic*********$publicKey*********$privateKey*********$publicKeyFromUserName")
+                            val charArray :List<CharArray>  = mnemonic.words
+                            val stringWordsList: List<String> = charArray.map { it.concatToString() }
+                            val words = stringWordsList.joinToString(separator = " ")
+                            result.success("${words}*********$publicKey*********$privateKey*********$publicKeyFromUserName")
                             return
                         }
 
@@ -176,8 +178,8 @@ class MainActivity : FlutterActivity() {
                     val contactUsername: String = call.argument("contactUsername") ?: ""
                     val indexAvatar: String = call.argument("indexAvatar") ?: ""
 
-                    Config.network = "Main"
-//                    Config.network = "dev"
+//                    Config.network = "Main"
+                    Config.network = "dev"
                     val tokenCipherUserOne: String
                     val tokenCipherUserTwo: String
                     val main32ByteKey = EncryptdecryptJavaHelper.generate32ByteKey()

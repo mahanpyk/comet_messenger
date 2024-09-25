@@ -6,11 +6,7 @@ import com.solana.models.TokenAccountInfo
 import com.solana.models.TokenResultObjects
 import com.squareup.moshi.Types
 
-fun Api.getTokenAccountsByOwner(
-    owner: PublicKey,
-    tokenMint: PublicKey,
-    onComplete: (Result<PublicKey>) -> Unit
-) {
+fun Api.getTokenAccountsByOwner(owner: PublicKey, tokenMint: PublicKey, onComplete: (Result<PublicKey>) -> Unit) {
     val params: MutableList<Any> = ArrayList()
     params.add(owner.toBase58())
     val parameterMap: MutableMap<String, Any> = HashMap()
@@ -33,7 +29,7 @@ fun Api.getTokenAccountsByOwner(
         )
     )
 
-    router.request<RPC<List<Map<String, Any>>>>(
+    router.request<RPC<List<Map<String,Any>>>>(
         "getTokenAccountsByOwner", params,
         type
     ) { result ->

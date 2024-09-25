@@ -29,9 +29,7 @@ class Transaction {
 
     fun sign2(signers: List<Account>) {
         require(signers.size != 0) { "No signers" }
-        message.feePayer ?: let {
-            message.feePayer = PublicKey("ExA2JMUhRBsnoPViTFqzsmZr4gEL8at3vcsJqeKgwSEi")
-        }
+        message.feePayer ?: let { message.feePayer = PublicKey("ExA2JMUhRBsnoPViTFqzsmZr4gEL8at3vcsJqeKgwSEi") }
         serializedMessage = message.serialize()
         val signatureProvider = TweetNaclFast.Signature(ByteArray(0), signers[0].secretKey)
         val signature = signatureProvider.detached(serializedMessage)

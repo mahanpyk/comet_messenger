@@ -17,8 +17,8 @@ fun Action.leftUser(
     val transaction = Transaction()
     val programId = PublicKey(CustomProgramId.getConversationProgramId());
     val keys: MutableList<AccountMeta> = java.util.ArrayList()
-    keys.add(AccountMeta(conversationId, false, true))
-    keys.add(AccountMeta(userId, false, true))
+        keys.add(AccountMeta(conversationId, false, true))
+        keys.add(AccountMeta(userId, false, true))
     val finalData = ByteArray(1)
     finalData[0] = 3
     val initializeAccountInstruction = TokenProgram.initializeAccountWithSeed(

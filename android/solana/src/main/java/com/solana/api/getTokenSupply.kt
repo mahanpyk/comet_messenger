@@ -7,10 +7,8 @@ import com.solana.models.buffer.BufferInfo
 import com.squareup.moshi.Types
 import java.lang.reflect.Type
 
-fun Api.getTokenSupply(
-    tokenMint: PublicKey,
-    onComplete: (Result<TokenResultObjects.TokenAmountInfo>) -> Unit
-) {
+fun Api.getTokenSupply(tokenMint: PublicKey,
+                   onComplete: (Result<TokenResultObjects.TokenAmountInfo>) -> Unit) {
     val params: MutableList<Any> = ArrayList()
     params.add(tokenMint.toString())
     val type = Types.newParameterizedType(
@@ -21,7 +19,7 @@ fun Api.getTokenSupply(
         "getTokenSupply",
         params,
         type
-    ) { result ->
+    ){ result ->
         result.map {
             it.value!!
         }.onSuccess {

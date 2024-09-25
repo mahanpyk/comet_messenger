@@ -13,15 +13,15 @@ import com.solana.vendor.ContResult
 import com.solana.vendor.Result
 import com.solana.vendor.flatMap
 
-typealias SPLTokenDestinationAddress = Pair<PublicKey, Boolean>
+typealias SPLTokenDestinationAddress = Pair<PublicKey,Boolean>
 
 fun Action.findSPLTokenDestinationAddress(
     mintAddress: PublicKey,
     destinationAddress: PublicKey,
     allowUnfundedRecipient: Boolean = false,
     onComplete: ((Result<SPLTokenDestinationAddress, ResultError>) -> Unit)
-) {
-    if (allowUnfundedRecipient) {
+){
+    if(allowUnfundedRecipient) {
         checkSPLTokenAccountExistence(
             mintAddress,
             destinationAddress,
@@ -43,10 +43,9 @@ private fun Action.checkSPLTokenAccountExistence(
 
     var associatedTokenAddress: PublicKey? = null
     try {
-        val associatedProgramDerivedAddress =
-            PublicKey.associatedTokenAddress(destinationAddress, mintAddress).address
+        val associatedProgramDerivedAddress = PublicKey.associatedTokenAddress(destinationAddress, mintAddress).address
         associatedTokenAddress = associatedProgramDerivedAddress
-    } catch (error: Exception) {
+    } catch (error: Exception){
         onComplete(Result.failure(error))
     }
 
@@ -59,21 +58,14 @@ private fun Action.checkSPLTokenAccountExistence(
             result.onSuccess {
                 hasAssociatedTokenAccount = true
             }.onFailure {
-                if (it == nullValueError) {
+                if(it == nullValueError){
                     hasAssociatedTokenAccount = false
                 } else {
                     onComplete(Result.failure(it))
                     return@onFailure
                 }
             }
-            onComplete(
-                Result.success(
-                    SPLTokenDestinationAddress(
-                        associatedTokenAddress,
-                        !hasAssociatedTokenAccount
-                    )
-                )
-            )
+            onComplete(Result.success(SPLTokenDestinationAddress(associatedTokenAddress, !hasAssociatedTokenAccount)))
         }
     }
 }
@@ -82,7 +74,7 @@ private fun Action.findSPLTokenDestinationAddressOfExistingAccount(
     mintAddress: PublicKey,
     destinationAddress: PublicKey,
     onComplete: ((Result<SPLTokenDestinationAddress, ResultError>) -> Unit)
-) {
+){
     return ContResult<BufferInfo<AccountInfo>, ResultError> { cb ->
         this.api.getAccountInfo(
             destinationAddress,
@@ -100,7 +92,7 @@ private fun Action.findSPLTokenDestinationAddressOfExistingAccount(
         if (mintAddress.toBase58() == toTokenMint) {
             // detect if destination address is already a SPLToken address
             toPublicKeyString = destinationAddress.toBase58()
-        } else if (info.owner == SystemProgram.PROGRAM_ID.toBase58()) {
+        }else if (info.owner == SystemProgram.PROGRAM_ID.toBase58()) {
             // detect if destination address is a SOL address
             val address = createProgramAddress(
                 listOf(destinationAddress.toByteArray()),
@@ -109,27 +101,26 @@ private fun Action.findSPLTokenDestinationAddressOfExistingAccount(
             toPublicKeyString = address.toBase58()
         }
         val toPublicKey = PublicKey(toPublicKeyString)
-        if (destinationAddress.toBase58() != toPublicKey.toBase58()) {
+        if(destinationAddress.toBase58() != toPublicKey.toBase58()){
             ContResult<BufferInfo<AccountInfo>, ResultError> { cb ->
                 this.api.getAccountInfo(
                     toPublicKey,
                     AccountInfo::class.java
-                ) { result ->
+                ){ result ->
                     result.onSuccess {
                         cb(Result.success(it))
                     }.onFailure {
                         cb(Result.failure(ResultError(it)))
                     }
                 }
-            }.map { info1 ->
+            }.map{ info1 ->
                 var isUnregisteredAsocciatedToken = true
                 // if associated token account has been registered
-                if (info1.owner == TokenProgram.PROGRAM_ID.toBase58() &&
-                    info.data?.value != null
-                ) {
+                if(info1.owner == TokenProgram.PROGRAM_ID.toBase58() &&
+                    info.data?.value != null) {
                     isUnregisteredAsocciatedToken = false
                 }
-                SPLTokenDestinationAddress(toPublicKey, isUnregisteredAsocciatedToken)
+                SPLTokenDestinationAddress(toPublicKey,isUnregisteredAsocciatedToken)
             }
         } else {
             ContResult.success(SPLTokenDestinationAddress(toPublicKey, false))

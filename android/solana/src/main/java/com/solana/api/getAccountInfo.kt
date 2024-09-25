@@ -19,7 +19,7 @@ fun Api.getAccountInfo(
     account: PublicKey,
     onComplete: ((String) -> Unit),
 ) {
-    return getAccountInfo(account, HashMap(), onComplete)
+     return getAccountInfo(account, HashMap(), onComplete)
 }
 
 fun <T> Api.getAccountInfo(
@@ -29,18 +29,15 @@ fun <T> Api.getAccountInfo(
     onComplete: ((com.solana.vendor.Result<BufferInfo<T>, ResultError>) -> Unit),
 ) {
 
-
     val params: MutableList<Any> = ArrayList()
     val parameterMap: MutableMap<String, Any?> = HashMap()
     parameterMap["commitment"] = additionalParams["commitment"] ?: "max"
     parameterMap["encoding"] = additionalParams["encoding"] ?: "base64"
-
     if (additionalParams.containsKey("dataSlice")) {
         parameterMap["dataSlice"] = additionalParams["dataSlice"]
     }
     params.add(account.toString())
     params.add(parameterMap)
-
     val type = Types.newParameterizedType(
         RPC::class.java,
         Types.newParameterizedType(

@@ -16,6 +16,8 @@ class CreateMnemonicController extends GetxController with AppUtilsMixin {
   RxString privateKey = RxString('');
   ListUserWalletsModel? listUserWalletsModel;
   RxBool isLoading = RxBool(true);
+  RxBool showQRCode = RxBool(false);
+  String basePubKey = '';
 
   @override
   void onInit() {
@@ -33,13 +35,15 @@ class CreateMnemonicController extends GetxController with AppUtilsMixin {
   }
 
   void onTapCopyAndNext() {
-    Clipboard.setData(ClipboardData(text: '''
-    Phrase:
-    ${mnemonic.value}
-    
-    Private key:
-    ${privateKey.value}
-    '''));
+    Clipboard.setData(ClipboardData(
+      text: '''
+Phrase:
+${mnemonic.value}
+
+Private key:
+${privateKey.value}
+''',
+    ));
     Get.snackbar(
       '',
       'Text copied',
@@ -57,8 +61,7 @@ class CreateMnemonicController extends GetxController with AppUtilsMixin {
 
   void generateMnemonic() async {
     // final mnemonic = await Mnemonic.create(WordCount.Words12);
-
-    const platform = MethodChannel(AppConstants.PLATFORM_CHANNEL);
+    const MethodChannel platform = MethodChannel(AppConstants.PLATFORM_CHANNEL);
     try {
       final String result = await platform.invokeMethod('createAccount', {
         "userName": userName,
@@ -69,7 +72,7 @@ class CreateMnemonicController extends GetxController with AppUtilsMixin {
       debugPrint('-----------------');
       var splitResult = result.split('*********');
       mnemonic(splitResult[0]);
-      String publicKeyBase58 = '', basePubKey = '';
+      String publicKeyBase58 = '';
 
       publicKeyBase58 = splitResult[1];
       privateKey(splitResult[2]);

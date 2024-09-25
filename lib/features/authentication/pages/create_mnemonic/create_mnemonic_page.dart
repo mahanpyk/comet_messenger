@@ -10,59 +10,66 @@ class CreateMnemonicPage extends BaseView<CreateMnemonicController> {
 
   @override
   Widget body() {
-    return Column(children: [
-      Expanded(
-        child: Column(children: [
-          Container(
-            padding: const EdgeInsets.all(24),
-            margin: const EdgeInsets.all(32),
-            decoration: BoxDecoration(
-              color: AppColors.backgroundSecondaryColor,
-              borderRadius: BorderRadius.circular(16),
+    return controller.isLoading.value
+        ? const Center(child: CircularProgressIndicator())
+        : Column(children: [
+            Expanded(
+              child: Column(children: [
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  margin: const EdgeInsets.all(32),
+                  decoration: BoxDecoration(
+                    color: AppColors.backgroundSecondaryColor,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Column(children: [
+                    Text(
+                      'Please copy your mnemonic words and store them in a safe place',
+                      style: Get.textTheme.titleMedium!.copyWith(color: AppColors.tertiaryColor),
+                    ),
+                    const SizedBox(height: 16),
+                    const Divider(
+                      height: 1,
+                      color: AppColors.tertiaryColor,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      controller.mnemonic.value,
+                      style: Get.textTheme.titleMedium!.copyWith(color: AppColors.tertiaryColor),
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      '********************************',
+                      style: Get.textTheme.titleMedium!.copyWith(color: AppColors.tertiaryColor),
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      'This is your private key. Do not share it with anyone',
+                      style: Get.textTheme.titleMedium!.copyWith(color: AppColors.tertiaryColor),
+                    ),
+                    const SizedBox(height: 16),
+                    const Divider(
+                      height: 1,
+                      color: AppColors.tertiaryColor,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      controller.privateKey.value,
+                      style: Get.textTheme.titleMedium!.copyWith(color: AppColors.tertiaryColor),
+                    ),
+                  ]),
+                ),
+              ]),
             ),
-            child: Column(children: [
-              Text(
-                'Please copy your mnemonic words and store them in a safe place',
-                style: Get.textTheme.titleMedium!.copyWith(color: AppColors.tertiaryColor),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: FillButtonWidget(
+                buttonTitle: 'save and next',
+                onTap: () => controller.onTapCopyAndNext(),
+                isLoading: false,
+                enable: true,
               ),
-              const SizedBox(height: 16),
-              const Divider(
-                height: 1,
-                color: AppColors.tertiaryColor,
-              ),
-              const SizedBox(height: 24),
-              Text(
-                controller.mnemonic.value,
-                style: Get.textTheme.titleMedium!.copyWith(color: AppColors.tertiaryColor),
-              ),
-              const SizedBox(height: 32),
-              Text(
-                'This is your private key. Do not share it with anyone',
-                style: Get.textTheme.titleMedium!.copyWith(color: AppColors.tertiaryColor),
-              ),
-              const SizedBox(height: 16),
-              const Divider(
-                height: 1,
-                color: AppColors.tertiaryColor,
-              ),
-              const SizedBox(height: 24),
-              Text(
-                controller.privateKey.value,
-                style: Get.textTheme.titleMedium!.copyWith(color: AppColors.tertiaryColor),
-              ),
-            ]),
-          ),
-        ]),
-      ),
-      Padding(
-        padding: const EdgeInsets.all(16),
-        child: FillButtonWidget(
-          buttonTitle: 'save and next',
-          onTap: () => controller.onTapCopyAndNext(),
-          isLoading: false,
-          enable: true,
-        ),
-      ),
-    ]);
+            ),
+          ]);
   }
 }

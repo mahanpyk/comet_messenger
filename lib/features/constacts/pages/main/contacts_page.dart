@@ -33,7 +33,6 @@ class ContactsPage extends BaseView<ContactsController> {
         Expanded(
           child: Stack(
             children: [
-              if (controller.isLoading.value) const Center(child: CircularProgressIndicator()),
               SingleChildScrollView(
                 child: Column(
                   children: [
@@ -53,6 +52,15 @@ class ContactsPage extends BaseView<ContactsController> {
                   ],
                 ),
               ),
+              if (controller.isLoading.value)
+                Expanded(
+                  child: Container(
+                    color: Colors.black38,
+                    child: const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),

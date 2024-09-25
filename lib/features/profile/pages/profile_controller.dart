@@ -80,9 +80,9 @@ class ProfileController extends GetxController with AppUtilsMixin {
     file.writeAsBytesSync(pngBytes);
 
     if (Platform.isAndroid) {
-      Share.shareXFiles([XFile(file.path)], text: 'اشتراک گذاری QR Code');
+      Share.shareXFiles([XFile(file.path)], text: 'Share QR Code');
     } else {
-      Share.shareXFiles([XFile(file.path)], subject: 'اشتراک گذاری QR Code');
+      Share.shareXFiles([XFile(file.path)], subject: 'Share QR Code');
     }
   }
 

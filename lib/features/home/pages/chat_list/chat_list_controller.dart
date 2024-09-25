@@ -19,6 +19,7 @@ class ChatListController extends GetxController {
   RxString title = RxString('There is nothing here');
   UserModel? userModel;
   RxList<ConversationBorshModel> chatList = RxList<ConversationBorshModel>([]);
+  RxBool isLoading = RxBool(true);
 
   @override
   void onInit() async {
@@ -54,21 +55,18 @@ class ChatListController extends GetxController {
 
           //convert to byte array
           data2.setAll(0, data.sublist(0, 4));
-          var decode = borsh.deserialize(DataLengthBorshModel().borshSchema,
-              data2, DataLengthBorshModel.fromJson);
+          var decode = borsh.deserialize(DataLengthBorshModel().borshSchema, data2, DataLengthBorshModel.fromJson);
           int length = decode.length!;
           if (length == 0) {
             length = 288;
           }
           final accountDataBuffer = Uint8List(length);
           accountDataBuffer.setAll(0, data.sublist(4, length));
-          var decodeContacts = borsh.deserialize(
-              ProfileBorshModel().borshSchema,
-              accountDataBuffer,
-              ProfileBorshModel.fromJson);
+          var decodeContacts = borsh.deserialize(ProfileBorshModel().borshSchema, accountDataBuffer, ProfileBorshModel.fromJson);
           chatList.addAll(decodeContacts.conversationList!);
           UserStoreService.to.saveUserModel(userModel!.toJson());
         }
+        isLoading(false);
       },
     );
   }
@@ -80,6 +78,7 @@ class ChatListController extends GetxController {
   }
 
   Future<void> onRefresh() async {
+    isLoading(true);
     chatList.clear();
     getChatsList();
   }

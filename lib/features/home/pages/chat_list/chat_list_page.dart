@@ -19,7 +19,7 @@ class ChatListPage extends BaseView<ChatListController> {
         child: Column(
           children: [
             Center(
-              child: controller.chatList.isEmpty
+              child: controller.isLoading.value
                   ? ListView.builder(
                       itemCount: 5,
                       shrinkWrap: true,
@@ -34,17 +34,29 @@ class ChatListPage extends BaseView<ChatListController> {
                         );
                       },
                     )
-                  : RefreshIndicator(
-                      onRefresh: () => controller.onRefresh(),
-                      child: ListView.builder(
-                        itemCount: controller.chatList.length,
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          return chatItemWidget(
-                              item: controller.chatList[index]);
-                        },
-                      ),
-                    ),
+                  : controller.chatList.isEmpty
+                      ? const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(Icons.chat_rounded, color: AppColors.tertiaryColor, size: 96),
+                            SizedBox(
+                              width: double.infinity,
+                              height: 8,
+                            ),
+                            Text('Chat has not started yet!'),
+                          ],
+                        )
+                      : RefreshIndicator(
+                          onRefresh: () => controller.onRefresh(),
+                          child: ListView.builder(
+                            itemCount: controller.chatList.length,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              return chatItemWidget(item: controller.chatList[index]);
+                            },
+                          ),
+                        ),
             ),
           ],
         ),
@@ -76,21 +88,14 @@ class ChatListPage extends BaseView<ChatListController> {
           color: AppColors.backgroundSecondaryColor,
           child: ListTile(
             title: Text(
-              item.conversationName
-                      ?.replaceAll(
-                          '${controller.userModel?.userName ?? ''}&_#', '')
-                      .replaceAll(
-                          '&_#${controller.userModel?.userName ?? ''}', '') ??
-                  'No title',
+              item.conversationName?.replaceAll('${controller.userModel?.userName ?? ''}&_#', '').replaceAll('&_#${controller.userModel?.userName ?? ''}', '') ?? 'No title',
               textAlign: TextAlign.left,
-              style: Get.textTheme.titleLarge!
-                  .copyWith(color: AppColors.tertiaryColor),
+              style: Get.textTheme.titleLarge!.copyWith(color: AppColors.tertiaryColor),
             ),
             subtitle: Text(
               'Last message',
               textAlign: TextAlign.left,
-              style: Get.textTheme.bodySmall!
-                  .copyWith(color: AppColors.tertiaryColor),
+              style: Get.textTheme.bodySmall!.copyWith(color: AppColors.tertiaryColor),
             ),
             leading: Text(
               // just show hour and minute for example 12:00 AM or PM

@@ -71,7 +71,11 @@ class ContactsPage extends BaseView<ContactsController> {
   Widget chatItemWidget({required Contact item}) {
     String icon = item.avatar != null ? item.avatar! : "0";
     try {
-      int.parse(icon);
+      int iconNumber = int.parse(icon);
+      if (iconNumber > 5) {
+        iconNumber = 5;
+        icon = iconNumber.toString();
+      }
     } catch (e) {
       icon = "0";
     }

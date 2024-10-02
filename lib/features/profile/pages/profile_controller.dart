@@ -31,7 +31,7 @@ class ProfileController extends GetxController with AppUtilsMixin {
     var json = await UserStoreService.to.getUserModel();
     if (json != null) {
       userModel(UserModel.fromJson(json));
-      publicKeyTEC.text = userModel.value?.publicKey ?? "public Key Not Found";
+      publicKeyTEC.text = userModel.value?.basePublicKey ?? "public Key Not Found";
     }
     getBalance();
     super.onInit();

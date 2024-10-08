@@ -103,7 +103,6 @@ class OkHttpNetworkingRouter(
         val rpcRequest = RpcRequest(method, params)
         val rpcRequestJsonAdapter: JsonAdapter<RpcRequest> = moshi.adapter(RpcRequest::class.java)
         val jsonParams = rpcRequestJsonAdapter.toJson(rpcRequest)
-        Log.d("Mahan","jsonParams => $jsonParams method => $method url => $url params => $params")
             val request: Request = Request.Builder().url(url)
                 .post(RequestBody.create(JSON, jsonParams)).build()
             call(request, clazz, onComplete, method)

@@ -1,4 +1,5 @@
 import 'package:comet_messenger/app/core/app_constants.dart';
+import 'package:comet_messenger/app/core/app_flush_bar_utils.dart';
 import 'package:comet_messenger/app/core/app_utils_mixin.dart';
 import 'package:comet_messenger/app/models/list_user_wallets_model.dart';
 import 'package:comet_messenger/app/models/user_model.dart';
@@ -90,6 +91,8 @@ ${privateKey.value}
       );
       UserStoreService.to.saveUserModel(newUserModel.toJson());
     } on PlatformException catch (e) {
+      isLoading(false);
+      AppFlushBarUtil.showFlushBar(message: 'Field to Create Account', duration: const Duration(seconds: 3));
       debugPrint('*****************************');
       debugPrint("Failed to encrypt data: '${e.message}'.");
       debugPrint('#############################');

@@ -247,6 +247,7 @@ object SolanaHelper {
                                 getInfoAccountModel.getResult().getValue().getData().get(0),
                                 ContactListModel::class.java
                             )
+                        Log.d("Lasemi", "getContacts: $contactListModel")
                         onComplete.onSuccess(contactListModel)
                     } catch (e: Exception) {
                         Log.e("errorGetContact", e.toString())
@@ -909,7 +910,7 @@ object SolanaHelper {
 
     }
 
-    public fun createAccountWithString(customSecretKey: String): Account {
+    fun createAccountWithString(customSecretKey: String): Account {
         val secByte: ByteArray = Base58.decode(customSecretKey);
         val datass = TweetNaclFast.Signature.keyPair_fromSecretKey(secByte)
         val account = Account(datass)

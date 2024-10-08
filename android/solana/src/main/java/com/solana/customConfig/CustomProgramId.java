@@ -9,8 +9,7 @@ public class CustomProgramId {
             return "7CaaDsKDwQ74HKZhxpozb6n8SxaAPDYRvJPrxkLtm67S";//(new)
 //            return "CUdVSkaXMoAnr7NLSKjD25Zk5gpTrhtuXJ4Fxaw7nxRA";
         } else {
-//            return "8jrX8mjgipdGVWJH5o1PeDrEgNJHNyBVTJycbKhm3yc4";//(new)
-            return "2qwWoMoPvxKfypbujTNwqWqmuriMkXMPZV21YCvd8BdU";
+            return "8jrX8mjgipdGVWJH5o1PeDrEgNJHNyBVTJycbKhm3yc4";
         }
     }
 

@@ -105,7 +105,7 @@ object TokenProgram : Program() {
         avatar: String,
     ): TransactionInstruction {
         val keys: MutableList<AccountMeta> = ArrayList()
-        keys.add(AccountMeta(PublicKey(CustomContactPda.getContactPda()),
+        keys.add(AccountMeta(PublicKey(CustomContactPda.getContactPda()[0]),
             false,
             true))
         var testusername = "a"

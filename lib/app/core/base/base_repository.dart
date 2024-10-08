@@ -37,7 +37,7 @@ class BaseRepository with AppUtilsMixin {
     bool requiredToken = true,
   }) async {
     try {
-      if (ConnectivityService.instance.hasConnection) {
+      // if (ConnectivityService.instance.hasConnection) {
         if (requiredToken) {
           String? token = await UserStoreService.to.getToken();
           headers?.addAll({'Authorization': 'Bearer $token'});
@@ -99,32 +99,32 @@ class BaseRepository with AppUtilsMixin {
           );
           return responseModel;
         }
-      } else {
-        AppDialog dialog = AppDialog(
-          title: 'Error to Access Internet',
-          subTitle: 'Please check your internet connection and try again',
-          mainButtonTitle: 'Try Again',
-          mainButtonOnTap: () {
-            get_package.Get.back();
-            request(
-              url: url,
-              method: method,
-              data: data,
-              queryParameters: queryParameters,
-              urlParameters: urlParameters,
-              requiredToken: requiredToken,
-            );
-          },
-          icon: AppIcons.icNoConnection,
-        );
-        dialog.showAppDialog();
-        return ResponseModel(
-          body: 'No internet connection',
-          statusCode: 500,
-          success: false,
-          message: 'No internet connection',
-        );
-      }
+      // } else {
+      //   AppDialog dialog = AppDialog(
+      //     title: 'Error to Access Internet',
+      //     subTitle: 'Please check your internet connection and try again',
+      //     mainButtonTitle: 'Try Again',
+      //     mainButtonOnTap: () {
+      //       get_package.Get.back();
+      //       request(
+      //         url: url,
+      //         method: method,
+      //         data: data,
+      //         queryParameters: queryParameters,
+      //         urlParameters: urlParameters,
+      //         requiredToken: requiredToken,
+      //       );
+      //     },
+      //     icon: AppIcons.icNoConnection,
+      //   );
+      //   dialog.showAppDialog();
+      //   return ResponseModel(
+      //     body: 'No internet connection',
+      //     statusCode: 500,
+      //     success: false,
+      //     message: 'No internet connection',
+      //   );
+      // }
     } on DioException catch (e, s) {
       return ResponseModel(
         body: e,

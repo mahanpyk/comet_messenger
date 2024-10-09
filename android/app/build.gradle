@@ -64,6 +64,12 @@ android {
             storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
             storePassword keystoreProperties['storePassword']
         }
+        debug {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword keystoreProperties['storePassword']
+        }
     }
 /*    buildTypes {
         release {
@@ -81,19 +87,16 @@ android {
     }*/
 
     buildTypes {
-        release {
-            signingConfig signingConfigs.release
-            minifyEnabled true
-            shrinkResources true
-            debuggable true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
+//        release {
+//            signingConfig signingConfigs.release
+//            minifyEnabled true
+//            shrinkResources true
+//            debuggable true
+//        }
         debug {
-            signingConfig signingConfigs.release
-            minifyEnabled true
-            shrinkResources true
-            debuggable true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
+            minifyEnabled false
+            shrinkResources false
         }
     }
 }

@@ -105,4 +105,8 @@ class ProfileController extends GetxController with AppUtilsMixin {
       }
     });
   }
+
+  void airDropRequest() {
+    _repo.airDropRequest(requestModel:)
+  }
 }

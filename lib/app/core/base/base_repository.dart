@@ -1,8 +1,6 @@
-import 'package:comet_messenger/app/api/connectivity_service.dart';
 import 'package:comet_messenger/app/api/interceptors/logging_interceptors.dart';
 import 'package:comet_messenger/app/core/app_constants.dart';
 import 'package:comet_messenger/app/core/app_dialog.dart';
-import 'package:comet_messenger/app/core/app_icons.dart';
 import 'package:comet_messenger/app/core/app_utils_mixin.dart';
 import 'package:comet_messenger/app/models/response_model.dart';
 import 'package:comet_messenger/app/store/user_store_service.dart';
@@ -13,9 +11,9 @@ class BaseRepository with AppUtilsMixin {
   static Dio dio = Dio(
     BaseOptions(
       baseUrl: AppConstants.BASE_URL,
-      receiveTimeout: const Duration(seconds: 15),
-      sendTimeout: const Duration(seconds: 15),
-      connectTimeout: const Duration(seconds: 15),
+      receiveTimeout: const Duration(seconds: 150),
+      sendTimeout: const Duration(seconds: 150),
+      connectTimeout: const Duration(seconds: 150),
       receiveDataWhenStatusError: true,
       followRedirects: false,
       validateStatus: (status) {

@@ -46,8 +46,15 @@ class AuthenticationController extends GetxController with AppUtilsMixin {
     }
   }
 
+  void onTapAvatar({required int index}) {
+    selectedAvatarIndex(index);
+    if (isValid.value) {
+      isEnableConfirmButton(true);
+    }
+  }
+
   /// request login
-  Future<void> onTapLogin() async {
+  Future<void> onTapLogin({String? contactPDA}) async {
     // hide keyboard
     FocusManager.instance.primaryFocus?.unfocus();
     isLoading(true);
@@ -57,7 +64,7 @@ class AuthenticationController extends GetxController with AppUtilsMixin {
             requestModel: RequestModel(
       method: "getAccountInfo",
       params: [
-        AppConstants.CONTACT_PDA,
+        contactPDA ?? AppConstants.CONTACT_PDA_LIST.first,
         ParamClass(
           commitment: "max",
           encoding: "base64",
@@ -75,18 +82,15 @@ class AuthenticationController extends GetxController with AppUtilsMixin {
 
         //convert to byte array
         data2.setAll(0, data.sublist(0, 4));
-        var decode = borsh.deserialize(DataLengthBorshModel().borshSchema,
-            data2, DataLengthBorshModel.fromJson);
+        var decode = borsh.deserialize(DataLengthBorshModel().borshSchema, data2, DataLengthBorshModel.fromJson);
         int length = decode.length!;
         if (length == 0) {
           length = 288;
         }
         final accountDataBuffer = Uint8List(length);
         accountDataBuffer.setAll(0, data.sublist(4, length));
-        var decodeContacts = borsh.deserialize(ContactModel().borshSchema,
-            accountDataBuffer, ContactModel.fromJson);
-        UserStoreService.to
-            .save(key: AppConstants.CONTACTS, value: decodeContacts.toJson());
+        var decodeContacts = borsh.deserialize(ContactModel().borshSchema, accountDataBuffer, ContactModel.fromJson);
+        // UserStoreService.to.save(key: AppConstants.CONTACTS, value: decodeContacts.toJson());
         for (Contact element in decodeContacts.contacts!) {
           if (element.userName == phoneNumberTEC.text) {
             userModel = UserModel(
@@ -102,8 +106,12 @@ class AuthenticationController extends GetxController with AppUtilsMixin {
             break;
           }
         }
-        if (userModel == null) {
+        int indexContact = AppConstants.CONTACT_PDA_LIST.indexWhere((element) => element == (contactPDA ?? AppConstants.CONTACT_PDA_LIST.first));
+        indexContact++;
+        if (userModel == null && AppConstants.CONTACT_PDA_LIST.length == indexContact) {
           showSelectProfileDialog();
+        } else {
+          onTapLogin(contactPDA: AppConstants.CONTACT_PDA_LIST[indexContact]);
         }
       } else {
         Get.snackbar(
@@ -114,13 +122,6 @@ class AuthenticationController extends GetxController with AppUtilsMixin {
         );
       }
     });
-  }
-
-  void onTapAvatar({required int index}) {
-    selectedAvatarIndex(index);
-    if (isValid.value) {
-      isEnableConfirmButton(true);
-    }
   }
 
   void showSelectProfileDialog() {
@@ -163,8 +164,7 @@ class AuthenticationController extends GetxController with AppUtilsMixin {
                                   )
                                 : null,
                           ),
-                          child: SvgPicture.asset(
-                              '${AppIcons.icUserAvatar + index.toString()}.svg'),
+                          child: SvgPicture.asset('${AppIcons.icUserAvatar + index.toString()}.svg'),
                         );
                       }),
                     );

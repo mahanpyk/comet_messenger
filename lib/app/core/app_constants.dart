@@ -17,7 +17,18 @@ class AppConstants {
 
   //region Devnet
   static const String BASE_URL = 'https://api.devnet.solana.com';
-  static const String CONTACT_PDA = 'J98ZB5pyfqah9xxue6HBYkj2xxsyga43vt3fG772iLoH';
+  static const List<String> CONTACT_PDA_LIST = [
+    "FdUUNThNuYykGoETF22HF451AKpfMvKQF1cYCiexzA9X",
+    "DDvjMTHkcPKH4R2uf7FrAmdPEDBHTvynKowmfKdBVGuq",
+    "9XoLHHtZJXYhC9YFBotaPjTTsi2V5X4KXMej7Db4zzX",
+    "FQ4W4FATS2GfM52YsjrmeGtyAcSTnhPXwVoHeCUNmsWV",
+    "8eHAWLEnGLMKoTQxnsPcryTd8k8V3juNBpcdmM6WBeLn",
+    "AgBLVPjUNf6ggFKn2nrRTjUKMtMpctcPjuVVvVUQn5tj",
+    "8qw88zz2hZE7iptKxpxmk6L1ZG85wy9Q2UXvgW4r7kjb",
+    "9aUKc9WxbFCmALnrgy9fB5H45FDGydg2Xgymvg1ex28c",
+    "xQLUd1XJjP9RwJnxkkNzCbfHmpTEYeUEEQGA4ARqiDs",
+    "7WFmPNLNwZQFTgyhHiqgvo9DmGGdm5L4nUYNngTcWt1f"
+  ];
   static const String CHAT_PROGRAM_ID = '7jRAvySXHGTJMKBQNfNxmemLnW1gnCPm8Bv1WWwzUN5Y';
 
   // endregion

@@ -92,7 +92,9 @@ class ProfilePage extends BaseView<ProfileController> {
                             style: Get.textTheme.titleMedium!
                                 .copyWith(color: AppColors.tertiaryColor),
                           ),
-                          const SizedBox(height: 32),
+                          const SizedBox(height: 24),
+                          FillButtonWidget(onTap: () => controller.airDropRequest(), buttonTitle: 'AirDrop')
+                          const SizedBox(height: 24),
                           Row(
                             children: [
                               Text(

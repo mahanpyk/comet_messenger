@@ -50,21 +50,22 @@ class ChatListController extends GetxController {
       (ChatListResponseModel response) {
         if (response.statusCode == 200) {
           // get response and get length from first 4 bytes
-          var data = base64Decode(response.data!.result!.value!.data![0]);
-          final data2 = Uint8List(4);
-
-          //convert to byte array
-          data2.setAll(0, data.sublist(0, 4));
-          var decode = borsh.deserialize(DataLengthBorshModel().borshSchema, data2, DataLengthBorshModel.fromJson);
-          int length = decode.length!;
-          if (length == 0) {
-            length = 288;
+          String? dataForCalculate = response.data?.result?.value?.data?[0];
+          if (dataForCalculate != null) {
+            var data = base64Decode(dataForCalculate);
+            final data2 = Uint8List(4);
+            //convert to byte array
+            data2.setAll(0, data.sublist(0, 4));
+            var decode = borsh.deserialize(DataLengthBorshModel().borshSchema, data2, DataLengthBorshModel.fromJson);
+            int length = decode.length!;
+            if (length == 0) {
+              length = 288;
+            }
+            final accountDataBuffer = Uint8List(length);
+            accountDataBuffer.setAll(0, data.sublist(4, length));
+            var decodeContacts = borsh.deserialize(ProfileBorshModel().borshSchema, accountDataBuffer, ProfileBorshModel.fromJson);
+            chatList.addAll(decodeContacts.conversationList!);
           }
-          final accountDataBuffer = Uint8List(length);
-          accountDataBuffer.setAll(0, data.sublist(4, length));
-          var decodeContacts = borsh.deserialize(ProfileBorshModel().borshSchema, accountDataBuffer, ProfileBorshModel.fromJson);
-          chatList.addAll(decodeContacts.conversationList!);
-          UserStoreService.to.saveUserModel(userModel!.toJson());
         }
         isLoading(false);
       },

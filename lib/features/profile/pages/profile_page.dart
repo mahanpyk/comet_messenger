@@ -39,11 +39,10 @@ class ProfilePage extends BaseView<ProfileController> {
             ),
           ),
         ),
-        const SizedBox(height: 48),
         Expanded(
           child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               child: Column(
                 children: [
                   Container(
@@ -127,15 +126,17 @@ class ProfilePage extends BaseView<ProfileController> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 40),
-                  FillButtonWidget(
-                    isLoading: false,
-                    onTap: () => controller.onTapShowMnemonicAndPrivate(),
-                    buttonTitle: 'Show Mnemonic And Private Key',
-                  ),
                 ],
               ),
             ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+          child: FillButtonWidget(
+            isLoading: false,
+            onTap: () => controller.onTapShowMnemonicAndPrivate(),
+            buttonTitle: 'Show Mnemonic And Private Key',
           ),
         ),
       ],

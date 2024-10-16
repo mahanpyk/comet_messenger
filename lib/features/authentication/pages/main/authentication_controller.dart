@@ -103,7 +103,7 @@ class AuthenticationController extends GetxController with AppUtilsMixin {
             );
             UserStoreService.to.saveUserModel(userModel!.toJson());
             Get.toNamed(AppRoutes.IMPORT_MNEMONIC);
-            break;
+            return;
           }
         }
         int indexContact = AppConstants.CONTACT_PDA_LIST.indexWhere((element) => element == (contactPDA ?? AppConstants.CONTACT_PDA_LIST.first));

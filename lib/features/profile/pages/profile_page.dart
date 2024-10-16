@@ -93,7 +93,9 @@ class ProfilePage extends BaseView<ProfileController> {
                                 .copyWith(color: AppColors.tertiaryColor),
                           ),
                           const SizedBox(height: 24),
-                          FillButtonWidget(onTap: () => controller.airDropRequest(), buttonTitle: 'AirDrop')
+                          FillButtonWidget(
+                              onTap: () => controller.airDropRequest(),
+                              buttonTitle: 'AirDrop'),
                           const SizedBox(height: 24),
                           Row(
                             children: [

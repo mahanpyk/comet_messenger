@@ -31,7 +31,8 @@ class ProfileController extends GetxController with AppUtilsMixin {
     var json = await UserStoreService.to.getUserModel();
     if (json != null) {
       userModel(UserModel.fromJson(json));
-      publicKeyTEC.text = userModel.value?.basePublicKey ?? "public Key Not Found";
+      publicKeyTEC.text =
+          userModel.value?.basePublicKey ?? "public Key Not Found";
     }
     getBalance();
     super.onInit();
@@ -107,6 +108,15 @@ class ProfileController extends GetxController with AppUtilsMixin {
   }
 
   void airDropRequest() {
-    _repo.airDropRequest(requestModel:)
+    _repo.airDropRequest(
+        requestModel: RequestModel(
+      method: "requestAirdrop",
+      params: [
+        userModel.value?.basePublicKey ?? "",
+        5000000000,
+      ],
+      jsonrpc: "2.0",
+      id: "b75758de-e0b2-469b-bd9c-ef366ee1b35a",
+    ));
   }
 }

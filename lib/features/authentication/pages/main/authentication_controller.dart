@@ -8,6 +8,7 @@ import 'package:comet_messenger/app/models/data_length_borsh_model.dart';
 import 'package:comet_messenger/app/models/request_model.dart';
 import 'package:comet_messenger/app/models/user_model.dart';
 import 'package:comet_messenger/app/routes/app_routes.dart';
+import 'package:comet_messenger/app/store/user_store_service.dart';
 import 'package:comet_messenger/app/theme/app_colors.dart';
 import 'package:comet_messenger/features/authentication/models/authentication_response_model.dart';
 import 'package:comet_messenger/features/authentication/models/contact_model.dart';

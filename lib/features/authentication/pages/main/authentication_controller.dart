@@ -100,7 +100,7 @@ class AuthenticationController extends GetxController with AppUtilsMixin {
               publicKey: element.publicKey,
               login: true,
             );
-            // UserStoreService.to.saveUserModel(userModel!.toJson());
+            UserStoreService.to.saveUserModel(userModel!.toJson());
             Get.toNamed(AppRoutes.IMPORT_MNEMONIC);
             return;
           }

@@ -30,8 +30,7 @@ class ProfilePage extends BaseView<ProfileController> {
                 Center(
                   child: Text(
                     'Profile',
-                    style: Get.textTheme.titleLarge!
-                        .copyWith(color: AppColors.tertiaryColor),
+                    style: Get.textTheme.titleLarge!.copyWith(color: AppColors.tertiaryColor),
                   ),
                 ),
                 const SizedBox(width: 40),
@@ -88,13 +87,13 @@ class ProfilePage extends BaseView<ProfileController> {
                           Text(
                             '${controller.balance.toStringAsFixed(9)} SOL',
                             textAlign: TextAlign.center,
-                            style: Get.textTheme.titleMedium!
-                                .copyWith(color: AppColors.tertiaryColor),
+                            style: Get.textTheme.titleMedium!.copyWith(color: AppColors.tertiaryColor),
                           ),
                           const SizedBox(height: 24),
                           FillButtonWidget(
-                              onTap: () => controller.airDropRequest(),
-                              buttonTitle: 'AirDrop'),
+                            onTap: () => controller.airDropRequest(),
+                            buttonTitle: 'AirDrop',
+                          ),
                           const SizedBox(height: 24),
                           Row(
                             children: [

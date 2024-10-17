@@ -58,7 +58,7 @@ class FillButtonWidget extends StatelessWidget {
                   child: Text(
                     buttonTitle,
                     style: Get.textTheme.labelLarge!.copyWith(
-                      color: enable ? AppColors.tertiaryColor : AppColors.backgroundSecondaryColor,
+                      color: enable ? AppColors.tertiaryColor : AppColors.tertiaryColor.withOpacity(0.3),
                       fontWeight: FontWeight.w900,
                     ),
                   ),

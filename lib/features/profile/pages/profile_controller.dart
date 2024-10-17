@@ -7,7 +7,9 @@ import 'package:comet_messenger/app/models/request_model.dart';
 import 'package:comet_messenger/app/models/user_model.dart';
 import 'package:comet_messenger/app/routes/app_routes.dart';
 import 'package:comet_messenger/app/store/user_store_service.dart';
+import 'package:comet_messenger/app/theme/app_colors.dart';
 import 'package:comet_messenger/features/authentication/models/balance_response_model.dart';
+import 'package:comet_messenger/features/profile/models/air_drop_response_model.dart';
 import 'package:comet_messenger/features/profile/repository/profile_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -31,8 +33,7 @@ class ProfileController extends GetxController with AppUtilsMixin {
     var json = await UserStoreService.to.getUserModel();
     if (json != null) {
       userModel(UserModel.fromJson(json));
-      publicKeyTEC.text =
-          userModel.value?.basePublicKey ?? "public Key Not Found";
+      publicKeyTEC.text = userModel.value?.basePublicKey ?? "public Key Not Found";
     }
     getBalance();
     super.onInit();
@@ -101,15 +102,15 @@ class ProfileController extends GetxController with AppUtilsMixin {
         double userBalance = response.data!.result!.value! / 1000000000;
         balance(userBalance);
 
-        UserStoreService.to
-            .save(key: AppConstants.BALANCE, value: balance.value);
+        UserStoreService.to.save(key: AppConstants.BALANCE, value: balance.value);
       }
     });
   }
 
   void airDropRequest() {
-    _repo.airDropRequest(
-        requestModel: RequestModel(
+    _repo
+        .airDropRequest(
+            requestModel: RequestModel(
       method: "requestAirdrop",
       params: [
         userModel.value?.basePublicKey ?? "",
@@ -117,6 +118,25 @@ class ProfileController extends GetxController with AppUtilsMixin {
       ],
       jsonrpc: "2.0",
       id: "b75758de-e0b2-469b-bd9c-ef366ee1b35a",
-    ));
+    ))
+        .then((AirDropResponseModel response) {
+      if (response.statusCode == 200) {
+        Get.snackbar(
+          'Airdrop successful',
+          'The airdrop will be in your account in a few minutes',
+          colorText: AppColors.tertiaryColor,
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: AppColors.successColor,
+        );
+      } else {
+        Get.snackbar(
+          'Airdrop failed',
+          'Please try again later',
+          colorText: AppColors.whiteColor,
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: AppColors.errorColor,
+        );
+      }
+    });
   }
 }

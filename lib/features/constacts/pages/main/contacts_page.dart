@@ -22,11 +22,16 @@ class ContactsPage extends BaseView<ContactsController> {
             padding: const EdgeInsets.symmetric(
               horizontal: 16,
             ),
-            child: Center(
-              child: Text(
-                'Contacts',
-                style: Get.textTheme.titleLarge!.copyWith(color: AppColors.tertiaryColor),
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                BackButton(),
+                Text(
+                  'Contacts',
+                  style: Get.textTheme.titleLarge!.copyWith(color: AppColors.tertiaryColor),
+                ),
+                Container(width: 48)
+              ],
             ),
           ),
         ),

@@ -19,5 +19,6 @@ class AppIcons {
   static const icForward = '$_base/ic_forward.svg';
   static const icUserAvatar = '$_base/ic_user_avatar_';
   static const icLock = '$_base/ic_lock.svg';
-
+  static const icCheck = '$_base/ic_check.svg';
+  static const icDoubleCheck = '$_base/ic_double_check.svg';
 }

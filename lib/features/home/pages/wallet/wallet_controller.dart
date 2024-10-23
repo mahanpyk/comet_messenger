@@ -6,16 +6,18 @@ import 'package:comet_messenger/features/home/repository/wallet_repository.dart'
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class WalletController extends GetxController {
+class WalletController extends GetxController with GetTickerProviderStateMixin {
   WalletController(this._repo);
 
   final WalletRepository _repo;
   RxBool isLoading = true.obs;
   RxList<transactions_model.Result> transactionsList = RxList([]);
   UserModel? userModel;
+  late final TabController tabController;
 
   @override
   void onInit() async {
+    tabController = TabController(length: 2, vsync: this);
     var json = await UserStoreService.to.getUserModel();
     if (json != null) {
       userModel = UserModel.fromJson(json);

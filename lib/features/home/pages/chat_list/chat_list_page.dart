@@ -15,52 +15,50 @@ class ChatListPage extends BaseView<ChatListController> {
   Widget body() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Center(
-              child: controller.isLoading.value
-                  ? ListView.builder(
-                      itemCount: 5,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return Shimmer.fromColors(
-                          baseColor: AppColors.shimmerBaseColor,
-                          highlightColor: AppColors.shimmerHighlightColor,
-                          child: const Card(
-                            child: ListTile(),
-                          ),
-                        );
-                      },
-                    )
-                  : controller.chatList.isEmpty
-                      ? const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(Icons.chat_rounded, color: AppColors.tertiaryColor, size: 96),
-                            SizedBox(
-                              width: double.infinity,
-                              height: 8,
-                            ),
-                            Text('Chat has not started yet!'),
-                          ],
-                        )
-                      : RefreshIndicator(
-                          onRefresh: () => controller.onRefresh(),
-                          child: ListView.builder(
-                            itemCount: controller.chatList.length,
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
-                              return chatItemWidget(item: controller.chatList[index]);
-                            },
-                          ),
-                        ),
-            ),
-          ],
-        ),
-      ),
+      child: controller.isLoading.value
+          ? SingleChildScrollView(
+              child: ListView.builder(
+                itemCount: 5,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  return Shimmer.fromColors(
+                    baseColor: AppColors.shimmerBaseColor,
+                    highlightColor: AppColors.shimmerHighlightColor,
+                    child: const Card(
+                      child: ListTile(),
+                    ),
+                  );
+                },
+              ),
+            )
+          : controller.chatList.isEmpty
+              ? const Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.chat_rounded,
+                      color: AppColors.tertiaryColor,
+                      size: 96,
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 8,
+                    ),
+                    Text('Chat has not started yet!'),
+                  ],
+                )
+              : RefreshIndicator(
+                  onRefresh: () => controller.onRefresh(),
+                  child: ListView.builder(
+                    itemCount: controller.chatList.length,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return chatItemWidget(item: controller.chatList[index]);
+                    },
+                  ),
+                ),
     );
   }
 
@@ -88,7 +86,10 @@ class ChatListPage extends BaseView<ChatListController> {
           color: AppColors.backgroundSecondaryColor,
           child: ListTile(
             title: Text(
-              item.conversationName?.replaceAll('${controller.userModel?.userName ?? ''}&_#', '').replaceAll('&_#${controller.userModel?.userName ?? ''}', '') ?? 'No title',
+              item.conversationName
+                      ?.replaceAll('${controller.userModel?.userName ?? ''}&_#', '')
+                      .replaceAll('&_#${controller.userModel?.userName ?? ''}', '') ??
+                  'No title',
               textAlign: TextAlign.left,
               style: Get.textTheme.titleLarge!.copyWith(color: AppColors.tertiaryColor),
             ),

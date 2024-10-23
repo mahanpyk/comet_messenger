@@ -15,32 +15,77 @@ class WalletPage extends BaseView<WalletController> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(children: [
-        const SizedBox(
+        Container(
           height: 48,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('transactions History'),
-              Text('Tab'),
+          margin: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(20)),
+            border: Border.all(width: 2),
+          ),
+          child: TabBar(
+            indicatorWeight: 0,
+            dividerColor: Colors.transparent,
+            controller: controller.tabController,
+            indicator: BoxDecoration(
+              borderRadius: BorderRadius.circular(16.0),
+              color: AppColors.primaryColor,
+            ),
+            labelStyle: const TextStyle(
+              color: AppColors.tertiaryColor,
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+            ),
+            unselectedLabelColor: AppColors.tertiaryColor,
+            indicatorSize: TabBarIndicatorSize.tab,
+            splashBorderRadius: BorderRadius.circular(20),
+            padding: const EdgeInsets.all(3),
+            tabs: const [
+              Tab(text: 'Transactions History'),
+              Tab(text: 'Tab'),
             ],
           ),
         ),
         Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                controller.transactionsList.isEmpty ?
-                const Text('No transactions yet!')
-                    : ListView.builder(
-                  itemCount: controller.transactionsList.length,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    return transactionItem(item: controller.transactionsList[index]);
-                  },
-                ),
-              ],
-            ),
+          child: TabBarView(
+            controller: controller.tabController,
+            children: [
+              Column(
+                children: [
+                  controller.transactionsList.isEmpty
+                      ? const Expanded(
+                          child: Center(
+                            child: Text('No transactions yet!'),
+                          ),
+                        )
+                      : ListView.builder(
+                          itemCount: controller.transactionsList.length,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            return transactionItem(item: controller.transactionsList[index]);
+                          },
+                        ),
+                ],
+              ),
+              Column(
+                children: [
+                  controller.transactionsList.isEmpty
+                      ? const Expanded(
+                          child: Center(
+                            child: Text('No transactions yet!'),
+                          ),
+                        )
+                      : ListView.builder(
+                          itemCount: controller.transactionsList.length,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            return transactionItem(item: controller.transactionsList[index]);
+                          },
+                        ),
+                ],
+              ),
+            ],
           ),
         ),
       ]),
@@ -79,5 +124,4 @@ class WalletPage extends BaseView<WalletController> {
       ),
     );
   }
-
 }

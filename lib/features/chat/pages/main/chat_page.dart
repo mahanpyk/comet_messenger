@@ -1,9 +1,11 @@
+import 'package:comet_messenger/app/core/app_icons.dart';
 import 'package:comet_messenger/app/core/app_images.dart';
 import 'package:comet_messenger/app/core/base/base_view.dart';
 import 'package:comet_messenger/app/theme/app_colors.dart';
 import 'package:comet_messenger/features/chat/pages/main/chat_controller.dart';
 import 'package:comet_messenger/features/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 class ChatPage extends BaseView<ChatController> {
@@ -17,10 +19,8 @@ class ChatPage extends BaseView<ChatController> {
           onTap: () => controller.onTapChatHeader(),
           child: AppBarWidget(
               title: controller.conversationModel.conversationName
-                      ?.replaceAll(
-                          '${controller.userModel?.userName ?? ''}&_#', '')
-                      .replaceAll(
-                          '&_#${controller.userModel?.userName ?? ''}', '') ??
+                      ?.replaceAll('${controller.userModel?.userName ?? ''}&_#', '')
+                      .replaceAll('&_#${controller.userModel?.userName ?? ''}', '') ??
                   'No title'),
         ),
         Expanded(
@@ -41,27 +41,23 @@ class ChatPage extends BaseView<ChatController> {
                         Expanded(
                           child: ListView.builder(
                             controller: controller.scrollController.value,
-                            itemCount: controller
-                                    .chatDetailsModel.value.messages?.length ??
-                                0,
+                            itemCount: controller.chatDetailsModel.value.messages?.length ?? 0,
                             itemBuilder: (context, index) {
-                              if (controller.chatDetailsModel.value
-                                      .messages?[index].name ==
-                                  controller.userModel?.userName) {
+                              if (controller.chatDetailsModel.value.messages?[index].name == controller.userModel?.userName) {
                                 return massageItem(
                                   message: controller.chatMessages[index],
                                   isMe: true,
-                                  time: controller.chatDetailsModel.value
-                                          .messages?[index].time ??
-                                      '',
+                                  time: controller.chatDetailsModel.value.messages?[index].time ?? '',
+                                  doubleCheck: controller.chatDetailsModel.value.messages?[index].status == 'success',
+                                  failed: controller.chatDetailsModel.value.messages?[index].status == 'failed',
                                 );
                               } else {
                                 return massageItem(
                                   message: controller.chatMessages[index],
                                   isMe: false,
-                                  time: controller.chatDetailsModel.value
-                                          .messages?[index].time ??
-                                      '',
+                                  time: controller.chatDetailsModel.value.messages?[index].time ?? '',
+                                  doubleCheck: controller.chatDetailsModel.value.messages?[index].status == 'success',
+                                  failed: controller.chatDetailsModel.value.messages?[index].status == 'failed',
                                 );
                               }
                             },
@@ -89,9 +85,7 @@ class ChatPage extends BaseView<ChatController> {
                       hintText: 'Message',
                       border: InputBorder.none,
                     ),
-                    onFieldSubmitted: (value) => controller.isTyping.value
-                        ? controller.sendMessage()
-                        : null,
+                    onFieldSubmitted: (value) => controller.isTyping.value ? controller.sendMessage() : null,
                     onChanged: (value) {
                       if (value.isNotEmpty) {
                         controller.isTyping.value = true;
@@ -102,13 +96,10 @@ class ChatPage extends BaseView<ChatController> {
                   ),
                 ),
                 IconButton(
-                  onPressed: () => controller.isTyping.value
-                      ? controller.sendMessage()
-                      : null,
+                  onPressed: () => controller.isTyping.value ? controller.sendMessage() : null,
                   icon: Icon(
                     Icons.send,
-                    color: AppColors.tertiaryColor
-                        .withOpacity(controller.isTyping.value ? 1.0 : 0.5),
+                    color: AppColors.tertiaryColor.withOpacity(controller.isTyping.value ? 1.0 : 0.5),
                   ),
                 ),
               ],
@@ -119,32 +110,55 @@ class ChatPage extends BaseView<ChatController> {
     );
   }
 
-  Widget massageItem(
-      {required String message, required bool isMe, required String time}) {
+  Widget massageItem({
+    required String message,
+    required bool isMe,
+    required String time,
+    required bool doubleCheck,
+    bool failed = false,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
-        crossAxisAlignment:
-            isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
           Container(
             decoration: BoxDecoration(
-                color: isMe
-                    ? AppColors.primaryColor.withOpacity(0.5)
-                    : AppColors.backgroundColor,
-                borderRadius: BorderRadius.circular(8)),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Text(
-                message,
-                style: Get.textTheme.bodyMedium!.copyWith(
-                  fontSize: 16,
+              color: isMe ? AppColors.primaryColor.withOpacity(0.5) : AppColors.backgroundColor,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    top: 8,
+                    bottom: 8,
+                  ),
+                  child: Text(
+                    message,
+                    style: Get.textTheme.bodyMedium!.copyWith(
+                      fontSize: 16,
+                    ),
+                    textAlign: TextAlign.justify,
+                    textDirection: message.contains(RegExp(r'[a-zA-Z]')) ? TextDirection.ltr : TextDirection.rtl,
+                  ),
                 ),
-                textAlign: TextAlign.justify,
-                textDirection: message.contains(RegExp(r'[a-zA-Z]'))
-                    ? TextDirection.ltr
-                    : TextDirection.rtl,
-              ),
+                failed
+                    ? const Icon(
+                        Icons.error_outline,
+                        color: AppColors.errorColor,
+                        size: 12,
+                      )
+                    : SvgPicture.asset(
+                        doubleCheck ? AppIcons.icDoubleCheck : AppIcons.icCheck,
+                        width: 16,
+                        height: 16,
+                      ),
+                const SizedBox(width: 8)
+              ],
             ),
           ),
           const SizedBox(height: 8),

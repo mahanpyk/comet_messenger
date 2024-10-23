@@ -129,7 +129,7 @@ class MessageBorshModel extends BorshObject {
   final String? senderAddress;
   final String? messageType;
   final bool? offlineAdded;
-  final String? status;
+  String? status;
   final String? state;
   final String? image;
   final String? checkUploadIpfs;

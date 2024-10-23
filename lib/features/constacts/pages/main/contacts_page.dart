@@ -25,7 +25,7 @@ class ContactsPage extends BaseView<ContactsController> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                BackButton(),
+                const BackButton(),
                 Text(
                   'Contacts',
                   style: Get.textTheme.titleLarge!.copyWith(color: AppColors.tertiaryColor),

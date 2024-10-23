@@ -12,6 +12,7 @@ import 'package:comet_messenger/features/chat/models/chat_details_borsh_model.da
 import 'package:comet_messenger/features/chat/models/chat_details_response_model.dart';
 import 'package:comet_messenger/features/chat/repository/chat_repository.dart';
 import 'package:comet_messenger/features/home/models/profile_borsh_model.dart';
+import 'package:comet_messenger/features/home/pages/chat_list/chat_list_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -199,6 +200,9 @@ class ChatController extends GetxController with AppUtilsMixin {
           members: chatDetailsModel.value.members,
           isPrivate: chatDetailsModel.value.isPrivate,
         ));
+        if (sendTransaction.toString() == 'true') {
+          Get.find<ChatListController>().startTimer();
+        }
       } on PlatformException catch (e) {
         debugPrint('*****************************');
         debugPrint("Failed to encrypt data: ${e.message}.");

@@ -1,5 +1,4 @@
 import 'package:comet_messenger/app/core/app_constants.dart';
-import 'package:comet_messenger/app/core/app_flush_bar_utils.dart';
 import 'package:comet_messenger/app/core/app_utils_mixin.dart';
 import 'package:comet_messenger/app/models/list_user_wallets_model.dart';
 import 'package:comet_messenger/app/models/user_model.dart';
@@ -49,7 +48,7 @@ ${privateKey.value}
       '',
       'Text copied',
       colorText: AppColors.tertiaryColor,
-      snackPosition: SnackPosition.BOTTOM,
+      snackPosition: SnackPosition.TOP,
     );
     if (listUserWalletsModel != null && listUserWalletsModel!.listWallets != null) {
       for (UserWalletModel element in listUserWalletsModel!.listWallets!) {
@@ -92,7 +91,13 @@ ${privateKey.value}
       UserStoreService.to.saveUserModel(newUserModel.toJson());
     } on PlatformException catch (e) {
       isLoading(false);
-      AppFlushBarUtil.showFlushBar(message: 'Field to Create Account', duration: const Duration(seconds: 3));
+      Get.snackbar(
+        'Field to Create Account',
+        'Failed to encrypt data: \n${e.message}.',
+        colorText: AppColors.tertiaryColor,
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: AppColors.errorColor,
+      );
       debugPrint('*****************************');
       debugPrint("Failed to encrypt data: '${e.message}'.");
       debugPrint('#############################');

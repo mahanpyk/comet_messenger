@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -6,6 +7,7 @@ import 'package:comet_messenger/app/models/request_model.dart';
 import 'package:comet_messenger/app/models/user_model.dart';
 import 'package:comet_messenger/app/routes/app_routes.dart';
 import 'package:comet_messenger/app/store/user_store_service.dart';
+import 'package:comet_messenger/app/theme/app_colors.dart';
 import 'package:comet_messenger/features/home/models/chat_list_response_model.dart';
 import 'package:comet_messenger/features/home/models/profile_borsh_model.dart';
 import 'package:comet_messenger/features/home/repository/chat_list_repository.dart';
@@ -20,6 +22,8 @@ class ChatListController extends GetxController {
   UserModel? userModel;
   RxList<ConversationBorshModel> chatList = RxList<ConversationBorshModel>([]);
   RxBool isLoading = RxBool(true);
+  Timer? timer;
+  bool accessToOpenChat = true;
 
   @override
   void onInit() async {
@@ -75,12 +79,30 @@ class ChatListController extends GetxController {
   void contactsPage() => Get.toNamed(AppRoutes.CONTACTS);
 
   void onTapTransactionDetail({required ConversationBorshModel item}) {
-    Get.toNamed(AppRoutes.CHAT, arguments: item.toJson());
+    if (accessToOpenChat) {
+      Get.toNamed(AppRoutes.CHAT, arguments: item.toJson());
+    } else {
+      Get.snackbar(
+        'Error to open chat',
+        'you don\'t have access to open this chat\nplease wait for 15 seconds',
+        colorText: AppColors.tertiaryColor,
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: AppColors.errorColor,
+      );
+    }
   }
 
   Future<void> onRefresh() async {
     isLoading(true);
     chatList.clear();
     getChatsList();
+  }
+
+  void startTimer() {
+    accessToOpenChat = false;
+    if (timer != null) {
+      timer!.cancel();
+    }
+    timer = Timer.periodic(const Duration(seconds: 15), (timer) => accessToOpenChat = true);
   }
 }

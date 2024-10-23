@@ -48,6 +48,7 @@ class WalletPage extends BaseView<WalletController> {
         Expanded(
           child: TabBarView(
             controller: controller.tabController,
+            physics: const NeverScrollableScrollPhysics(),
             children: [
               Column(
                 children: [
@@ -57,13 +58,15 @@ class WalletPage extends BaseView<WalletController> {
                             child: Text('No transactions yet!'),
                           ),
                         )
-                      : ListView.builder(
-                          itemCount: controller.transactionsList.length,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            return transactionItem(item: controller.transactionsList[index]);
-                          },
+                      : SingleChildScrollView(
+                          child: ListView.builder(
+                            itemCount: controller.transactionsList.length,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              return transactionItem(item: controller.transactionsList[index]);
+                            },
+                          ),
                         ),
                 ],
               ),
@@ -75,13 +78,15 @@ class WalletPage extends BaseView<WalletController> {
                             child: Text('No transactions yet!'),
                           ),
                         )
-                      : ListView.builder(
-                          itemCount: controller.transactionsList.length,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            return transactionItem(item: controller.transactionsList[index]);
-                          },
+                      : SingleChildScrollView(
+                          child: ListView.builder(
+                            itemCount: controller.transactionsList.length,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              return transactionItem(item: controller.transactionsList[index]);
+                            },
+                          ),
                         ),
                 ],
               ),

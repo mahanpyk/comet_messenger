@@ -6,7 +6,6 @@ import 'package:comet_messenger/app/core/app_icons.dart';
 import 'package:comet_messenger/app/models/data_length_borsh_model.dart';
 import 'package:comet_messenger/app/models/request_model.dart';
 import 'package:comet_messenger/app/models/user_model.dart';
-import 'package:comet_messenger/app/routes/app_routes.dart';
 import 'package:comet_messenger/app/store/user_store_service.dart';
 import 'package:comet_messenger/features/authentication/models/authentication_response_model.dart';
 import 'package:comet_messenger/features/authentication/models/contact_model.dart';
@@ -71,13 +70,15 @@ class ContactsController extends GetxController {
       });
 
       debugPrint('*****************************');
-      debugPrint(result.toString());
+      debugPrint(result);
       debugPrint('#############################');
-      Get.toNamed(AppRoutes.CHAT);
       isLoading(false);
+      Get.back(result: contactUsername);
+
+      // Get.toNamed(AppRoutes.CHAT);
     } on PlatformException catch (e) {
       debugPrint('*****************************');
-      debugPrint("Failed to encrypt data: ${e.message}.");
+      debugPrint("Failed to create chat:\n${e.message}");
       debugPrint('#############################');
       Get.snackbar(
         "Error",

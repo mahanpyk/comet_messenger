@@ -247,7 +247,6 @@ object SolanaHelper {
                                 getInfoAccountModel.getResult().getValue().getData().get(0),
                                 ContactListModel::class.java
                             )
-                        Log.d("Lasemi", "getContacts: $contactListModel")
                         onComplete.onSuccess(contactListModel)
                     } catch (e: Exception) {
                         Log.e("errorGetContact", e.toString())
@@ -558,7 +557,7 @@ object SolanaHelper {
         onComplete: OnResponseStr,
     ) {
         val LAMPORTS_PER_SOL = 1000000000L
-        getSolana().api.requestAirdrop(customPublickey, LAMPORTS_PER_SOL * 1) { result ->
+        getSolana_dev().api.requestAirdrop(customPublickey, LAMPORTS_PER_SOL * 4) { result ->
             result.onSuccess { res ->
 //                getSolana().api.getConfirmedTransaction()
 

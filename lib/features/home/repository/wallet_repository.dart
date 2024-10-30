@@ -18,7 +18,7 @@ class WalletRepositoryImpl extends WalletRepository {
       data: {
         "jsonrpc": "2.0",
         "id": 1,
-        "method": "getConfirmedSignaturesForAddress2",
+        "method": "getSignaturesForAddress",
         "params": [
           walletAddress,
         ]

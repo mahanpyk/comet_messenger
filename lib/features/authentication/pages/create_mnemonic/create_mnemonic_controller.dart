@@ -45,8 +45,8 @@ ${privateKey.value}
 ''',
     ));
     Get.snackbar(
-      '',
       'Text copied',
+      'you can access to your account data from clipboard',
       colorText: AppColors.tertiaryColor,
       snackPosition: SnackPosition.TOP,
     );

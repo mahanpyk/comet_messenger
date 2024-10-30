@@ -62,11 +62,11 @@ class TransactionDetailPage extends BaseView<TransactionDetailController> {
                     children: [
                       Text(
                         'Transaction Data',
-                        style: Get.textTheme.titleMedium!.copyWith(color: AppColors.tertiaryColor),
+                        style: Get.textTheme.titleSmall!.copyWith(color: AppColors.tertiaryColor),
                       ),
                       Text(
                         controller.convertUnixToDate(controller.transactionDetail.result!.blockTime!).replaceAll('.000', ''),
-                        style: Get.textTheme.titleMedium,
+                        style: Get.textTheme.titleSmall,
                         textDirection: TextDirection.ltr,
                       ),
                     ],
@@ -77,11 +77,11 @@ class TransactionDetailPage extends BaseView<TransactionDetailController> {
                     children: [
                       Text(
                         'Balance before transaction',
-                        style: Get.textTheme.titleMedium!.copyWith(color: AppColors.tertiaryColor),
+                        style: Get.textTheme.titleSmall!.copyWith(color: AppColors.tertiaryColor),
                       ),
                       Text(
                         controller.convertSolanaBalance(balance: controller.transactionDetail.result!.meta!.preBalances![0]),
-                        style: Get.textTheme.titleMedium,
+                        style: Get.textTheme.titleSmall,
                       ),
                     ],
                   ),
@@ -91,11 +91,11 @@ class TransactionDetailPage extends BaseView<TransactionDetailController> {
                     children: [
                       Text(
                         'Balance after transaction',
-                        style: Get.textTheme.titleMedium!.copyWith(color: AppColors.tertiaryColor),
+                        style: Get.textTheme.titleSmall!.copyWith(color: AppColors.tertiaryColor),
                       ),
                       Text(
                         controller.convertSolanaBalance(balance: controller.transactionDetail.result!.meta!.postBalances![0]),
-                        style: Get.textTheme.titleMedium,
+                        style: Get.textTheme.titleSmall,
                       ),
                     ],
                   ),
@@ -105,11 +105,11 @@ class TransactionDetailPage extends BaseView<TransactionDetailController> {
                     children: [
                       Text(
                         'solt',
-                        style: Get.textTheme.titleMedium!.copyWith(color: AppColors.tertiaryColor),
+                        style: Get.textTheme.titleSmall!.copyWith(color: AppColors.tertiaryColor),
                       ),
                       Text(
                         controller.transactionDetail.result!.slot.toString(),
-                        style: Get.textTheme.titleMedium,
+                        style: Get.textTheme.titleSmall,
                       ),
                     ],
                   ),

@@ -3,7 +3,6 @@ package com.solana.networking
 import android.util.Log
 import com.solana.core.PublicKeyJsonAdapter
 import com.solana.core.PublicKeyRule
-import com.solana.models.RPC
 import com.solana.models.buffer.AccountInfoRule
 import com.solana.models.buffer.MintRule
 import com.solana.models.buffer.TokenSwapInfoRule
@@ -23,7 +22,6 @@ import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import java.io.IOException
 import java.lang.reflect.Type
-import kotlin.time.seconds
 
 sealed class NetworkingError(override val message: String?) : Exception(message) {
     object invalidResponseNoData : NetworkingError("No data was returned.")
@@ -166,7 +164,7 @@ class OkHttpNetworkingRouter(
             override fun onResponse(call: Call, response: Response) {
                 response.body?.let { body ->
                     val responses = body.string()
-                    if (method.equals("sendTransaction")) Log.d("Lasemi", "onResponse: $responses")
+//                    if (method.equals("sendTransaction")) Log.d("Lasemi", "onResponse: $responses")
                     fromJsonToResult<T>(responses, clazz)
                         .map { rpcResult ->
                             rpcResult.error?.let { error ->

@@ -24,7 +24,7 @@ fun Action.createConversationAction(
     is_private: Boolean,
     onComplete: ((Result<Pair<String, PublicKey>>) -> Unit),
 ) {
-    api.getMinimumBalanceForRentExemption(6000) {
+    api.getMinimumBalanceForRentExemption(40000) {
         it.onSuccess { balance ->
             val transaction = Transaction()
             val programId = PublicKey(CustomProgramId.getConversationProgramId())
@@ -35,7 +35,7 @@ fun Action.createConversationAction(
                 seed = conversationName,
                 newAccountPublickey = conversationId,
                 lamports = balance,
-                space = 6000,
+                space = 40000,
                 programId = programId
             )
             transaction.addInstruction(createAccountInstruction)

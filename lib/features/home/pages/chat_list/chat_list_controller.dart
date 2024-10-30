@@ -68,6 +68,7 @@ class ChatListController extends GetxController {
             final accountDataBuffer = Uint8List(length);
             accountDataBuffer.setAll(0, data.sublist(4, length));
             var decodeContacts = borsh.deserialize(ProfileBorshModel().borshSchema, accountDataBuffer, ProfileBorshModel.fromJson);
+            chatList.clear();
             chatList.addAll(decodeContacts.conversationList!);
           }
         }
@@ -76,10 +77,23 @@ class ChatListController extends GetxController {
     );
   }
 
-  void contactsPage() => Get.toNamed(AppRoutes.CONTACTS);
+  void contactsPage() {
+    Get.toNamed(AppRoutes.CONTACTS)?.then(
+      (dynamic value) {
+        if (value is String) {
+          chatList.add(ConversationBorshModel(
+            avatar: '1',
+            conversationId: "",
+            conversationName: value,
+            newConversation: 'true',
+          ));
+        }
+      },
+    );
+  }
 
   void onTapTransactionDetail({required ConversationBorshModel item}) {
-    if (accessToOpenChat) {
+    if (item.newConversation != 'true' && accessToOpenChat) {
       Get.toNamed(AppRoutes.CHAT, arguments: item.toJson());
     } else {
       Get.snackbar(
@@ -94,7 +108,6 @@ class ChatListController extends GetxController {
 
   Future<void> onRefresh() async {
     isLoading(true);
-    chatList.clear();
     getChatsList();
   }
 
@@ -103,6 +116,9 @@ class ChatListController extends GetxController {
     if (timer != null) {
       timer!.cancel();
     }
-    timer = Timer.periodic(const Duration(seconds: 15), (timer) => accessToOpenChat = true);
+    timer = Timer.periodic(const Duration(seconds: 15), (timer) {
+      accessToOpenChat = true;
+      onRefresh();
+    });
   }
 }

@@ -58,11 +58,10 @@ class WalletPage extends BaseView<WalletController> {
                             child: Text('No transactions yet!'),
                           ),
                         )
-                      : SingleChildScrollView(
+                      : Expanded(
                           child: ListView.builder(
                             itemCount: controller.transactionsList.length,
                             shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
                             itemBuilder: (context, index) {
                               return transactionItem(item: controller.transactionsList[index]);
                             },
@@ -70,26 +69,13 @@ class WalletPage extends BaseView<WalletController> {
                         ),
                 ],
               ),
-              Column(
-                children: [
-                  controller.transactionsList.isEmpty
-                      ? const Expanded(
-                          child: Center(
-                            child: Text('No transactions yet!'),
-                          ),
-                        )
-                      : SingleChildScrollView(
-                          child: ListView.builder(
-                            itemCount: controller.transactionsList.length,
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              return transactionItem(item: controller.transactionsList[index]);
-                            },
-                          ),
-                        ),
-                ],
-              ),
+              const Column(children: [
+                Expanded(
+                  child: Center(
+                    child: Text('Not set anything yet!'),
+                  ),
+                ),
+              ]),
             ],
           ),
         ),

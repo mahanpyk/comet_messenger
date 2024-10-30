@@ -86,17 +86,17 @@ class ChatListPage extends BaseView<ChatListController> {
           color: AppColors.backgroundSecondaryColor,
           child: ListTile(
             title: Text(
-              item.conversationName
+              (item.conversationName
                       ?.replaceAll('${controller.userModel?.userName ?? ''}&_#', '')
                       .replaceAll('&_#${controller.userModel?.userName ?? ''}', '') ??
-                  'No title',
+                  'No title'),
               textAlign: TextAlign.left,
               style: Get.textTheme.titleLarge!.copyWith(color: AppColors.tertiaryColor),
             ),
             subtitle: Text(
-              'Last message',
+              item.newConversation == 'true' ? 'This is a new conversation' : 'Last message',
               textAlign: TextAlign.left,
-              style: Get.textTheme.bodySmall!.copyWith(color: AppColors.tertiaryColor),
+              style: Get.textTheme.bodySmall!.copyWith(color: item.newConversation == 'true' ? AppColors.redColor : AppColors.tertiaryColor),
             ),
             leading: Text(
               // just show hour and minute for example 12:00 AM or PM

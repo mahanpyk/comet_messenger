@@ -15,7 +15,7 @@ fun Action.createAccountWithSeed(
     indexProfile: String,
     onComplete: ((Result<Pair<String, PublicKey>>) -> Unit)
 ) {
-    api.getMinimumBalanceForRentExemption(500) {
+    api.getMinimumBalanceForRentExemption(6000) {
         it.onSuccess { balance ->
             val transaction = Transaction()
             val createAccountInstruction = SystemProgram.createAccountWithSeed(
@@ -24,7 +24,7 @@ fun Action.createAccountWithSeed(
                 seed = userName,
                 newAccountPublickey = accountId,
                 lamports = balance,
-                space = 500,
+                space = 6000,
                 programId =programId
             )
             transaction.addInstruction(createAccountInstruction)

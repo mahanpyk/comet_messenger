@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:comet_messenger/app/core/app_constants.dart';
+import 'package:comet_messenger/app/core/app_enums.dart';
+import 'package:comet_messenger/app/core/app_icons.dart';
 import 'package:comet_messenger/app/core/app_utils_mixin.dart';
 import 'package:comet_messenger/app/models/data_length_borsh_model.dart';
 import 'package:comet_messenger/app/models/request_model.dart';
@@ -120,7 +122,7 @@ class ChatController extends GetxController with AppUtilsMixin {
                 debugPrint("Failed to decrypt data: $e");
                 debugPrint('#############################');
               }
-              element.status = 'success';
+              element.status = ChatStateEnum.SUCCESS.name;
             }
             isLoading(false);
             scrollToBottom();
@@ -146,7 +148,8 @@ class ChatController extends GetxController with AppUtilsMixin {
           MessageBorshModel(
             text: text,
             time: time,
-            status: 'pending',
+            status: ChatStateEnum.PENDING.name,
+            senderAddress: userModel?.id ?? '',
           ),
         ],
         conversationName: chatDetailsModel.value.conversationName,
@@ -191,7 +194,7 @@ class ChatController extends GetxController with AppUtilsMixin {
             MessageBorshModel(
               text: text,
               time: time,
-              status: sendTransaction.toString() == 'true' ? 'success' : 'failed',
+              status: sendTransaction.toString() == 'true' ? ChatStateEnum.SEND.name : ChatStateEnum.FAILURE.name,
             ),
           ],
           conversationName: chatDetailsModel.value.conversationName,
@@ -251,6 +254,18 @@ class ChatController extends GetxController with AppUtilsMixin {
     final Random random = Random.secure();
     const String chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
     return List.generate(16, (index) => chars[random.nextInt(chars.length)]).join();
+  }
+
+  String getStatusIcon(String status) {
+    if (status == ChatStateEnum.PENDING.name) {
+      return AppIcons.icClock;
+    } else if (status == ChatStateEnum.SEND.name) {
+      return AppIcons.icCheck;
+    } else if (status == ChatStateEnum.SUCCESS.name) {
+      return AppIcons.icDoubleCheck;
+    } else {
+      return AppIcons.icFailure;
+    }
   }
 
   void onTapChatHeader() => Get.toNamed(

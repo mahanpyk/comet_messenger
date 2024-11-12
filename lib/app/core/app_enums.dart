@@ -35,3 +35,10 @@ enum StateAuthLoginEnum {
   EXCEPTION,
   SHOW_MODAL,
 }
+
+enum ChatStateEnum {
+  PENDING,
+  SEND,
+  SUCCESS,
+  FAILURE,
+}

@@ -21,4 +21,6 @@ class AppIcons {
   static const icLock = '$_base/ic_lock.svg';
   static const icCheck = '$_base/ic_check.svg';
   static const icDoubleCheck = '$_base/ic_double_check.svg';
+  static const icClock = '$_base/ic_clock.svg';
+  static const icFailure = '$_base/ic_failure.svg';
 }

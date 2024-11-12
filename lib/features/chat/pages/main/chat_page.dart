@@ -1,9 +1,10 @@
+import 'package:comet_messenger/app/core/app_enums.dart';
 import 'package:comet_messenger/app/core/app_icons.dart';
 import 'package:comet_messenger/app/core/app_images.dart';
+import 'package:comet_messenger/app/core/app_regex.dart';
 import 'package:comet_messenger/app/core/base/base_view.dart';
 import 'package:comet_messenger/app/theme/app_colors.dart';
 import 'package:comet_messenger/features/chat/pages/main/chat_controller.dart';
-import 'package:comet_messenger/features/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -17,11 +18,45 @@ class ChatPage extends BaseView<ChatController> {
       children: [
         InkWell(
           onTap: () => controller.onTapChatHeader(),
-          child: AppBarWidget(
-              title: controller.conversationModel.conversationName
-                      ?.replaceAll('${controller.userModel?.userName ?? ''}&_#', '')
-                      .replaceAll('&_#${controller.userModel?.userName ?? ''}', '') ??
-                  'No title'),
+          child: Container(
+            height: kToolbarHeight,
+            width: Get.width,
+            color: AppColors.primaryColor,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  BackButton(onPressed: () => Get.back()),
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        width: 1,
+                        color: AppColors.tertiaryColor,
+                      ),
+                    ),
+                    padding: EdgeInsets.zero,
+                    margin: EdgeInsets.zero,
+                    child: SvgPicture.asset(
+                      '${AppIcons.icUserAvatar}${controller.chatDetailsModel.value.messages?.last.image ?? "0"}.svg',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Text(
+                    controller.conversationModel.conversationName
+                            ?.replaceAll('${controller.userModel?.userName ?? ''}&_#', '')
+                            .replaceAll('&_#${controller.userModel?.userName ?? ''}', '') ??
+                        'No title',
+                    style: Get.textTheme.titleLarge!.copyWith(color: AppColors.tertiaryColor),
+                  ),
+                  const SizedBox(width: 40),
+                ],
+              ),
+            ),
+          ),
         ),
         Expanded(
           child: Stack(
@@ -45,8 +80,7 @@ class ChatPage extends BaseView<ChatController> {
                                 message: controller.chatMessages[index],
                                 isMe: controller.chatDetailsModel.value.messages?[index].senderAddress == controller.userModel?.id,
                                 time: controller.chatDetailsModel.value.messages?[index].time ?? '',
-                                doubleCheck: controller.chatDetailsModel.value.messages?[index].status == 'success',
-                                failed: controller.chatDetailsModel.value.messages?[index].status == 'failed',
+                                chatStatus: controller.getStatusIcon(controller.chatDetailsModel.value.messages![index].status ?? ChatStateEnum.PENDING.name),
                               );
                             },
                           ),
@@ -102,8 +136,7 @@ class ChatPage extends BaseView<ChatController> {
     required String message,
     required bool isMe,
     required String time,
-    required bool doubleCheck,
-    bool failed = false,
+    required String chatStatus,
   }) {
     return Row(
       mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
@@ -138,23 +171,18 @@ class ChatPage extends BaseView<ChatController> {
                                 fontSize: 16,
                               ),
                               textAlign: TextAlign.justify,
-                              textDirection: message.contains(RegExp(r'[a-zA-Z]')) ? TextDirection.ltr : TextDirection.rtl,
+                              textDirection: message.contains(AppRegex.alphabetRegex) ? TextDirection.ltr : TextDirection.rtl,
                             ),
                           ],
                         ),
                       ),
                     ),
-                    failed
-                        ? const Icon(
-                            Icons.error_outline,
-                            color: AppColors.errorColor,
-                            size: 12,
-                          )
-                        : SvgPicture.asset(
-                            doubleCheck ? AppIcons.icDoubleCheck : AppIcons.icCheck,
-                            width: 16,
-                            height: 16,
-                          ),
+                    if (isMe)
+                      SvgPicture.asset(
+                        chatStatus,
+                        width: 16,
+                        height: 16,
+                      ),
                     const SizedBox(width: 8)
                   ],
                 ),

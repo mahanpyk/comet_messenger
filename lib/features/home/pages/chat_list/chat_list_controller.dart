@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:comet_messenger/app/core/app_utils_mixin.dart';
 import 'package:comet_messenger/app/models/data_length_borsh_model.dart';
 import 'package:comet_messenger/app/models/request_model.dart';
 import 'package:comet_messenger/app/models/user_model.dart';
@@ -14,7 +15,7 @@ import 'package:comet_messenger/features/home/repository/chat_list_repository.da
 import 'package:get/get.dart';
 import 'package:solana_borsh/borsh.dart';
 
-class ChatListController extends GetxController {
+class ChatListController extends GetxController with AppUtilsMixin {
   ChatListController(this._repo);
 
   final ChatListRepository _repo;
@@ -78,7 +79,10 @@ class ChatListController extends GetxController {
   }
 
   void contactsPage() {
-    Get.toNamed(AppRoutes.CONTACTS)?.then(
+    Get.toNamed(
+      AppRoutes.CONTACTS,
+      arguments: chatList,
+    )?.then(
       (dynamic value) {
         if (value is String) {
           chatList.add(ConversationBorshModel(

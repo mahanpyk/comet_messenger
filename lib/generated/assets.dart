@@ -11,7 +11,7 @@ class Assets {
   static const String iconsIcDashboardActive = 'assets/icons/ic_dashboard_active.svg';
   static const String iconsIcDashboardInactive = 'assets/icons/ic_dashboard_inactive.svg';
   static const String iconsIcDoubleCheck = 'assets/icons/ic_double_check.svg';
-  static const String iconsIcFailed = 'assets/icons/ic_failure.svg';
+  static const String iconsIcFailure = 'assets/icons/ic_failure.svg';
   static const String iconsIcForward = 'assets/icons/ic_forward.svg';
   static const String iconsIcLock = 'assets/icons/ic_lock.svg';
   static const String iconsIcNavigate = 'assets/icons/ic_navigate.svg';
@@ -30,6 +30,7 @@ class Assets {
   static const String iconsIcUserAvatar4 = 'assets/icons/ic_user_avatar_4.svg';
   static const String iconsIcUserAvatar5 = 'assets/icons/ic_user_avatar_5.svg';
   static const String iconsIcWarning = 'assets/icons/ic_warning.svg';
+  static const String iconsIcTwoCoins = 'assets/icons/ic_two_coins.svg';
   static const String imagesImgChatBackgroundPage = 'assets/images/img_chat_background_page.png';
   static const String imagesImgCreateMnemonicPage = 'assets/images/img_create_mnemonic_page.png';
   static const String imagesImgLogo = 'assets/images/img_logo.png';

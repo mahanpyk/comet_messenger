@@ -1,5 +1,4 @@
 import 'package:comet_messenger/app/core/app_enums.dart';
-import 'package:comet_messenger/app/core/app_icons.dart';
 import 'package:comet_messenger/app/core/app_images.dart';
 import 'package:comet_messenger/app/core/app_regex.dart';
 import 'package:comet_messenger/app/core/base/base_view.dart';
@@ -40,7 +39,7 @@ class ChatPage extends BaseView<ChatController> {
                     padding: EdgeInsets.zero,
                     margin: EdgeInsets.zero,
                     child: SvgPicture.asset(
-                      '${AppIcons.icUserAvatar}${controller.chatDetailsModel.value.messages?.last.image ?? "0"}.svg',
+                      controller.getAvatar(controller.conversationModel.avatar),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -64,68 +63,77 @@ class ChatPage extends BaseView<ChatController> {
             children: [
               Image.asset(
                 AppImages.imgChatBackgroundPage,
-                fit: BoxFit.fitWidth,
+                fit: BoxFit.cover,
               ),
-              controller.isLoading.value
-                  ? const Center(child: CircularProgressIndicator())
-                  : Column(
-                      children: [
-                        const SizedBox(height: 8),
-                        Expanded(
-                          child: ListView.builder(
-                            controller: controller.scrollController.value,
-                            itemCount: controller.chatDetailsModel.value.messages?.length ?? 0,
-                            itemBuilder: (context, index) {
-                              return massageItem(
-                                message: controller.chatMessages[index],
-                                isMe: controller.chatDetailsModel.value.messages?[index].senderAddress == controller.userModel?.id,
-                                time: controller.chatDetailsModel.value.messages?[index].time ?? '',
-                                chatStatus: controller.getStatusIcon(controller.chatDetailsModel.value.messages![index].status ?? ChatStateEnum.PENDING.name),
-                              );
-                            },
-                          ),
+              Scaffold(
+                resizeToAvoidBottomInset: true,
+                backgroundColor: Colors.transparent,
+                body: Column(
+                  children: [
+                    Expanded(
+                      child: controller.isLoading.value
+                          ? const Center(child: CircularProgressIndicator())
+                          : Column(children: [
+                              const SizedBox(height: 8),
+                              Expanded(
+                                child: ListView.builder(
+                                  controller: controller.scrollController.value,
+                                  itemCount: controller.chatDetailsModel.value.messages?.length ?? 0,
+                                  itemBuilder: (context, index) {
+                                    return massageItem(
+                                      message: controller.chatMessages[index],
+                                      isMe: controller.chatDetailsModel.value.messages?[index].senderAddress == controller.userModel?.id,
+                                      time: controller.chatDetailsModel.value.messages?[index].time ?? '',
+                                      chatStatus:
+                                          controller.getStatusIcon(controller.chatDetailsModel.value.messages![index].status ?? ChatStateEnum.PENDING.name),
+                                    );
+                                  },
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                            ]),
+                    ),
+                    Container(
+                      height: 64,
+                      width: Get.width,
+                      color: AppColors.backgroundColor,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: TextFormField(
+                                controller: controller.messageTEC,
+                                decoration: const InputDecoration(
+                                  hintText: 'Message',
+                                  border: InputBorder.none,
+                                ),
+                                onFieldSubmitted: (value) => controller.isTyping.value ? controller.sendMessage() : null,
+                                onChanged: (value) {
+                                  if (value.isNotEmpty) {
+                                    controller.isTyping.value = true;
+                                  } else {
+                                    controller.isTyping.value = false;
+                                  }
+                                },
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () => controller.isTyping.value ? controller.sendMessage() : null,
+                              icon: Icon(
+                                Icons.send,
+                                color: AppColors.tertiaryColor.withOpacity(controller.isTyping.value ? 1.0 : 0.5),
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 16),
-                      ],
+                      ),
                     ),
+                  ],
+                ),
+              ),
             ],
-          ),
-        ),
-        Container(
-          height: 64,
-          width: Get.width,
-          color: AppColors.backgroundColor,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    controller: controller.messageTEC,
-                    decoration: const InputDecoration(
-                      hintText: 'Message',
-                      border: InputBorder.none,
-                    ),
-                    onFieldSubmitted: (value) => controller.isTyping.value ? controller.sendMessage() : null,
-                    onChanged: (value) {
-                      if (value.isNotEmpty) {
-                        controller.isTyping.value = true;
-                      } else {
-                        controller.isTyping.value = false;
-                      }
-                    },
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => controller.isTyping.value ? controller.sendMessage() : null,
-                  icon: Icon(
-                    Icons.send,
-                    color: AppColors.tertiaryColor.withOpacity(controller.isTyping.value ? 1.0 : 0.5),
-                  ),
-                ),
-              ],
-            ),
           ),
         ),
       ],
@@ -163,18 +171,16 @@ class ChatPage extends BaseView<ChatController> {
                       ),
                       child: Container(
                         constraints: BoxConstraints(maxWidth: Get.width - 80),
-                        child: Wrap(
-                          children: [
-                            Text(
-                              message,
-                              style: Get.textTheme.bodyMedium!.copyWith(
-                                fontSize: 16,
-                              ),
-                              textAlign: TextAlign.justify,
-                              textDirection: message.contains(AppRegex.alphabetRegex) ? TextDirection.ltr : TextDirection.rtl,
+                        child: Wrap(children: [
+                          Text(
+                            message,
+                            style: Get.textTheme.bodyMedium!.copyWith(
+                              fontSize: 16,
                             ),
-                          ],
-                        ),
+                            textAlign: TextAlign.justify,
+                            textDirection: message.contains(AppRegex.alphabetRegex) ? TextDirection.ltr : TextDirection.rtl,
+                          ),
+                        ]),
                       ),
                     ),
                     if (isMe)
@@ -198,4 +204,7 @@ class ChatPage extends BaseView<ChatController> {
       ],
     );
   }
+
+  @override
+  bool resizeToAvoidBottomInset() => false;
 }

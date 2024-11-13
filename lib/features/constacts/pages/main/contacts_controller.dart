@@ -6,10 +6,12 @@ import 'package:comet_messenger/app/core/app_icons.dart';
 import 'package:comet_messenger/app/models/data_length_borsh_model.dart';
 import 'package:comet_messenger/app/models/request_model.dart';
 import 'package:comet_messenger/app/models/user_model.dart';
+import 'package:comet_messenger/app/routes/app_routes.dart';
 import 'package:comet_messenger/app/store/user_store_service.dart';
 import 'package:comet_messenger/features/authentication/models/authentication_response_model.dart';
 import 'package:comet_messenger/features/authentication/models/contact_model.dart';
 import 'package:comet_messenger/features/constacts/repository/contacts_repository.dart';
+import 'package:comet_messenger/features/home/models/profile_borsh_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -23,6 +25,7 @@ class ContactsController extends GetxController {
   ContactModel? contactModel;
   RxList<Contact> contacts = RxList([]);
   UserModel? userModel;
+  List<ConversationBorshModel> chatList = [];
 
   @override
   void onInit() async {
@@ -31,23 +34,35 @@ class ContactsController extends GetxController {
     if (jsonUserModel != null) {
       userModel = UserModel.fromJson(jsonUserModel);
     }
+    var args = Get.arguments;
+    if (args != null) {
+      chatList.addAll(args);
+    }
     getContactsList();
   }
 
   void showModalConfirmationCreateChat(Contact item) async {
-    AppDialog dialog = AppDialog(
-      title: 'Create Conversation',
-      subTitle: 'This will cost you. are you sure you want to create this conversation?',
-      mainButtonTitle: 'Yes',
-      icon: AppIcons.icWarning,
-      mainButtonOnTap: () {
-        Get.back();
-        sendCreateConversation(item);
-      },
-      otherTask: () => Get.back(),
-      otherTaskTitle: 'No',
-    );
-    dialog.showAppDialog();
+    ConversationBorshModel? conversationModel = chatList.firstWhereOrNull((element) => element.conversationName?.contains(item.userName ?? '') ?? false);
+    if (conversationModel != null) {
+      Get.offAndToNamed(
+        AppRoutes.CHAT,
+        arguments: conversationModel.toJson(),
+      );
+    } else {
+      AppDialog dialog = AppDialog(
+        title: 'Create Conversation',
+        subTitle: 'This will cost you. are you sure you want to create this conversation?',
+        mainButtonTitle: 'Yes',
+        icon: AppIcons.icWarning,
+        mainButtonOnTap: () {
+          Get.back();
+          sendCreateConversation(item);
+        },
+        otherTask: () => Get.back(),
+        otherTaskTitle: 'No',
+      );
+      dialog.showAppDialog();
+    }
   }
 
   void sendCreateConversation(Contact item) async {

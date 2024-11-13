@@ -195,6 +195,7 @@ class ChatController extends GetxController with AppUtilsMixin {
               text: text,
               time: time,
               status: sendTransaction.toString() == 'true' ? ChatStateEnum.SEND.name : ChatStateEnum.FAILURE.name,
+              senderAddress: userModel?.id ?? '',
             ),
           ],
           conversationName: chatDetailsModel.value.conversationName,
@@ -268,8 +269,13 @@ class ChatController extends GetxController with AppUtilsMixin {
     }
   }
 
-  void onTapChatHeader() => Get.toNamed(
-        AppRoutes.CHAT_PROFILE,
-        arguments: chatDetailsModel.toJson(),
-      );
+  void onTapChatHeader() {
+    Get.toNamed(
+      AppRoutes.CHAT_PROFILE,
+      arguments: {
+        'chatDetailModel': chatDetailsModel.toJson(),
+        'avatar': getAvatar(conversationModel.avatar),
+      },
+    );
+  }
 }

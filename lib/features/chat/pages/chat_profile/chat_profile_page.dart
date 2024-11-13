@@ -33,7 +33,7 @@ class ChatProfilePage extends BaseView<ChatProfileController> {
               ),
               const SizedBox(height: 16),
               SvgPicture.asset(
-                '${AppIcons.icUserAvatar}${controller.chatDetailsModel.messages?.last.image ?? "0"}.svg',
+                '${AppIcons.icUserAvatar}${controller.avatar}.svg',
                 height: 120,
                 width: 120,
               ),

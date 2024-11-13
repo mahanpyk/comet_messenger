@@ -13,6 +13,7 @@ class PinController extends GetxController {
   final FocusNode focusNode = FocusNode();
   final TextEditingController pinTEC = TextEditingController();
   RxBool fingerPrintEnabled = RxBool(false);
+
   // final LocalAuthentication auth = LocalAuthentication();
   bool deviceHasFingerPrint = false;
 
@@ -55,7 +56,7 @@ class PinController extends GetxController {
     // if (fingerPrintEnabled.value) {
     //   fingerPrintAuth();
     // } else {
-      onTapPage();
+    onTapPage();
     // }
     super.onReady();
   }
@@ -129,7 +130,10 @@ class PinController extends GetxController {
           // if (deviceHasFingerPrint) {
           //   Get.offAndToNamed(AppRoutes.FINGER_PRINT);
           // } else {
-            Get.offAndToNamed(AppRoutes.HOME);
+          Get.offAndToNamed(
+            AppRoutes.HOME,
+            arguments: {'showAirDropDialog': true},
+          );
           // }
         } else {
           showError(true);

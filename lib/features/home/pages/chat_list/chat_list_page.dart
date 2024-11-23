@@ -1,8 +1,10 @@
 import 'package:comet_messenger/app/core/base/base_view.dart';
 import 'package:comet_messenger/app/theme/app_colors.dart';
+import 'package:comet_messenger/features/home/models/profile_borsh_model.dart';
 import 'package:comet_messenger/features/home/pages/chat_list/chat_list_controller.dart';
-import 'package:comet_messenger/features/home/widgets/chat_item_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ChatListPage extends BaseView<ChatListController> {
@@ -52,7 +54,7 @@ class ChatListPage extends BaseView<ChatListController> {
                     itemCount: controller.chatList.length,
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
-                      return ChatItemWidget(
+                      return chatItemWidget(
                         conversationBorshModel: controller.chatList[index],
                         userName: controller.userModel?.userName ?? '',
                         avatar: controller.getAvatar(controller.chatList[index].avatar),
@@ -70,6 +72,59 @@ class ChatListPage extends BaseView<ChatListController> {
       backgroundColor: AppColors.primaryColor,
       onPressed: () => controller.contactsPage(),
       child: const Icon(Icons.add),
+    );
+  }
+
+  Widget chatItemWidget({
+    required ConversationBorshModel conversationBorshModel,
+    required VoidCallback onTapItem,
+    required String userName,
+    required String avatar,
+  }) {
+    return GestureDetector(
+      onTap: () => onTapItem(),
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: Card(
+          color: AppColors.backgroundSecondaryColor,
+          child: ListTile(
+            title: Text(
+              (conversationBorshModel.conversationName?.replaceAll('${userName ?? ''}&_#', '').replaceAll('&_#${userName ?? ''}', '') ?? 'No title'),
+              textAlign: TextAlign.left,
+              style: Get.textTheme.titleLarge!.copyWith(color: AppColors.tertiaryColor),
+            ),
+            subtitle: Text(
+              conversationBorshModel.newConversation == 'true' ? 'This is a new conversation' : 'Last message',
+              textAlign: TextAlign.left,
+              style: Get.textTheme.bodySmall!.copyWith(color: conversationBorshModel.newConversation == 'true' ? AppColors.redColor : AppColors.tertiaryColor),
+            ),
+            leading: conversationBorshModel.newConversation == 'true'
+                ? Row(
+                    children: [
+                      Text(
+                        controller.timerCounter.value.toString(),
+                        style: Get.textTheme.bodySmall!.copyWith(color: AppColors.redColor),
+                      ),
+                      const SizedBox(width: 8),
+                      const Icon(
+                        Icons.timer_outlined,
+                        color: AppColors.redColor,
+                        size: 24,
+                      ),
+                    ],
+                  )
+                : Text(
+                    // just show hour and minute for example 12:00 AM or PM
+                    '${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')} ${DateTime.now().hour > 12 ? 'PM' : 'AM'}',
+                  ),
+            trailing: SvgPicture.asset(
+              avatar,
+              height: 48,
+              width: 48,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

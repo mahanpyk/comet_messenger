@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:comet_messenger/app/routes/app_routes.dart';
 import 'package:comet_messenger/app/store/user_store_service.dart';
+import 'package:comet_messenger/app/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:local_auth/local_auth.dart';
 
 class PinController extends GetxController {
   Rx<PageController> pageViewController = Rx(PageController());
@@ -13,26 +17,29 @@ class PinController extends GetxController {
   final FocusNode focusNode = FocusNode();
   final TextEditingController pinTEC = TextEditingController();
   RxBool fingerPrintEnabled = RxBool(false);
-
-  // final LocalAuthentication auth = LocalAuthentication();
+  final LocalAuthentication auth = LocalAuthentication();
   bool deviceHasFingerPrint = false;
+  bool isChangePin = false;
 
   @override
   void onInit() async {
+    var arguments = Get.arguments;
+    if (arguments != null) {
+      isChangePin = arguments;
+    }
     savePin = await UserStoreService.to.getPin();
-    // fingerPrintEnabled(await UserStoreService.to.get(key: AppConstants.FINGER_PRINT) ?? false);
-/*    checkBiometrics().then((isAvailable) {
+    fingerPrintEnabled(await UserStoreService.to.getFingerPrint() ?? false);
+    checkBiometrics().then((isAvailable) {
       if (isAvailable) {
         deviceHasFingerPrint = true;
-        print('Fingerprint authentication is supported.');
       } else {
-        print('Fingerprint authentication not available.');
+        deviceHasFingerPrint = false;
       }
-    });*/
+    });
     super.onInit();
   }
 
-/*  Future<bool> checkBiometrics() async {
+  Future<bool> checkBiometrics() async {
     bool canCheckBiometrics = false;
     try {
       canCheckBiometrics = await auth.canCheckBiometrics;
@@ -49,24 +56,24 @@ class PinController extends GetxController {
       }
     }
     return false;
-  }*/
+  }
 
   @override
   void onReady() {
-    // if (fingerPrintEnabled.value) {
-    //   fingerPrintAuth();
-    // } else {
-    onTapPage();
-    // }
+    if (fingerPrintEnabled.value && !isChangePin) {
+      fingerPrintAuth();
+    } else {
+      onTapPage();
+    }
     super.onReady();
   }
 
   Future<void> fingerPrintAuth() async {
     bool authenticated = false;
-/*    try {
+    try {
       authenticated = await auth.authenticate(
-        localizedReason: 'لطفاً اثر انگشت خود را مطابقت دهید تا وارد شوید',
-        options: const AuthenticatxionOptions(
+        localizedReason: 'Please authenticate to proceed.',
+        options: const AuthenticationOptions(
           sensitiveTransaction: false,
           biometricOnly: true,
           useErrorDialogs: true,
@@ -77,7 +84,7 @@ class PinController extends GetxController {
       debugPrint('*****************');
       debugPrint(e.message);
       debugPrint('-----------------');
-    }*/
+    }
     if (authenticated) {
       if (await UserStoreService.to.getMnemonic() != null) {
         Get.offAndToNamed(AppRoutes.HOME);
@@ -104,10 +111,16 @@ class PinController extends GetxController {
       if (value.length == 4) {
         if (savePin != null) {
           if (firstPin == savePin) {
-            if (await UserStoreService.to.getMnemonic() != null) {
-              Get.offAndToNamed(AppRoutes.HOME);
+            if (isChangePin) {
+              animatedToPage(1);
+              currentIndex(0);
+              pinTEC.text = '';
             } else {
-              Get.offAndToNamed(AppRoutes.AUTHENTICATION);
+              if (await UserStoreService.to.getMnemonic() != null) {
+                Get.offAndToNamed(AppRoutes.HOME);
+              } else {
+                Get.offAndToNamed(AppRoutes.AUTHENTICATION);
+              }
             }
           } else {
             incorrectPassword(true);
@@ -127,15 +140,27 @@ class PinController extends GetxController {
       if (value.length == 4) {
         if (firstPin == secondPin) {
           UserStoreService.to.savePin(secondPin!);
-          // if (deviceHasFingerPrint) {
-          //   Get.offAndToNamed(AppRoutes.FINGER_PRINT);
-          // } else {
-          Get.offAndToNamed(
-            AppRoutes.HOME,
-            arguments: {'showAirDropDialog': true},
-          );
-          // }
+          if (deviceHasFingerPrint) {
+            Get.offAndToNamed(AppRoutes.FINGERPRINT);
+          } else {
+            Get.offAndToNamed(
+              AppRoutes.HOME,
+              arguments: {'showAirDropDialog': true},
+            );
+          }
         } else {
+          if (isChangePin) {
+            UserStoreService.to.savePin(secondPin!);
+            Get.back();
+            Get.snackbar(
+              'Change Pin Successful',
+              'Your Pin has been changed successfully',
+              colorText: AppColors.tertiaryColor,
+              snackPosition: SnackPosition.TOP,
+              backgroundColor: AppColors.successColor,
+            );
+            return;
+          }
           showError(true);
           pinTEC.text = '';
           secondPin = '';
@@ -161,8 +186,4 @@ class PinController extends GetxController {
       curve: Curves.easeIn,
     );
   }
-}
-
-class AuthenticationOptions {
-  const AuthenticationOptions();
 }

@@ -88,7 +88,10 @@ class ContactsController extends GetxController {
       debugPrint(result);
       debugPrint('#############################');
       isLoading(false);
-      Get.back(result: contactUsername);
+      Get.back(result: {
+        'username': contactUsername,
+        'avatar': item.avatar,
+      });
 
       // Get.toNamed(AppRoutes.CHAT);
     } on PlatformException catch (e) {

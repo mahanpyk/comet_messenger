@@ -24,7 +24,7 @@ class ChatListController extends GetxController with AppUtilsMixin {
   RxList<ConversationBorshModel> chatList = RxList<ConversationBorshModel>([]);
   RxBool isLoading = RxBool(true);
   Timer? timer;
-  bool accessToOpenChat = true;
+  RxInt timerCounter = RxInt(-1);
 
   @override
   void onInit() async {
@@ -84,25 +84,29 @@ class ChatListController extends GetxController with AppUtilsMixin {
       arguments: chatList,
     )?.then(
       (dynamic value) {
-        if (value is String) {
-          chatList.add(ConversationBorshModel(
-            avatar: '1',
-            conversationId: "",
-            conversationName: value,
-            newConversation: 'true',
-          ));
+        if (value is Map) {
+          // add new contact to first position
+          chatList.insert(
+              0,
+              ConversationBorshModel(
+                avatar: value['avatar'],
+                conversationId: "",
+                conversationName: value['username'],
+                newConversation: 'true',
+              ));
+          startTimer();
         }
       },
     );
   }
 
   void onTapTransactionDetail({required ConversationBorshModel item}) {
-    if (item.newConversation != 'true' && accessToOpenChat) {
+    if (item.newConversation != 'true') {
       Get.toNamed(AppRoutes.CHAT, arguments: item.toJson());
     } else {
       Get.snackbar(
         'Error to open chat',
-        'you don\'t have access to open this chat\nplease wait for 15 seconds',
+        'you don\'t have access to open this chat\nplease wait until the transaction is confirmed',
         colorText: AppColors.tertiaryColor,
         snackPosition: SnackPosition.TOP,
         backgroundColor: AppColors.errorColor,
@@ -116,13 +120,19 @@ class ChatListController extends GetxController with AppUtilsMixin {
   }
 
   void startTimer() {
-    accessToOpenChat = false;
     if (timer != null) {
       timer!.cancel();
     }
-    timer = Timer.periodic(const Duration(seconds: 15), (timer) {
-      accessToOpenChat = true;
-      onRefresh();
-    });
+    timer = Timer.periodic(
+      const Duration(seconds: 1),
+      (timer) {
+        if (timerCounter.value == 15) {
+          timer.cancel();
+          onRefresh();
+        } else {
+          timerCounter.value++;
+        }
+      },
+    );
   }
 }

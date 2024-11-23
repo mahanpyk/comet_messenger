@@ -3,6 +3,7 @@ class AppConstants {
   static const String TOKEN = 'TOKEN';
   static const String REFRESH_TOKEN = 'REFRESH_TOKEN';
   static const String LANGUAGE = 'LANGUAGE';
+  static const String FINGERPRINT = 'FINGERPRINT';
 
   static const String WALLETS = 'WALLETS';
   static const String MNEMONIC = 'MNEMONIC';

@@ -18,9 +18,12 @@ class UserStoreService {
     await _secureStorage.write(key: AppConstants.TOKEN, value: tokenString);
   }
 
+  Future<void> saveFingerprint(bool fingerprintState) async {
+    await _secureStorage.write(key: AppConstants.FINGERPRINT, value: fingerprintState.toString());
+  }
+
   Future<void> saveRefreshToken(String tokenString) async {
-    await _secureStorage.write(
-        key: AppConstants.REFRESH_TOKEN, value: tokenString);
+    await _secureStorage.write(key: AppConstants.REFRESH_TOKEN, value: tokenString);
   }
 
   Future<String?> getToken() async {
@@ -28,19 +31,38 @@ class UserStoreService {
     return result;
   }
 
+  Future<bool?> getFingerPrint() async {
+    String? result = await _secureStorage.read(key: AppConstants.FINGERPRINT);
+    if (result != null) {
+      return result == 'true';
+    } else {
+      return null;
+    }
+  }
+
+  Future<double?> getBalance() async {
+    String? result = await _secureStorage.read(key: AppConstants.BALANCE);
+    if (result != null) {
+      return double.parse(result);
+    } else {
+      return null;
+    }
+  }
+
+  Future<void> saveBalance(double balance) async {
+    await _secureStorage.write(key: AppConstants.BALANCE, value: balance.toString());
+  }
+
   Future<String?> getRefreshToken() async {
     String? result = await _secureStorage.read(key: AppConstants.REFRESH_TOKEN);
     return result;
   }
 
-  void deleteToken() async =>
-      await _secureStorage.delete(key: AppConstants.TOKEN);
+  void deleteToken() async => await _secureStorage.delete(key: AppConstants.TOKEN);
 
-  void deleteRefreshToken() async =>
-      await _secureStorage.delete(key: AppConstants.REFRESH_TOKEN);
+  void deleteRefreshToken() async => await _secureStorage.delete(key: AppConstants.REFRESH_TOKEN);
 
-  Future<void> save({required String key, required dynamic value}) async =>
-      await _storage.write(key, value);
+  Future<void> save({required String key, required dynamic value}) async => await _storage.write(key, value);
 
   dynamic get({required String key}) {
     var result = _storage.read(key);

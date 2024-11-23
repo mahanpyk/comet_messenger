@@ -3,16 +3,19 @@ import 'package:comet_messenger/app/bindings/chat_binding.dart';
 import 'package:comet_messenger/app/bindings/chat_profile_binding.dart';
 import 'package:comet_messenger/app/bindings/contacts_binding.dart';
 import 'package:comet_messenger/app/bindings/create_mnemonic_binding.dart';
+import 'package:comet_messenger/app/bindings/fingerprint_binding.dart';
 import 'package:comet_messenger/app/bindings/home_binding.dart';
 import 'package:comet_messenger/app/bindings/import_wallet_binding.dart';
 import 'package:comet_messenger/app/bindings/intro_binding.dart';
 import 'package:comet_messenger/app/bindings/pin_binding.dart';
 import 'package:comet_messenger/app/bindings/profile_binding.dart';
+import 'package:comet_messenger/app/bindings/security_binding.dart';
 import 'package:comet_messenger/app/bindings/show_mnemonic_binding.dart';
 import 'package:comet_messenger/app/bindings/splash_binding.dart';
 import 'package:comet_messenger/app/bindings/transaction_detail_binding.dart';
 import 'package:comet_messenger/app/routes/app_routes.dart';
 import 'package:comet_messenger/features/authentication/pages/create_mnemonic/create_mnemonic_page.dart';
+import 'package:comet_messenger/features/authentication/pages/fingerprint/fingerprint_page.dart';
 import 'package:comet_messenger/features/authentication/pages/import_mnemonic/import_mnemonic_page.dart';
 import 'package:comet_messenger/features/authentication/pages/main/authentication_page.dart';
 import 'package:comet_messenger/features/authentication/pages/pin/pin_page.dart';
@@ -22,6 +25,7 @@ import 'package:comet_messenger/features/constacts/pages/main/contacts_page.dart
 import 'package:comet_messenger/features/home/pages/main/home_page.dart';
 import 'package:comet_messenger/features/intro/pages/intro_page.dart';
 import 'package:comet_messenger/features/profile/pages/profile_page.dart';
+import 'package:comet_messenger/features/security/pages/security_page.dart';
 import 'package:comet_messenger/features/show_mnemonic/pages/show_mnemonic_page.dart';
 import 'package:comet_messenger/features/splash/pages/splash_page.dart';
 import 'package:comet_messenger/features/transaction_detail/pages/transaction_detail_page.dart';
@@ -60,6 +64,11 @@ abstract class AppPages {
       binding: PinBinding(),
     ),
     GetPage(
+      name: AppRoutes.FINGERPRINT,
+      page: () => const FingerprintPage(),
+      binding: FingerprintBinding(),
+    ),
+    GetPage(
       name: AppRoutes.HOME,
       page: () => const HomePage(),
       binding: HomeBinding(),
@@ -93,6 +102,11 @@ abstract class AppPages {
       name: AppRoutes.CHAT_PROFILE,
       page: () => const ChatProfilePage(),
       binding: ChatProfileBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.SECURITY,
+      page: () => const SecurityPage(),
+      binding: SecurityBinding(),
     ),
   ];
 }

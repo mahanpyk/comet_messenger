@@ -23,7 +23,7 @@ class SplashController extends GetxController {
       }
 
       if (userModel != null && userModel!.basePublicKey != null) {
-        Get.offAndToNamed(AppRoutes.HOME);
+        Get.offAndToNamed(AppRoutes.PIN);
       } else {
         Get.offAndToNamed(AppRoutes.INTRO);
       }

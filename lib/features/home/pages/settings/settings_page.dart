@@ -30,11 +30,11 @@ class SettingsPage extends BaseView<SettingsController> {
           SettingsMenuItemWidget(
             title: 'Security',
             icon: AppIcons.icLock,
-            onTap: () => controller.onTapShowMnemonic(),
+            onTap: () => controller.onTapSecurity(),
           ), SettingsMenuItemWidget(
             title: 'Theme',
             icon: AppIcons.icLock,
-            onTap: () => controller.onTapShowMnemonic(),
+            onTap: () => controller.onTapTheme(),
           ),
           const Divider(
             color: AppColors.whiteColor,

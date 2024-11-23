@@ -14,7 +14,7 @@ import com.solana.models.buffer.MessageState
 import com.solana.models.buffer.MessageStatus
 import com.solana.models.buffer.SendMessageType
 import com.solana.models.buffer.UserModel
-import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import org.sol4k.Base58
@@ -22,7 +22,7 @@ import org.sol4k.Keypair
 import java.util.Locale
 import java.util.UUID
 
-class MainActivity : FlutterActivity() {
+class MainActivity : FlutterFragmentActivity() {
     private val CHANNEL = "comet_messenger/encryption"
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {

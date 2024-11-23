@@ -78,7 +78,7 @@ class ImportMnemonicController extends GetxController {
           id: userModel!.publicKey,
         );
         UserStoreService.to.saveUserModel(newUserModel.toJson());
-        Get.offAllNamed(AppRoutes.HOME);
+        Get.offAllNamed(AppRoutes.PIN);
       } else {
         Get.snackbar(
           'Error import wallet',

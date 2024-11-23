@@ -18,7 +18,9 @@ const Map<String, String> faIR = {
 
   //region Pin
   'pin_title': 'Enter your PIN',
+  'change_pin_title': 'Enter your old PIN',
   'pin_title_confirm': 'Confirm your PIN',
+  'pin_title_new': 'Enter your new PIN',
   // endregion
 
   //region Home

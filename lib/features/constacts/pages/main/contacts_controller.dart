@@ -21,9 +21,10 @@ class ContactsController extends GetxController {
   ContactsController(this._repo);
 
   final ContactsRepository _repo;
-  RxBool isLoading = RxBool(false);
+  RxBool isLoading = RxBool(true);
   ContactModel? contactModel;
   RxList<Contact> contacts = RxList([]);
+  RxList<Contact> contactsTemp = RxList([]);
   UserModel? userModel;
   List<ConversationBorshModel> chatList = [];
 
@@ -37,6 +38,12 @@ class ContactsController extends GetxController {
     var args = Get.arguments;
     if (args != null) {
       chatList.addAll(args);
+    }
+    var contactsJson = await UserStoreService.to.get(key: AppConstants.CONTACTS);
+    if (contactsJson != null) {
+      contactModel = ContactModel.fromJson(contactsJson);
+      contacts.addAll(contactModel?.contacts ?? []);
+      isLoading(false);
     }
     getContactsList();
   }
@@ -109,7 +116,6 @@ class ContactsController extends GetxController {
   }
 
   void getContactsList({String? contactPDA}) {
-    isLoading(true);
     _repo
         .getContactsList(
             requestModel: RequestModel(
@@ -125,7 +131,6 @@ class ContactsController extends GetxController {
       id: "b75758de-e0b2-469b-bd9c-ef366ee1b35a",
     ))
         .then((AuthenticationResponseModel response) {
-      isLoading(false);
       if (response.statusCode == 200) {
         // get response and get length from first 4 bytes
         var data = base64Decode(response.data!.result!.value!.data![0]);
@@ -141,12 +146,20 @@ class ContactsController extends GetxController {
         final accountDataBuffer = Uint8List(length);
         accountDataBuffer.setAll(0, data.sublist(4, length));
         var decodeContacts = borsh.deserialize(ContactModel().borshSchema, accountDataBuffer, ContactModel.fromJson);
-        // UserStoreService.to.save(key: AppConstants.CONTACTS, value: decodeContacts.toJson());
-        contacts.addAll(decodeContacts.contacts ?? []);
+        contactsTemp.addAll(decodeContacts.contacts ?? []);
         int indexContact = AppConstants.CONTACT_PDA_LIST.indexWhere((element) => element == (contactPDA ?? AppConstants.CONTACT_PDA_LIST.first));
         indexContact++;
         if (AppConstants.CONTACT_PDA_LIST.length > indexContact) {
           getContactsList(contactPDA: AppConstants.CONTACT_PDA_LIST[indexContact]);
+        } else {
+          if (contactsTemp.isNotEmpty && contactsTemp.length > contacts.length) {
+            contacts.clear();
+            contacts.addAll(contactsTemp);
+            ContactModel contactModel = ContactModel(contacts: contacts);
+            UserStoreService.to.save(key: AppConstants.CONTACTS, value: contactModel.toJson());
+            isLoading(false);
+            contactsTemp.close();
+          }
         }
       } else {
         Get.snackbar(

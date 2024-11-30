@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:comet_messenger/app/core/app_constants.dart';
 import 'package:comet_messenger/app/core/app_enums.dart';
@@ -24,11 +23,10 @@ class ChatController extends GetxController with AppUtilsMixin {
   ChatController(this._repo);
 
   final ChatRepository _repo;
-  RxBool isLoading = RxBool(false);
+  RxBool isLoading = RxBool(true);
   RxBool isTyping = RxBool(false);
-  RxBool isFirstTime = RxBool(false);
   UserModel? userModel;
-  ConversationBorshModel conversationModel = ConversationBorshModel();
+  Rx<ConversationBorshModel> conversationModel = Rx(ConversationBorshModel());
   Rx<ChatDetailsBorshModel> chatDetailsModel = Rx(ChatDetailsBorshModel());
   RxList<String> chatMessages = RxList([]);
   TextEditingController messageTEC = TextEditingController();
@@ -46,25 +44,24 @@ class ChatController extends GetxController with AppUtilsMixin {
     }
     var args = Get.arguments;
     if (args != null) {
-      conversationModel = ConversationBorshModel.fromJson(args);
-    } else {
-      isFirstTime(true);
-      isLoading(false);
+      conversationModel(ConversationBorshModel.fromJson(args));
+    }
+    var chatsJson = await UserStoreService.to.get(key: conversationModel.value.conversationId ?? '');
+    if (chatsJson != null) {
+      chatDetailsModel(ChatDetailsBorshModel.fromJson(chatsJson));
+      await readMessageFromChatList();
     }
     super.onInit();
-    if (!isFirstTime.value) {
-      getChatDetail();
-    }
+    getChatDetail();
   }
 
   Future<void> getChatDetail() async {
-    isLoading(true);
     _repo
         .chatDetailsRequest(
             requestModel: RequestModel(
       method: "getAccountInfo",
       params: [
-        conversationModel.conversationId,
+        conversationModel.value.conversationId,
         ParamClass(
           commitment: "max",
           encoding: "base64",
@@ -89,52 +86,60 @@ class ChatController extends GetxController with AppUtilsMixin {
           }
           final accountDataBuffer = Uint8List(length);
           accountDataBuffer.setAll(0, data.sublist(4, length));
-          chatDetailsModel(borsh.deserialize(ChatDetailsBorshModel().borshSchema, accountDataBuffer, ChatDetailsBorshModel.fromJson));
-
-          const platform = MethodChannel(AppConstants.PLATFORM_CHANNEL);
-
-          try {
-            tokenCipher = chatDetailsModel.value.members?.last.tokenCipher ?? '';
-
-            if (tokenCipher == "") {
-              tokenCipher = await platform.invokeMethod('createCipher');
-            } else {
-              tokenCipher = await platform.invokeMethod('importCipher', {
-                'tokenCipher': tokenCipher,
-                'base64PrivateKey': AppConstants.PRIVATE_KEY,
-              });
-            }
-
-            for (MessageBorshModel element in chatDetailsModel.value.messages ?? []) {
-              try {
-                final String decryptMessage = await platform.invokeMethod('decryptMessage', {
-                  'message': element.text,
-                  'privateKey': tokenCipher,
-                });
-                chatMessages.add(decryptMessage);
-              } on Exception catch (e) {
-                final String decryptMessage = await platform.invokeMethod('decryptMessage', {
-                  'message': element.text,
-                  'privateKey': "",
-                });
-                chatMessages.add(decryptMessage);
-                debugPrint('*****************************');
-                debugPrint("Failed to decrypt data: $e");
-                debugPrint('#############################');
-              }
-              element.status = ChatStateEnum.SUCCESS.name;
-            }
-            isLoading(false);
-            scrollToBottom();
-          } on PlatformException catch (e) {
-            debugPrint('*****************************');
-            debugPrint("Failed to decrypt data: '${e.message}'.");
-            debugPrint('#############################');
-            return '';
+          var chatDetailsDeserialized = borsh.deserialize(ChatDetailsBorshModel().borshSchema, accountDataBuffer, ChatDetailsBorshModel.fromJson);
+          if ((chatDetailsModel.value.messages?.length ?? 0) != (chatDetailsDeserialized.messages?.length ?? 0)) {
+            chatDetailsModel(chatDetailsDeserialized);
+            UserStoreService.to.save(key: conversationModel.value.conversationId ?? '', value: chatDetailsModel.toJson());
+            await readMessageFromChatList();
           }
+          isLoading(false);
         }
       },
     );
+  }
+
+  Future<void> readMessageFromChatList() async {
+    try {
+      const platform = MethodChannel(AppConstants.PLATFORM_CHANNEL);
+      tokenCipher = chatDetailsModel.value.members?.last.tokenCipher ?? '';
+
+      if (tokenCipher == "") {
+        tokenCipher = await platform.invokeMethod('createCipher');
+      } else {
+        tokenCipher = await platform.invokeMethod('importCipher', {
+          'tokenCipher': tokenCipher,
+          'base64PrivateKey': AppConstants.PRIVATE_KEY,
+        });
+      }
+      for (MessageBorshModel element in chatDetailsModel.value.messages ?? []) {
+        try {
+          final String decryptMessage = await platform.invokeMethod('decryptMessage', {
+            'message': element.text,
+            'privateKey': tokenCipher,
+          });
+          chatMessages.add(decryptMessage);
+        } on Exception catch (e) {
+          final String decryptMessage = await platform.invokeMethod('decryptMessage', {
+            'message': element.text,
+            'privateKey': "",
+          });
+          chatMessages.add(decryptMessage);
+          debugPrint('*****************************');
+          debugPrint("Failed to decrypt data: $e");
+          debugPrint('#############################');
+        }
+        element.status = ChatStateEnum.SUCCESS.name;
+      }
+      isLoading(false);
+      if (chatMessages.isNotEmpty) {
+        scrollToBottom();
+      }
+    } on PlatformException catch (e) {
+      debugPrint('*****************************');
+      debugPrint("Failed to decrypt data: '${e.message}'.");
+      debugPrint('#############################');
+      return;
+    }
   }
 
   void sendMessage() async {
@@ -169,7 +174,7 @@ class ChatController extends GetxController with AppUtilsMixin {
         });
         messageTEC.clear();
 
-        var conversationId = conversationModel.conversationId ?? '';
+        var conversationId = conversationModel.value.conversationId ?? '';
         var privateKey = userModel?.privateKey ?? '';
         var publicKey = userModel?.publicKey ?? '';
         var userName = userModel?.userName ?? '';
@@ -250,13 +255,6 @@ class ChatController extends GetxController with AppUtilsMixin {
     });
   }
 
-  String uuid() {
-    // create random uuid manually
-    final Random random = Random.secure();
-    const String chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
-    return List.generate(16, (index) => chars[random.nextInt(chars.length)]).join();
-  }
-
   String getStatusIcon(String status) {
     if (status == ChatStateEnum.PENDING.name) {
       return AppIcons.icClock;
@@ -274,8 +272,14 @@ class ChatController extends GetxController with AppUtilsMixin {
       AppRoutes.CHAT_PROFILE,
       arguments: {
         'chatDetailModel': chatDetailsModel.toJson(),
-        'avatar': getAvatar(conversationModel.avatar),
+        'avatar': getAvatar(conversationModel.value.avatar),
+        'userName': getUserName(),
       },
     );
+  }
+
+  String getUserName() {
+    return conversationModel.value.conversationName?.replaceAll('${userModel?.userName ?? ''}&_#', '').replaceAll('&_#${userModel?.userName ?? ''}', '') ??
+        'No title';
   }
 }

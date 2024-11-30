@@ -1,4 +1,3 @@
-import 'package:comet_messenger/app/core/app_icons.dart';
 import 'package:comet_messenger/app/core/base/base_view.dart';
 import 'package:comet_messenger/app/theme/app_colors.dart';
 import 'package:comet_messenger/features/chat/models/chat_details_borsh_model.dart';
@@ -17,8 +16,7 @@ class ChatProfilePage extends BaseView<ChatProfileController> {
       children: [
         IgnorePointer(
           ignoring: true,
-          child:
-              controller.isLoading.value ? const SizedBox() : const SizedBox(),
+          child: controller.isLoading.value ? const SizedBox() : const SizedBox(),
         ),
         Container(
           width: Get.width,
@@ -33,16 +31,14 @@ class ChatProfilePage extends BaseView<ChatProfileController> {
               ),
               const SizedBox(height: 16),
               SvgPicture.asset(
-                '${AppIcons.icUserAvatar}${controller.avatar}.svg',
+                controller.avatar,
                 height: 120,
                 width: 120,
               ),
               const SizedBox(height: 24),
               Text(
-                controller.chatDetailsModel.members?.last.userName ??
-                    "No title",
-                style: Get.textTheme.titleLarge!
-                    .copyWith(color: AppColors.tertiaryColor),
+                controller.userName,
+                style: Get.textTheme.titleLarge!.copyWith(color: AppColors.tertiaryColor),
               ),
               const SizedBox(height: 32),
             ],
@@ -62,11 +58,10 @@ class ChatProfilePage extends BaseView<ChatProfileController> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: ListView.separated(
-                  itemCount: controller.chatDetailsModel.members?.length ?? 0,
+                  itemCount: controller.chatDetailsModel.value.members?.length ?? 0,
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
-                    return profileMembers(
-                        item: controller.chatDetailsModel.members![index]);
+                    return profileMembers(item: controller.chatDetailsModel.value.members![index]);
                   },
                   separatorBuilder: (BuildContext context, int index) {
                     return const Divider(height: 24);

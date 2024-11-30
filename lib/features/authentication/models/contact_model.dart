@@ -13,9 +13,10 @@ class ContactModel extends BorshObject {
 
   final List<Contact>? contacts;
 
+  // toJson
   @override
   Map<String, dynamic> toJson() => {
-        'contacts': contacts,
+        'contacts': contacts?.map((final e) => e.toJson()).toList(),
       };
 
   @override

@@ -39,16 +39,13 @@ class ChatPage extends BaseView<ChatController> {
                     padding: EdgeInsets.zero,
                     margin: EdgeInsets.zero,
                     child: SvgPicture.asset(
-                      controller.getAvatar(controller.conversationModel.avatar),
+                      controller.getAvatar(controller.conversationModel.value.avatar),
                       fit: BoxFit.cover,
                     ),
                   ),
                   const SizedBox(width: 16),
                   Text(
-                    controller.conversationModel.conversationName
-                            ?.replaceAll('${controller.userModel?.userName ?? ''}&_#', '')
-                            .replaceAll('&_#${controller.userModel?.userName ?? ''}', '') ??
-                        'No title',
+                    controller.getUserName(),
                     style: Get.textTheme.titleLarge!.copyWith(color: AppColors.tertiaryColor),
                   ),
                   const SizedBox(width: 40),

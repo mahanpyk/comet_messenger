@@ -70,7 +70,7 @@ class ChatListController extends GetxController with AppUtilsMixin {
             accountDataBuffer.setAll(0, data.sublist(4, length));
             var decodeContacts = borsh.deserialize(ProfileBorshModel().borshSchema, accountDataBuffer, ProfileBorshModel.fromJson);
             chatList.clear();
-            chatList.addAll(decodeContacts.conversationList!);
+            chatList.addAll(decodeContacts.conversationList!.reversed);
           }
         }
         isLoading(false);
@@ -87,13 +87,14 @@ class ChatListController extends GetxController with AppUtilsMixin {
         if (value is Map) {
           // add new contact to first position
           chatList.insert(
-              0,
-              ConversationBorshModel(
-                avatar: value['avatar'],
-                conversationId: "",
-                conversationName: value['username'],
-                newConversation: 'true',
-              ));
+            0,
+            ConversationBorshModel(
+              avatar: value['avatar'],
+              conversationId: "",
+              conversationName: value['username'],
+              newConversation: 'true',
+            ),
+          );
           startTimer();
         }
       },

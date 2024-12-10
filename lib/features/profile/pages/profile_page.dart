@@ -93,6 +93,7 @@ class ProfilePage extends BaseView<ProfileController> {
                           FillButtonWidget(
                             onTap: () => controller.airDropRequest(),
                             buttonTitle: 'AirDrop',
+                            isLoading: controller.isLoading.value,
                           ),
                           const SizedBox(height: 24),
                           Row(

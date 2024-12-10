@@ -3,6 +3,7 @@ import 'package:comet_messenger/app/core/base/base_view.dart';
 import 'package:comet_messenger/app/theme/app_colors.dart';
 import 'package:comet_messenger/features/authentication/models/contact_model.dart';
 import 'package:comet_messenger/features/constacts/pages/main/contacts_controller.dart';
+import 'package:comet_messenger/features/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -14,29 +15,10 @@ class ContactsPage extends BaseView<ContactsController> {
   Widget body() {
     return Column(
       children: [
-        Container(
-          height: 64,
-          width: Get.width,
-          color: AppColors.primaryColor,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const BackButton(),
-                Text(
-                  'Contacts',
-                  style: Get.textTheme.titleLarge!.copyWith(color: AppColors.tertiaryColor),
-                ),
-                Container(width: 48)
-              ],
-            ),
-          ),
-        ),
+        const AppBarWidget(title: 'Contacts'),
         Expanded(
           child: Stack(
+            fit: StackFit.expand,
             children: [
               SingleChildScrollView(
                 child: Column(
@@ -58,12 +40,10 @@ class ContactsPage extends BaseView<ContactsController> {
                 ),
               ),
               if (controller.isLoading.value)
-                Expanded(
-                  child: Container(
-                    color: Colors.black38,
-                    child: const Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                Container(
+                  color: Colors.black38,
+                  child: const Center(
+                    child: CircularProgressIndicator(),
                   ),
                 ),
             ],

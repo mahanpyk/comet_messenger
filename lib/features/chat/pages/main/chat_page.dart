@@ -78,11 +78,11 @@ class ChatPage extends BaseView<ChatController> {
                                   itemCount: controller.chatDetailsModel.value.messages?.length ?? 0,
                                   itemBuilder: (context, index) {
                                     return massageItem(
-                                      message: controller.chatMessages[index],
+                                      message: controller.chatMessages[index] ?? '',
                                       isMe: controller.chatDetailsModel.value.messages?[index].senderAddress == controller.userModel?.id,
                                       time: controller.chatDetailsModel.value.messages?[index].time ?? '',
                                       chatStatus:
-                                          controller.getStatusIcon(controller.chatDetailsModel.value.messages![index].status ?? ChatStateEnum.PENDING.name),
+                                          controller.getStatusIcon(controller.chatDetailsModel.value.messages![index].status ?? ChatStateEnum.SUCCESS.name),
                                     );
                                   },
                                 ),
@@ -185,6 +185,7 @@ class ChatPage extends BaseView<ChatController> {
                         chatStatus,
                         width: 16,
                         height: 16,
+                        color: AppColors.tertiaryColor,
                       ),
                     const SizedBox(width: 8)
                   ],

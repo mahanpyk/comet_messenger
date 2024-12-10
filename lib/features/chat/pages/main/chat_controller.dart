@@ -28,7 +28,7 @@ class ChatController extends GetxController with AppUtilsMixin {
   UserModel? userModel;
   Rx<ConversationBorshModel> conversationModel = Rx(ConversationBorshModel());
   Rx<ChatDetailsBorshModel> chatDetailsModel = Rx(ChatDetailsBorshModel());
-  RxList<String> chatMessages = RxList([]);
+  RxList<String?> chatMessages = RxList([]);
   TextEditingController messageTEC = TextEditingController();
   Rx<ScrollController> scrollController = Rx(ScrollController(initialScrollOffset: 0));
   String tokenCipher = '';
@@ -87,7 +87,7 @@ class ChatController extends GetxController with AppUtilsMixin {
           final accountDataBuffer = Uint8List(length);
           accountDataBuffer.setAll(0, data.sublist(4, length));
           var chatDetailsDeserialized = borsh.deserialize(ChatDetailsBorshModel().borshSchema, accountDataBuffer, ChatDetailsBorshModel.fromJson);
-          if ((chatDetailsModel.value.messages?.length ?? 0) != (chatDetailsDeserialized.messages?.length ?? 0)) {
+          if ((chatDetailsModel.value.messages?.length ?? 0) <= (chatDetailsDeserialized.messages?.length ?? 0)) {
             chatDetailsModel(chatDetailsDeserialized);
             UserStoreService.to.save(key: conversationModel.value.conversationId ?? '', value: chatDetailsModel.toJson());
             await readMessageFromChatList();
@@ -119,14 +119,21 @@ class ChatController extends GetxController with AppUtilsMixin {
           });
           chatMessages.add(decryptMessage);
         } on Exception catch (e) {
-          final String decryptMessage = await platform.invokeMethod('decryptMessage', {
-            'message': element.text,
-            'privateKey': "",
-          });
-          chatMessages.add(decryptMessage);
-          debugPrint('*****************************');
-          debugPrint("Failed to decrypt data: $e");
-          debugPrint('#############################');
+          try {
+            final String decryptMessage = await platform.invokeMethod('decryptMessage', {
+              'message': element.text,
+              'privateKey': "",
+            });
+            chatMessages.add(decryptMessage);
+            debugPrint('*****************************');
+            debugPrint("Failed to decrypt data: $e");
+            debugPrint('#############################');
+          } on Exception catch (e) {
+            chatMessages.add(element.text);
+            debugPrint('*****************************');
+            debugPrint("Failed to decrypt data: $e");
+            debugPrint('#############################');
+          }
         }
         element.status = ChatStateEnum.SUCCESS.name;
       }
@@ -146,6 +153,22 @@ class ChatController extends GetxController with AppUtilsMixin {
     if (messageTEC.text.isNotEmpty) {
       String time = setTimeFormat(DateTime.now().toUtc().toIso8601String());
       String text = messageTEC.text;
+      var chatModel = ChatDetailsBorshModel(
+        admin: chatDetailsModel.value.admin,
+        messages: [
+          ...chatDetailsModel.value.messages ?? [],
+          MessageBorshModel(
+            text: text,
+            time: time,
+            status: ChatStateEnum.SEND.name,
+            senderAddress: userModel?.id ?? '',
+          ),
+        ],
+        conversationName: chatDetailsModel.value.conversationName,
+        createdTime: chatDetailsModel.value.createdTime,
+        members: chatDetailsModel.value.members,
+        isPrivate: chatDetailsModel.value.isPrivate,
+      );
       chatDetailsModel(ChatDetailsBorshModel(
         admin: chatDetailsModel.value.admin,
         messages: [
@@ -162,6 +185,7 @@ class ChatController extends GetxController with AppUtilsMixin {
         members: chatDetailsModel.value.members,
         isPrivate: chatDetailsModel.value.isPrivate,
       ));
+      UserStoreService.to.save(key: conversationModel.value.conversationId ?? '', value: chatModel.toJson());
       chatMessages.add(text);
       scrollToBottom();
 
@@ -236,9 +260,15 @@ class ChatController extends GetxController with AppUtilsMixin {
   }
 
   String formatDate(String time) {
-    DateTime utcDateTime = DateTime.parse(time);
-    DateFormat formatter = DateFormat('yyyy-MM-dd hh:mm a');
-    return formatter.format(utcDateTime);
+    try {
+      DateTime utcDateTime = DateTime.parse(time);
+      DateFormat formatter = DateFormat('yyyy-MM-dd hh:mm a');
+      return formatter.format(utcDateTime);
+    } on Exception catch (e) {
+      DateTime utcDateTime = DateTime.now();
+      DateFormat formatter = DateFormat('yyyy-MM-dd hh:mm a');
+      return formatter.format(utcDateTime);
+    }
   }
 
   String setTimeFormat(String iso8601string) {

@@ -17,28 +17,13 @@ class HomePage extends BaseView<HomeController> {
   @override
   Widget body() {
     return Column(children: [
-/*      Container(
-        height: 64,
-        width: Get.width,
-        color: AppColors.primaryColor,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16,
-          ),
-          child: Center(
-            child: Text(
-              'splash_title'.tr,
-              style: Get.textTheme.titleLarge!
-                  .copyWith(color: AppColors.tertiaryColor),
-            ),
-          ),
-        ),
-      ),*/
       AppBarWidget(
         title: 'splash_title'.tr,
         showBackButton: false,
         balance: controller.balance.value,
         isLoading: controller.isLoading.value,
+        userName: controller.userModel?.userName,
+        avatar: controller.userModel?.avatar,
       ),
       Expanded(
         child: PageView(controller: controller.pageController, physics: const NeverScrollableScrollPhysics(), children: const [

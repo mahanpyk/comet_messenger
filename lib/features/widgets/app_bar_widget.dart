@@ -1,5 +1,7 @@
+import 'package:comet_messenger/app/core/app_icons.dart';
 import 'package:comet_messenger/app/theme/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 class AppBarWidget extends StatelessWidget {
@@ -9,12 +11,16 @@ class AppBarWidget extends StatelessWidget {
     this.balance,
     this.showBackButton = true,
     this.isLoading = false,
+    this.userName,
+    this.avatar,
   });
 
   final String title;
   final double? balance;
   final bool showBackButton;
   final bool isLoading;
+  final String? userName;
+  final String? avatar;
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +33,33 @@ class AppBarWidget extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Expanded(
-              flex: 1,
-              child: showBackButton ? BackButton(onPressed: () => Get.back()) : const SizedBox(),
-            ),
+            userName != null
+                ? Expanded(
+                    flex: 1,
+                    child: Row(
+                      children: [
+                        SvgPicture.asset(
+                          '${AppIcons.icUserAvatar}${avatar != "" ? avatar ?? '0' : '0'}.svg',
+                          height: 32,
+                          width: 32,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          userName!,
+                          style: Get.textTheme.titleLarge!.copyWith(color: AppColors.tertiaryColor),
+                        ),
+                      ],
+                    ),
+                  )
+                : Expanded(
+                    flex: 1,
+                    child: showBackButton
+                        ? Align(
+                            alignment: Alignment.centerLeft,
+                            child: BackButton(onPressed: () => Get.back()),
+                          )
+                        : const SizedBox(),
+                  ),
             Expanded(
               flex: 1,
               child: Center(

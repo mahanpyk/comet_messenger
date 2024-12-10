@@ -25,6 +25,7 @@ class ProfileController extends GetxController with AppUtilsMixin {
   RxBool showQRCode = true.obs;
   RxBool qrAddress = false.obs;
   double balance = 0;
+  RxBool isLoading = RxBool(false);
 
   @override
   void onInit() async {
@@ -87,6 +88,7 @@ class ProfileController extends GetxController with AppUtilsMixin {
   }
 
   void airDropRequest() {
+    isLoading(true);
     _repo
         .airDropRequest(
             requestModel: RequestModel(
@@ -99,6 +101,7 @@ class ProfileController extends GetxController with AppUtilsMixin {
       id: "b75758de-e0b2-469b-bd9c-ef366ee1b35a",
     ))
         .then((AirDropResponseModel response) {
+      isLoading(false);
       if (response.statusCode == 200) {
         Get.snackbar(
           'Airdrop successful',

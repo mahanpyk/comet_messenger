@@ -10,7 +10,6 @@ import 'package:get/get.dart' as get_package;
 class BaseRepository with AppUtilsMixin {
   static Dio dio = Dio(
     BaseOptions(
-      baseUrl: AppConstants.BASE_URL,
       receiveTimeout: const Duration(seconds: 150),
       sendTimeout: const Duration(seconds: 150),
       connectTimeout: const Duration(seconds: 150),
@@ -33,70 +32,71 @@ class BaseRepository with AppUtilsMixin {
     String urlParameters = '',
     Map<String, dynamic>? queryParameters,
     bool requiredToken = true,
+    String baseUrl = AppConstants.BASE_URL,
   }) async {
     try {
       // if (ConnectivityService.instance.hasConnection) {
-        if (requiredToken) {
-          String? token = await UserStoreService.to.getToken();
-          headers?.addAll({'Authorization': 'Bearer $token'});
-        }
-        final Response response = await dio.request(
-          url + urlParameters,
-          data: data,
-          queryParameters: queryParameters,
-          options: Options(
-            method: method,
-            headers: headers,
-          ),
+      if (requiredToken) {
+        String? token = await UserStoreService.to.getToken();
+        headers?.addAll({'Authorization': 'Bearer $token'});
+      }
+      final Response response = await dio.request(
+        baseUrl + url + urlParameters,
+        data: data,
+        queryParameters: queryParameters,
+        options: Options(
+          method: method,
+          headers: headers,
+        ),
+      );
+      if (response.statusCode == 200) {
+        ResponseModel responseModel = ResponseModel(
+          body: response.data,
+          statusCode: 200,
+          success: true,
+          message: response.statusMessage,
         );
-        if (response.statusCode == 200) {
-          ResponseModel responseModel = ResponseModel(
-            body: response.data,
-            statusCode: 200,
-            success: true,
-            message: response.statusMessage,
+        return responseModel;
+      } else if (response.statusCode == 401 || response.statusCode == 403) {
+        if (await renewToken()) {
+          return request(
+            url: url,
+            method: method,
+            data: data,
+            queryParameters: queryParameters,
+            urlParameters: urlParameters,
+            requiredToken: requiredToken,
           );
-          return responseModel;
-        } else if (response.statusCode == 401 || response.statusCode == 403) {
-          if (await renewToken()) {
-            return request(
-              url: url,
-              method: method,
-              data: data,
-              queryParameters: queryParameters,
-              urlParameters: urlParameters,
-              requiredToken: requiredToken,
-            );
-          } else {
-            bool isOpenDialog = get_package.Get.isDialogOpen ?? false;
-            if (!isOpenDialog) {
-              AppDialog dialog = AppDialog(
-                title: 'Something went wrong',
-                subTitle: 'Please try again',
-                mainButtonTitle: 'Try Again',
-                mainButtonOnTap: () {
-                  get_package.Get.back();
-                  logoutFromApp();
-                },
-              );
-              dialog.showAppDialog();
-            }
-            return ResponseModel(
-              body: 'Exit',
-              statusCode: 401,
-              success: false,
-              message: 'Log Out',
-            );
-          }
         } else {
-          ResponseModel responseModel = ResponseModel(
-            body: response.data,
-            statusCode: response.statusCode,
+          bool isOpenDialog = get_package.Get.isDialogOpen ?? false;
+          if (!isOpenDialog) {
+            AppDialog dialog = AppDialog(
+              title: 'Something went wrong',
+              subTitle: 'Please try again',
+              mainButtonTitle: 'Try Again',
+              mainButtonOnTap: () {
+                get_package.Get.back();
+                logoutFromApp();
+              },
+            );
+            dialog.showAppDialog();
+          }
+          return ResponseModel(
+            body: 'Exit',
+            statusCode: 401,
             success: false,
-            message: response.statusMessage,
+            message: 'Log Out',
           );
-          return responseModel;
         }
+      } else {
+        ResponseModel responseModel = ResponseModel(
+          body: response.data,
+          statusCode: response.statusCode,
+          success: false,
+          message: response.statusMessage,
+        );
+        return responseModel;
+      }
       // } else {
       //   AppDialog dialog = AppDialog(
       //     title: 'Error to Access Internet',

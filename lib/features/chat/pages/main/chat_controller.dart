@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:comet_messenger/app/core/app_constants.dart';
 import 'package:comet_messenger/app/core/app_enums.dart';
@@ -11,13 +12,17 @@ import 'package:comet_messenger/app/routes/app_routes.dart';
 import 'package:comet_messenger/app/store/user_store_service.dart';
 import 'package:comet_messenger/features/chat/models/chat_details_borsh_model.dart';
 import 'package:comet_messenger/features/chat/models/chat_details_response_model.dart';
+import 'package:comet_messenger/features/chat/models/send_file_request_model.dart';
 import 'package:comet_messenger/features/chat/repository/chat_repository.dart';
 import 'package:comet_messenger/features/home/models/profile_borsh_model.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart' as path;
 import 'package:solana_borsh/borsh.dart';
+import 'package:uuid/uuid.dart';
 
 class ChatController extends GetxController with AppUtilsMixin {
   ChatController(this._repo);
@@ -92,8 +97,8 @@ class ChatController extends GetxController with AppUtilsMixin {
             UserStoreService.to.save(key: conversationModel.value.conversationId ?? '', value: chatDetailsModel.toJson());
             await readMessageFromChatList();
           }
-          isLoading(false);
         }
+        isLoading(false);
       },
     );
   }
@@ -311,5 +316,58 @@ class ChatController extends GetxController with AppUtilsMixin {
   String getUserName() {
     return conversationModel.value.conversationName?.replaceAll('${userModel?.userName ?? ''}&_#', '').replaceAll('&_#${userModel?.userName ?? ''}', '') ??
         'No title';
+  }
+
+  Future<void> selectFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    if (result != null) {
+      File file = File(result.files.single.path!);
+      double fileSizeInKB = file.readAsBytesSync().lengthInBytes / 1024;
+      if (fileSizeInKB > 100) {
+        Get.snackbar(
+          'Error',
+          'File size is too large. Please select a file less than 100KB.',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      } else {
+        List<String> list = await queryName(file);
+        // convert file to base64
+        String base64File = base64Encode(file.readAsBytesSync());
+        _repo.sendFile(
+            requestModel: SendFileResponseModel(
+              image: base64File,
+              name: list[0],
+              size: list[1],
+              type: list[2],
+              uuid: const Uuid().v4(),
+            ),
+            headers: {
+              "pinata_api_key": "8b4d1b2f17e8aabafb83",
+              "pinata_secret_api_key": "b1030db36f592a52fb045799e864471b39829133df9906ded6b72bf8e75f880b",
+              "Content-Type": "application/json",
+            }).then(
+          (response) {
+            if (response.statusCode == 200) {}
+          },
+        );
+      }
+    } else {}
+  }
+
+  Future<List<String>> queryName(File file) async {
+    if (await file.exists()) {
+      String name = path.basename(file.path);
+      int size = await file.length();
+
+      List<String> result = [];
+      result.add(name);
+      result.add((size / 1024).toString());
+      result.add(path.extension(name).replaceAll('.', ''));
+      return result;
+    } else {
+      throw Exception("File does not exist");
+    }
   }
 }

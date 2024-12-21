@@ -117,6 +117,13 @@ class ChatPage extends BaseView<ChatController> {
                               ),
                             ),
                             IconButton(
+                              onPressed: () => controller.selectFile(),
+                              icon: const Icon(
+                                Icons.attach_file,
+                                color: AppColors.tertiaryColor,
+                              ),
+                            ),
+                            IconButton(
                               onPressed: () => controller.isTyping.value ? controller.sendMessage() : null,
                               icon: Icon(
                                 Icons.send,

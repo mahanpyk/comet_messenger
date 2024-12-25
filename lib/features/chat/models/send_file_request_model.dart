@@ -1,5 +1,5 @@
-class SendFileResponseModel {
-  SendFileResponseModel({
+class SendFileRequestModel {
+  SendFileRequestModel({
     this.image,
     this.name,
     this.size,

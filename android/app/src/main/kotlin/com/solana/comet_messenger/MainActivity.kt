@@ -80,6 +80,7 @@ class MainActivity : FlutterFragmentActivity() {
                     val conversationId: String = call.argument("conversationId") ?: ""
                     val publicKey: String = call.argument("publicKey") ?: ""
                     val time: String = call.argument("time") ?: ""
+                    val messageType: String = call.argument("messageType") ?: "text"
 
 //                    Config.network = "Main"
                     Config.network = "dev"
@@ -102,7 +103,7 @@ class MainActivity : FlutterFragmentActivity() {
                         userPublicKey,
                         MessageStatus.PENDING.name,
                         MessageState.SEND.name,
-                        SendMessageType.text.toString(),
+                        messageType,
                         null,
                         null,
                         "",

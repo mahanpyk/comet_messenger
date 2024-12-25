@@ -10,15 +10,20 @@ import 'package:comet_messenger/app/models/request_model.dart';
 import 'package:comet_messenger/app/models/user_model.dart';
 import 'package:comet_messenger/app/routes/app_routes.dart';
 import 'package:comet_messenger/app/store/user_store_service.dart';
+import 'package:comet_messenger/app/theme/app_colors.dart';
 import 'package:comet_messenger/features/chat/models/chat_details_borsh_model.dart';
 import 'package:comet_messenger/features/chat/models/chat_details_response_model.dart';
+import 'package:comet_messenger/features/chat/models/chat_list_model.dart';
+import 'package:comet_messenger/features/chat/models/read_file_response_model.dart';
 import 'package:comet_messenger/features/chat/models/send_file_request_model.dart';
+import 'package:comet_messenger/features/chat/models/send_file_response_model.dart';
 import 'package:comet_messenger/features/chat/repository/chat_repository.dart';
 import 'package:comet_messenger/features/home/models/profile_borsh_model.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
 import 'package:solana_borsh/borsh.dart';
@@ -33,7 +38,7 @@ class ChatController extends GetxController with AppUtilsMixin {
   UserModel? userModel;
   Rx<ConversationBorshModel> conversationModel = Rx(ConversationBorshModel());
   Rx<ChatDetailsBorshModel> chatDetailsModel = Rx(ChatDetailsBorshModel());
-  RxList<String?> chatMessages = RxList([]);
+  RxList<ChatListModel?> chatMessages = RxList([]);
   TextEditingController messageTEC = TextEditingController();
   Rx<ScrollController> scrollController = Rx(ScrollController(initialScrollOffset: 0));
   String tokenCipher = '';
@@ -92,8 +97,9 @@ class ChatController extends GetxController with AppUtilsMixin {
           final accountDataBuffer = Uint8List(length);
           accountDataBuffer.setAll(0, data.sublist(4, length));
           var chatDetailsDeserialized = borsh.deserialize(ChatDetailsBorshModel().borshSchema, accountDataBuffer, ChatDetailsBorshModel.fromJson);
-          if ((chatDetailsModel.value.messages?.length ?? 0) <= (chatDetailsDeserialized.messages?.length ?? 0)) {
+          if ((chatDetailsModel.value.messages?.length ?? 0) != (chatDetailsDeserialized.messages?.length ?? 0)) {
             chatDetailsModel(chatDetailsDeserialized);
+            chatMessages.clear();
             UserStoreService.to.save(key: conversationModel.value.conversationId ?? '', value: chatDetailsModel.toJson());
             await readMessageFromChatList();
           }
@@ -116,31 +122,58 @@ class ChatController extends GetxController with AppUtilsMixin {
           'base64PrivateKey': AppConstants.PRIVATE_KEY,
         });
       }
-      for (MessageBorshModel element in chatDetailsModel.value.messages ?? []) {
+      // convert to for
+      for (int index = 0; index < (chatDetailsModel.value.messages?.length ?? 0); index++) {
+        MessageBorshModel element = chatDetailsModel.value.messages![index];
+        String text;
         try {
           final String decryptMessage = await platform.invokeMethod('decryptMessage', {
             'message': element.text,
             'privateKey': tokenCipher,
           });
-          chatMessages.add(decryptMessage);
+          text = decryptMessage;
         } on Exception catch (e) {
           try {
             final String decryptMessage = await platform.invokeMethod('decryptMessage', {
               'message': element.text,
               'privateKey': "",
             });
-            chatMessages.add(decryptMessage);
+            text = decryptMessage;
             debugPrint('*****************************');
             debugPrint("Failed to decrypt data: $e");
             debugPrint('#############################');
           } on Exception catch (e) {
-            chatMessages.add(element.text);
+            text = element.text!;
             debugPrint('*****************************');
             debugPrint("Failed to decrypt data: $e");
             debugPrint('#############################');
           }
         }
         element.status = ChatStateEnum.SUCCESS.name;
+        if (element.messageType == 'text') {
+          chatMessages.add(ChatListModel(
+            text: text,
+            messageType: MassageTypeEnum.TEXT,
+            isMe: element.senderAddress == userModel!.id,
+            time: chatDetailsModel.value.messages?[index].time,
+            status: getStatusIcon(chatDetailsModel.value.messages![index].status ?? ChatStateEnum.SUCCESS.name),
+          ));
+        } else {
+          chatMessages.add(ChatListModel(
+            text: text,
+            messageType: element.messageType == 'file' ? MassageTypeEnum.FILE : MassageTypeEnum.IMAGE,
+            isMe: element.senderAddress == userModel!.id,
+            time: chatDetailsModel.value.messages?[index].time,
+            status: getStatusIcon(chatDetailsModel.value.messages![index].status ?? ChatStateEnum.SUCCESS.name),
+          ));
+          readMessageFromIPFS(
+            ipfs: text,
+            index: index,
+            isMe: element.senderAddress == userModel!.id,
+            time: chatDetailsModel.value.messages?[index].time ?? '',
+            status: getStatusIcon(chatDetailsModel.value.messages![index].status ?? ChatStateEnum.SUCCESS.name),
+          );
+        }
       }
       isLoading(false);
       if (chatMessages.isNotEmpty) {
@@ -191,7 +224,13 @@ class ChatController extends GetxController with AppUtilsMixin {
         isPrivate: chatDetailsModel.value.isPrivate,
       ));
       UserStoreService.to.save(key: conversationModel.value.conversationId ?? '', value: chatModel.toJson());
-      chatMessages.add(text);
+      chatMessages.add(ChatListModel(
+        text: text,
+        messageType: MassageTypeEnum.TEXT,
+        isMe: true,
+        time: time,
+        status: getStatusIcon(ChatStateEnum.PENDING.name),
+      ));
       scrollToBottom();
 
       const platform = MethodChannel(AppConstants.PLATFORM_CHANNEL);
@@ -322,7 +361,8 @@ class ChatController extends GetxController with AppUtilsMixin {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
     if (result != null) {
       File file = File(result.files.single.path!);
-      double fileSizeInKB = file.readAsBytesSync().lengthInBytes / 1024;
+      Uint8List fileBytes = file.readAsBytesSync();
+      double fileSizeInKB = fileBytes.lengthInBytes / 1024;
       if (fileSizeInKB > 100) {
         Get.snackbar(
           'Error',
@@ -334,9 +374,63 @@ class ChatController extends GetxController with AppUtilsMixin {
       } else {
         List<String> list = await queryName(file);
         // convert file to base64
-        String base64File = base64Encode(file.readAsBytesSync());
+        String base64File = base64Encode(fileBytes);
+        String time = setTimeFormat(DateTime.now().toUtc().toIso8601String());
+        String text = '';
+        String type;
+        if (list[2] == 'jpeg' || list[2] == 'jpg' || list[2] == 'png') {
+          type = list[2];
+        } else {
+          type = 'file';
+        }
+        var chatModel = ChatDetailsBorshModel(
+          admin: chatDetailsModel.value.admin,
+          messages: [
+            ...chatDetailsModel.value.messages ?? [],
+            MessageBorshModel(
+              text: text,
+              time: time,
+              status: ChatStateEnum.SEND.name,
+              senderAddress: userModel?.id ?? '',
+              messageType: type,
+            ),
+          ],
+          conversationName: chatDetailsModel.value.conversationName,
+          createdTime: chatDetailsModel.value.createdTime,
+          members: chatDetailsModel.value.members,
+          isPrivate: chatDetailsModel.value.isPrivate,
+        );
+        chatDetailsModel(ChatDetailsBorshModel(
+          admin: chatDetailsModel.value.admin,
+          messages: [
+            ...chatDetailsModel.value.messages ?? [],
+            MessageBorshModel(
+              text: text,
+              time: time,
+              status: ChatStateEnum.PENDING.name,
+              senderAddress: userModel?.id ?? '',
+              messageType: type,
+            ),
+          ],
+          conversationName: chatDetailsModel.value.conversationName,
+          createdTime: chatDetailsModel.value.createdTime,
+          members: chatDetailsModel.value.members,
+          isPrivate: chatDetailsModel.value.isPrivate,
+        ));
+        UserStoreService.to.save(key: conversationModel.value.conversationId ?? '', value: chatModel.toJson());
+        chatMessages.add(
+          ChatListModel(
+            text: text,
+            messageType: type == 'file' ? MassageTypeEnum.FILE : MassageTypeEnum.IMAGE,
+            time: time,
+            isMe: true,
+            status: getStatusIcon(ChatStateEnum.PENDING.name),
+            file: fileBytes,
+          ),
+        );
+        scrollToBottom();
         _repo.sendFile(
-            requestModel: SendFileResponseModel(
+            requestModel: SendFileRequestModel(
               image: base64File,
               name: list[0],
               size: list[1],
@@ -348,8 +442,81 @@ class ChatController extends GetxController with AppUtilsMixin {
               "pinata_secret_api_key": "b1030db36f592a52fb045799e864471b39829133df9906ded6b72bf8e75f880b",
               "Content-Type": "application/json",
             }).then(
-          (response) {
-            if (response.statusCode == 200) {}
+          (SendFileResponseModel response) async {
+            if (response.statusCode == 200) {
+              text = response.data?.ipfsHash ?? '';
+
+              const platform = MethodChannel(AppConstants.PLATFORM_CHANNEL);
+
+              try {
+                final String result = await platform.invokeMethod('encryptMessage', {
+                  'message': response.data?.ipfsHash ?? '',
+                  'key': tokenCipher,
+                });
+                messageTEC.clear();
+
+                var conversationId = conversationModel.value.conversationId ?? '';
+                var privateKey = userModel?.privateKey ?? '';
+                var publicKey = userModel?.publicKey ?? '';
+                var userName = userModel?.userName ?? '';
+
+                final String sendTransaction = await platform.invokeMethod('sendTransaction', {
+                  'message': result,
+                  'privateKey': privateKey,
+                  'conversationId': conversationId,
+                  'userName': userName,
+                  'publicKey': publicKey,
+                  'time': time,
+                  'messageType': type,
+                });
+
+                debugPrint('*****************************');
+                debugPrint(sendTransaction.toString());
+                debugPrint('#############################');
+                chatDetailsModel.value.messages!.removeWhere((element) => element.time == time);
+                chatDetailsModel(ChatDetailsBorshModel(
+                  admin: chatDetailsModel.value.admin,
+                  messages: [
+                    ...chatDetailsModel.value.messages ?? [],
+                    MessageBorshModel(
+                      text: text,
+                      time: time,
+                      status: sendTransaction.toString() == 'true' ? ChatStateEnum.SEND.name : ChatStateEnum.FAILURE.name,
+                      senderAddress: userModel?.id ?? '',
+                      messageType: type,
+                    ),
+                  ],
+                  conversationName: chatDetailsModel.value.conversationName,
+                  createdTime: chatDetailsModel.value.createdTime,
+                  members: chatDetailsModel.value.members,
+                  isPrivate: chatDetailsModel.value.isPrivate,
+                ));
+                chatMessages.removeWhere((element) => (element?.time ?? '') == time);
+
+                chatMessages.add(
+                  ChatListModel(
+                    text: text,
+                    messageType: type == 'file' ? MassageTypeEnum.FILE : MassageTypeEnum.IMAGE,
+                    time: time,
+                    isMe: true,
+                    status: getStatusIcon(sendTransaction.toString() == 'true' ? ChatStateEnum.SEND.name : ChatStateEnum.FAILURE.name),
+                    file: fileBytes,
+                  ),
+                );
+              } on PlatformException catch (e) {
+                debugPrint('*****************************');
+                debugPrint("Failed to encrypt data: ${e.message}.");
+                debugPrint('#############################');
+              }
+            } else {
+              Get.snackbar(
+                'Error',
+                'Something went wrong. Please try again.',
+                snackPosition: SnackPosition.TOP,
+                backgroundColor: Colors.red,
+                colorText: Colors.white,
+              );
+            }
           },
         );
       }
@@ -368,6 +535,77 @@ class ChatController extends GetxController with AppUtilsMixin {
       return result;
     } else {
       throw Exception("File does not exist");
+    }
+  }
+
+  void readMessageFromIPFS({
+    required String ipfs,
+    required int index,
+    required bool isMe,
+    required String time,
+    required String status,
+  }) {
+    if (ipfs.isEmpty || ipfs == '') {
+      chatMessages.removeWhere((element) => (element?.text ?? '') == ipfs);
+      return;
+    }
+    _repo.readFile(urlParameter: ipfs).then((ReadFileResponseModel response) {
+      if (response.statusCode == 200) {
+        var type = response.data?.type ?? 'file';
+        MassageTypeEnum massageType;
+        if (type == 'jpeg' || type == 'jpg' || type == 'png') {
+          massageType = MassageTypeEnum.IMAGE;
+        } else {
+          massageType = MassageTypeEnum.FILE;
+        }
+
+        // remove old message from list and add new file message to list at same index
+        // find index
+        var indexItem = chatMessages.indexWhere((element) => (element?.time ?? '') == time);
+        // remove old message
+        chatMessages.removeAt(indexItem);
+        // add new message
+        chatMessages.insert(
+          indexItem > chatMessages.length ? chatMessages.length : indexItem,
+          ChatListModel(
+            text: ipfs,
+            messageType: massageType,
+            file: base64.decode(response.data?.content?.replaceAll('\n', '') ?? ''),
+            isMe: isMe,
+            time: time,
+            status: status,
+          ),
+        );
+        scrollToBottom();
+        // isLoading(true);
+        // isLoading(false);
+      }
+    });
+  }
+
+  Future<void> saveImageToGallery({required Uint8List imageBytes}) async {
+    final result = await ImageGallerySaver.saveImage(
+      imageBytes,
+      quality: 80, // کیفیت تصویر
+      name: "my_saved_image", // نام فایل
+    );
+
+    if (result['isSuccess']) {
+      Get.snackbar(
+        'Image saved to gallery',
+        'Image saved successfully',
+        colorText: AppColors.tertiaryColor,
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: AppColors.successColor,
+      );
+    } else {
+      Get.snackbar(
+        'Error',
+        'Failed to save image',
+        colorText: AppColors.tertiaryColor,
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: AppColors.errorColor,
+      );
     }
   }
 }

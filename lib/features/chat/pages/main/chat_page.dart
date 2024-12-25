@@ -1,4 +1,5 @@
 import 'package:comet_messenger/app/core/app_enums.dart';
+import 'package:comet_messenger/app/core/app_icons.dart';
 import 'package:comet_messenger/app/core/app_images.dart';
 import 'package:comet_messenger/app/core/app_regex.dart';
 import 'package:comet_messenger/app/core/base/base_view.dart';
@@ -75,15 +76,31 @@ class ChatPage extends BaseView<ChatController> {
                               Expanded(
                                 child: ListView.builder(
                                   controller: controller.scrollController.value,
-                                  itemCount: controller.chatDetailsModel.value.messages?.length ?? 0,
+                                  itemCount: controller.chatMessages.length,
                                   itemBuilder: (context, index) {
-                                    return massageItem(
-                                      message: controller.chatMessages[index] ?? '',
-                                      isMe: controller.chatDetailsModel.value.messages?[index].senderAddress == controller.userModel?.id,
-                                      time: controller.chatDetailsModel.value.messages?[index].time ?? '',
-                                      chatStatus:
-                                          controller.getStatusIcon(controller.chatDetailsModel.value.messages![index].status ?? ChatStateEnum.SUCCESS.name),
-                                    );
+                                    if (controller.chatMessages[index]?.messageType == MassageTypeEnum.TEXT) {
+                                      return massageItem(
+                                        message: controller.chatMessages[index]?.text ?? '',
+                                        isMe: controller.chatMessages[index]?.isMe ?? false,
+                                        time: controller.chatMessages[index]?.time ?? '',
+                                        chatStatus: controller.chatMessages[index]?.status ?? '',
+                                      );
+                                    } else {
+                                      if (controller.chatMessages[index]?.file != null) {
+                                        if (controller.chatMessages[index]?.messageType == MassageTypeEnum.IMAGE) {
+                                          return imageItem(
+                                            isMe: controller.chatMessages[index]?.isMe ?? false,
+                                            index: index,
+                                            time: controller.chatMessages[index]?.time ?? '',
+                                            chatStatus: controller.chatMessages[index]?.status ?? '',
+                                          );
+                                        } else {
+                                          return fileItem(isMe: controller.chatMessages[index]?.isMe ?? false);
+                                        }
+                                      } else {
+                                        return imageLoadingItem(isMe: controller.chatMessages[index]?.isMe ?? false);
+                                      }
+                                    }
                                   },
                                 ),
                               ),
@@ -144,6 +161,128 @@ class ChatPage extends BaseView<ChatController> {
     );
   }
 
+  Widget imageItem({
+    required bool isMe,
+    required int index,
+    required String time,
+    required String chatStatus,
+  }) {
+    bool sending = chatStatus != AppIcons.icDoubleCheck;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            children: [
+              Row(
+                textDirection: isMe ? TextDirection.rtl : TextDirection.ltr,
+                children: [
+                  Container(
+                    decoration: const BoxDecoration(boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        spreadRadius: 1,
+                        blurRadius: 5,
+                        offset: Offset(0, 3),
+                      ),
+                    ]),
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.all(Radius.circular(8)),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.memory(
+                            controller.chatMessages[index]!.file!,
+                            width: 240,
+                          ),
+                          if (sending) const CircularProgressIndicator()
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  IconButton(
+                    onPressed: () => controller.saveImageToGallery(imageBytes: controller.chatMessages[index]!.file!),
+                    icon: const CircleAvatar(child: Icon(Icons.download_for_offline_outlined, color: AppColors.tertiaryColor)),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(children: [
+                if (isMe)
+                  SvgPicture.asset(
+                    chatStatus,
+                    width: 16,
+                    height: 16,
+                    color: AppColors.tertiaryColor,
+                  ),
+                const SizedBox(width: 8),
+                Text(
+                  controller.formatDate(time),
+                  style: Get.textTheme.bodySmall,
+                )
+              ]),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget fileItem({required bool isMe}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GestureDetector(
+            // onTap: () => controller.saveFile(),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: isMe ? AppColors.primaryColor.withValues(alpha: 0.7) : AppColors.backgroundColor,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                'Download File',
+                style: Get.textTheme.labelLarge!.copyWith(color: AppColors.tertiaryColor),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget imageLoadingItem({required bool isMe}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Column(
+              children: [
+                const CircularProgressIndicator(),
+                Text(
+                  'loading image...',
+                  style: Get.textTheme.labelLarge!.copyWith(color: AppColors.tertiaryColor),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget massageItem({
     required String message,
     required bool isMe,
@@ -160,9 +299,16 @@ class ChatPage extends BaseView<ChatController> {
             children: [
               Container(
                 decoration: BoxDecoration(
-                  color: isMe ? AppColors.primaryColor.withOpacity(0.5) : AppColors.backgroundColor,
-                  borderRadius: BorderRadius.circular(8),
-                ),
+                    color: isMe ? AppColors.primaryColor.withValues(alpha: 0.7) : AppColors.backgroundColor,
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black12,
+                        spreadRadius: 1,
+                        blurRadius: 5,
+                        offset: Offset(0, 3),
+                      ),
+                    ]),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.end,

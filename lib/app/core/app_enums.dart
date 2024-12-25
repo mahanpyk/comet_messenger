@@ -42,3 +42,9 @@ enum ChatStateEnum {
   SUCCESS,
   FAILURE,
 }
+
+enum MassageTypeEnum {
+  TEXT,
+  IMAGE,
+  FILE,
+}

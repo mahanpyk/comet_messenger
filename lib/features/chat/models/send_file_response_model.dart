@@ -22,25 +22,28 @@ class SendFileResponseModel {
 }
 
 class Data {
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
-        ipfsHash: json["ipfsHash"],
-        pinSize: json["pinSize"],
-        timestamp: json["Timestamp"],
-      );
-
   Data({
     this.ipfsHash,
     this.pinSize,
     this.timestamp,
+    this.isDuplicate,
   });
 
+  factory Data.fromJson(Map<String, dynamic> json) => Data(
+        ipfsHash: json["IpfsHash"],
+        pinSize: json["PinSize"],
+        timestamp: json["Timestamp"],
+        isDuplicate: json["isDuplicate"],
+      );
   String? ipfsHash;
   int? pinSize;
   String? timestamp;
+  bool? isDuplicate;
 
   Map<String, dynamic> toJson() => {
-        "ipfsHash": ipfsHash,
-        "pinSize": pinSize,
+        "IpfsHash": ipfsHash,
+        "PinSize": pinSize,
         "Timestamp": timestamp,
+        "isDuplicate": isDuplicate,
       };
 }

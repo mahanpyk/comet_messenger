@@ -150,6 +150,10 @@ class ChatController extends GetxController with AppUtilsMixin {
           }
         }
         element.status = ChatStateEnum.SUCCESS.name;
+
+        if (element.messageType == null) {
+          return;
+        }
         if (element.messageType == 'text') {
           chatMessages.add(ChatListModel(
             text: text,
@@ -254,6 +258,7 @@ class ChatController extends GetxController with AppUtilsMixin {
           'userName': userName,
           'publicKey': publicKey,
           'time': time,
+          'messageType': 'text'
         });
 
         debugPrint('*****************************');
@@ -276,6 +281,17 @@ class ChatController extends GetxController with AppUtilsMixin {
           members: chatDetailsModel.value.members,
           isPrivate: chatDetailsModel.value.isPrivate,
         ));
+        chatMessages.removeWhere((element) => (element?.time ?? '') == time);
+
+        chatMessages.add(
+          ChatListModel(
+            text: text,
+            messageType: MassageTypeEnum.TEXT,
+            time: time,
+            isMe: true,
+            status: getStatusIcon(sendTransaction.toString() == 'true' ? ChatStateEnum.SEND.name : ChatStateEnum.FAILURE.name),
+          ),
+        );
       } on PlatformException catch (e) {
         debugPrint('*****************************');
         debugPrint("Failed to encrypt data: ${e.message}.");

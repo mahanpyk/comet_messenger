@@ -71,41 +71,35 @@ class ChatPage extends BaseView<ChatController> {
                     Expanded(
                       child: controller.isLoading.value
                           ? const Center(child: CircularProgressIndicator())
-                          : Column(children: [
-                              const SizedBox(height: 8),
-                              Expanded(
-                                child: ListView.builder(
-                                  controller: controller.scrollController.value,
-                                  itemCount: controller.chatMessages.length,
-                                  itemBuilder: (context, index) {
-                                    if (controller.chatMessages[index]?.messageType == MassageTypeEnum.TEXT) {
-                                      return massageItem(
-                                        message: controller.chatMessages[index]?.text ?? '',
+                          : ListView.builder(
+                              controller: controller.scrollController.value,
+                              itemCount: controller.chatMessages.length,
+                              itemBuilder: (context, index) {
+                                if (controller.chatMessages[index]?.messageType == MassageTypeEnum.TEXT) {
+                                  return massageItem(
+                                    message: controller.chatMessages[index]?.text ?? '',
+                                    isMe: controller.chatMessages[index]?.isMe ?? false,
+                                    time: controller.chatMessages[index]?.time ?? '',
+                                    chatStatus: controller.chatMessages[index]?.status ?? '',
+                                  );
+                                } else {
+                                  if (controller.chatMessages[index]?.file != null) {
+                                    if (controller.chatMessages[index]?.messageType == MassageTypeEnum.IMAGE) {
+                                      return imageItem(
                                         isMe: controller.chatMessages[index]?.isMe ?? false,
+                                        index: index,
                                         time: controller.chatMessages[index]?.time ?? '',
                                         chatStatus: controller.chatMessages[index]?.status ?? '',
                                       );
                                     } else {
-                                      if (controller.chatMessages[index]?.file != null) {
-                                        if (controller.chatMessages[index]?.messageType == MassageTypeEnum.IMAGE) {
-                                          return imageItem(
-                                            isMe: controller.chatMessages[index]?.isMe ?? false,
-                                            index: index,
-                                            time: controller.chatMessages[index]?.time ?? '',
-                                            chatStatus: controller.chatMessages[index]?.status ?? '',
-                                          );
-                                        } else {
-                                          return fileItem(isMe: controller.chatMessages[index]?.isMe ?? false);
-                                        }
-                                      } else {
-                                        return imageLoadingItem(isMe: controller.chatMessages[index]?.isMe ?? false);
-                                      }
+                                      return fileItem(isMe: controller.chatMessages[index]?.isMe ?? false);
                                     }
-                                  },
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                            ]),
+                                  } else {
+                                    return imageLoadingItem(isMe: controller.chatMessages[index]?.isMe ?? false);
+                                  }
+                                }
+                              },
+                            ),
                     ),
                     Container(
                       height: 64,
@@ -124,6 +118,8 @@ class ChatPage extends BaseView<ChatController> {
                                   border: InputBorder.none,
                                 ),
                                 onFieldSubmitted: (value) => controller.isTyping.value ? controller.sendMessage() : null,
+                                minLines: 1,
+                                maxLines: 4,
                                 onChanged: (value) {
                                   if (value.isNotEmpty) {
                                     controller.isTyping.value = true;

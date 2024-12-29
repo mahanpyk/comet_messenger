@@ -39,6 +39,7 @@ class ChatController extends GetxController with AppUtilsMixin, WidgetsBindingOb
   UserModel? userModel;
   Rx<ConversationBorshModel> conversationModel = Rx(ConversationBorshModel());
   Rx<ChatDetailsBorshModel> chatDetailsModel = Rx(ChatDetailsBorshModel());
+  List<MessageBorshModel> messageList = [];
   RxList<ChatListModel?> chatMessages = RxList([]);
   TextEditingController messageTEC = TextEditingController();
   Rx<ScrollController> scrollController = Rx(ScrollController(initialScrollOffset: 0));
@@ -58,6 +59,7 @@ class ChatController extends GetxController with AppUtilsMixin, WidgetsBindingOb
     var chatsJson = await UserStoreService.to.get(key: conversationModel.value.conversationId ?? '');
     if (chatsJson != null) {
       chatDetailsModel(ChatDetailsBorshModel.fromJson(chatsJson));
+      messageList.addAll(chatDetailsModel.value.messages ?? []);
       await readMessageFromChatList();
     }
     super.onInit();
@@ -137,9 +139,40 @@ class ChatController extends GetxController with AppUtilsMixin, WidgetsBindingOb
           if (chatsJson != null) {
             chatDetailsModel(ChatDetailsBorshModel.fromJson(chatsJson));
           }
-          if ((chatDetailsModel.value.messages?.length ?? 0) != (chatDetailsDeserialized.messages?.length ?? 0)) {
+          if (messageList.length < (chatDetailsDeserialized.messages?.length ?? 0)) {
+            // if (messageList.isEmpty) {
             chatDetailsModel(chatDetailsDeserialized);
-            chatMessages.clear();
+            messageList.clear();
+            messageList.addAll(chatDetailsDeserialized.messages ?? []);
+            // } else if (messageList.length < (chatDetailsModel.value.messages?.length ?? 0)) {
+            //   if ((chatDetailsModel.value.messages?.length ?? 0) == (chatDetailsDeserialized.messages?.length ?? 0)) {
+            //     chatDetailsModel.value.messages?.removeLast();
+            //     chatDetailsModel.value.messages?.add(chatDetailsDeserialized.messages?.last ?? MessageBorshModel());
+            //     messageList.clear();
+            //     messageList.addAll(chatDetailsDeserialized.messages ?? []);
+            //   } else if ((chatDetailsModel.value.messages?.length ?? 0) < (chatDetailsDeserialized.messages?.length ?? 0)) {
+            //     // check how many messages are missing
+            //     if (messageList.length < (chatDetailsModel.value.messages?.length ?? 0)) {
+            //       int missingCurrentMessages = (chatDetailsModel.value.messages?.length ?? 0) - messageList.length;
+            //       int currentMessagesLength = chatDetailsModel.value.messages?.length ?? 0;
+            //       chatDetailsModel.value.messages?.removeRange(currentMessagesLength - missingCurrentMessages, currentMessagesLength);
+            //     }
+            //     int missingMessages = (chatDetailsDeserialized.messages?.length ?? 0) - (chatDetailsModel.value.messages?.length ?? 0);
+            //     for (int i = 0; i < missingMessages; i++) {
+            //       var index = (chatDetailsDeserialized.messages?.length ?? 0) - i - 1;
+            //       if (index < 0) {
+            //         break;
+            //       }
+            //       chatDetailsModel.value.messages?.add(chatDetailsDeserialized.messages?[index] ?? MessageBorshModel());
+            //     }
+            //     messageList.clear();
+            //     messageList.addAll(chatDetailsDeserialized.messages ?? []);
+            //   }
+            // }
+
+            // chatDetailsModel(chatDetailsDeserialized);
+            // chatMessages.clear();
+
             UserStoreService.to.save(key: conversationModel.value.conversationId ?? '', value: chatDetailsModel.toJson());
             await readMessageFromChatList();
           }
@@ -162,7 +195,6 @@ class ChatController extends GetxController with AppUtilsMixin, WidgetsBindingOb
           'base64PrivateKey': AppConstants.PRIVATE_KEY,
         });
       }
-      // convert to for
       for (int index = 0; index < (chatDetailsModel.value.messages?.length ?? 0); index++) {
         MessageBorshModel element = chatDetailsModel.value.messages![index];
         String text;
@@ -191,30 +223,44 @@ class ChatController extends GetxController with AppUtilsMixin, WidgetsBindingOb
         }
         element.status = ChatStateEnum.SUCCESS.name;
 
-        if ((element.messageType ?? 'text') == 'text') {
-          chatMessages.add(ChatListModel(
-            text: text,
-            messageType: MassageTypeEnum.TEXT,
-            isMe: element.senderAddress == userModel!.id,
-            time: chatDetailsModel.value.messages?[index].time,
-            status: getStatusIcon(chatDetailsModel.value.messages![index].status ?? ChatStateEnum.SUCCESS.name),
-          ));
+        // add condition to check if message already exists in list
+        int existingMessageIndex = chatMessages.indexWhere(
+          (message) =>
+              (message?.time ?? '') == chatDetailsModel.value.messages?[index].time &&
+              (message?.text ?? '') == text &&
+              (message?.status ?? '') != ChatStateEnum.SUCCESS.name,
+        );
+
+        if (existingMessageIndex != -1) {
+          chatMessages[existingMessageIndex]?.status = getStatusIcon(element.status ?? ChatStateEnum.SUCCESS.name);
+          isLoading(true);
+          isLoading(false);
         } else {
-          chatMessages.add(ChatListModel(
-            text: text,
-            messageType: element.messageType == 'file' ? MassageTypeEnum.FILE : MassageTypeEnum.IMAGE,
-            isMe: element.senderAddress == userModel!.id,
-            time: chatDetailsModel.value.messages?[index].time,
-            status: getStatusIcon(chatDetailsModel.value.messages![index].status ?? ChatStateEnum.SUCCESS.name),
-            file: text == '' ? base64Decode(element.name ?? '') : null,
-          ));
-          readMessageFromIPFS(
-            ipfs: text,
-            index: index,
-            isMe: element.senderAddress == userModel!.id,
-            time: chatDetailsModel.value.messages?[index].time ?? '',
-            status: getStatusIcon(chatDetailsModel.value.messages![index].status ?? ChatStateEnum.SUCCESS.name),
-          );
+          if ((element.messageType ?? 'text') == 'text') {
+            chatMessages.add(ChatListModel(
+              text: text,
+              messageType: MassageTypeEnum.TEXT,
+              isMe: element.senderAddress == userModel!.id,
+              time: chatDetailsModel.value.messages?[index].time,
+              status: getStatusIcon(chatDetailsModel.value.messages![index].status ?? ChatStateEnum.SUCCESS.name),
+            ));
+          } else {
+            chatMessages.add(ChatListModel(
+              text: text,
+              messageType: element.messageType == 'file' ? MassageTypeEnum.FILE : MassageTypeEnum.IMAGE,
+              isMe: element.senderAddress == userModel!.id,
+              time: chatDetailsModel.value.messages?[index].time,
+              status: getStatusIcon(chatDetailsModel.value.messages![index].status ?? ChatStateEnum.SUCCESS.name),
+              file: text == '' ? base64Decode(element.name ?? '') : null,
+            ));
+            readMessageFromIPFS(
+              ipfs: text,
+              index: index,
+              isMe: element.senderAddress == userModel!.id,
+              time: chatDetailsModel.value.messages?[index].time ?? '',
+              status: getStatusIcon(chatDetailsModel.value.messages![index].status ?? ChatStateEnum.SUCCESS.name),
+            );
+          }
         }
       }
       isLoading(false);

@@ -24,7 +24,7 @@ class ChatListController extends GetxController with AppUtilsMixin {
   RxList<ConversationBorshModel> chatList = RxList<ConversationBorshModel>([]);
   RxBool isLoading = RxBool(true);
   Timer? timer;
-  RxInt timerCounter = RxInt(-1);
+  RxInt timerCounter = RxInt(15);
 
   @override
   void onInit() async {
@@ -123,15 +123,16 @@ class ChatListController extends GetxController with AppUtilsMixin {
   void startTimer() {
     if (timer != null) {
       timer!.cancel();
+      timerCounter(15);
     }
     timer = Timer.periodic(
       const Duration(seconds: 1),
       (timer) {
-        if (timerCounter.value == 15) {
+        if (timerCounter.value == 0) {
           timer.cancel();
           onRefresh();
         } else {
-          timerCounter.value++;
+          timerCounter.value--;
         }
       },
     );

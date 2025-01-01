@@ -13,6 +13,7 @@ class AppBarWidget extends StatelessWidget {
     this.isLoading = false,
     this.userName,
     this.avatar,
+    this.onTapBackButton,
   });
 
   final String title;
@@ -21,6 +22,7 @@ class AppBarWidget extends StatelessWidget {
   final bool isLoading;
   final String? userName;
   final String? avatar;
+  final VoidCallback? onTapBackButton;
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +58,13 @@ class AppBarWidget extends StatelessWidget {
                     child: showBackButton
                         ? Align(
                             alignment: Alignment.centerLeft,
-                            child: BackButton(onPressed: () => Get.back()),
+                            child: BackButton(onPressed: () {
+                              if (onTapBackButton != null) {
+                                onTapBackButton!();
+                              } else {
+                                Get.back();
+                              }
+                            }),
                           )
                         : const SizedBox(),
                   ),

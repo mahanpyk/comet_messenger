@@ -15,7 +15,10 @@ class ContactsPage extends BaseView<ContactsController> {
   Widget body() {
     return Column(
       children: [
-        const AppBarWidget(title: 'Contacts'),
+        AppBarWidget(
+          title: 'Contacts',
+          showBackButton: true,
+        ),
         Expanded(
           child: Stack(
             fit: StackFit.expand,

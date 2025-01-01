@@ -100,11 +100,15 @@ class ChatListPage extends BaseView<ChatListController> {
             ),
             leading: conversationBorshModel.newConversation == 'true'
                 ? Row(
+                    mainAxisSize: MainAxisSize.min,
+                    textDirection: TextDirection.ltr,
                     children: [
-                      Text(
-                        controller.timerCounter.value.toString(),
-                        style: Get.textTheme.bodySmall!.copyWith(color: AppColors.redColor),
-                      ),
+                      Obx(() {
+                        return Text(
+                          controller.timerCounter.value.toString(),
+                          style: Get.textTheme.bodySmall!.copyWith(color: AppColors.redColor),
+                        );
+                      }),
                       const SizedBox(width: 8),
                       const Icon(
                         Icons.timer_outlined,

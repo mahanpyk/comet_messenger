@@ -1,11 +1,11 @@
 import 'package:comet_messenger/app/core/app_icons.dart';
+import 'package:comet_messenger/app/core/app_images.dart';
 import 'package:comet_messenger/app/core/base/base_view.dart';
 import 'package:comet_messenger/app/theme/app_colors.dart';
 import 'package:comet_messenger/features/home/pages/chat_list/chat_list_page.dart';
 import 'package:comet_messenger/features/home/pages/main/home_controller.dart';
 import 'package:comet_messenger/features/home/pages/settings/settings_page.dart';
 import 'package:comet_messenger/features/home/pages/wallet/wallet_page.dart';
-import 'package:comet_messenger/features/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -17,13 +17,55 @@ class HomePage extends BaseView<HomeController> {
   @override
   Widget body() {
     return Column(children: [
-      AppBarWidget(
-        title: 'splash_title'.tr,
-        showBackButton: false,
-        balance: controller.balance.value,
-        isLoading: controller.isLoading.value,
-        userName: controller.userModel?.userName,
-        avatar: controller.userModel?.avatar,
+      Container(
+        height: 64,
+        width: Get.width,
+        color: AppColors.primaryColor,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                flex: 4,
+                child: Row(
+                  children: [
+                    SvgPicture.asset(
+                      '${AppIcons.icUserAvatar}${controller.userModel?.avatar != "" ? controller.userModel?.avatar ?? '0' : '0'}.svg',
+                      height: 32,
+                      width: 32,
+                    ),
+                    const SizedBox(width: 8),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          controller.userModel?.userName ?? '',
+                          style: Get.textTheme.titleLarge!.copyWith(color: AppColors.tertiaryColor),
+                        ),
+                        Text(
+                          '${controller.balance.value.toStringAsFixed(6)} SOL',
+                          style: Get.textTheme.bodySmall!.copyWith(color: AppColors.tertiaryColor),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Center(
+                  child: Image.asset(AppImages.imgLogoJpeg, height: 48, width: 48),
+                ),
+              ),
+              Expanded(
+                flex: 4,
+                child: const SizedBox(),
+              )
+            ],
+          ),
+        ),
       ),
       Expanded(
         child: PageView(controller: controller.pageController, physics: const NeverScrollableScrollPhysics(), children: const [

@@ -84,20 +84,26 @@ class ChatProfilePage extends BaseView<ChatProfileController> {
             children: [
               Text(item.userName ?? ""),
               const SizedBox(height: 8),
-              Text(
-                item.userAddress ?? "",
-                style: Get.textTheme.bodyMedium,
-                maxLines: 2,
+              InkWell(
+                onTap: () => controller.copyToClipboard(item.userAddress ?? ""),
+                child: Text(
+                  item.userAddress ?? "",
+                  style: Get.textTheme.bodyMedium,
+                  maxLines: 2,
+                ),
               )
             ],
           ),
         ),
         const SizedBox(width: 16),
-        QrImageView(
-          data: item.userAddress ?? "",
-          version: QrVersions.auto,
-          size: 64,
-          backgroundColor: Colors.white,
+        GestureDetector(
+          onTap: () => controller.showQrCodeLargeSize(item),
+          child: QrImageView(
+            data: item.userAddress ?? "",
+            version: QrVersions.auto,
+            size: 64,
+            backgroundColor: Colors.white,
+          ),
         ),
       ],
     );

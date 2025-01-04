@@ -40,18 +40,6 @@ class UserStoreService {
     }
   }
 
-  Future<double?> getBalance() async {
-    String? result = await _secureStorage.read(key: AppConstants.BALANCE);
-    if (result != null) {
-      return double.parse(result);
-    } else {
-      return null;
-    }
-  }
-
-  Future<void> saveBalance(double balance) async {
-    await _secureStorage.write(key: AppConstants.BALANCE, value: balance.toString());
-  }
 
   Future<String?> getRefreshToken() async {
     String? result = await _secureStorage.read(key: AppConstants.REFRESH_TOKEN);

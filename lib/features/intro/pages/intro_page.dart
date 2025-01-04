@@ -72,7 +72,7 @@ class IntroPage extends BaseView<IntroController> {
           description,
           style: Get.textTheme.bodyMedium!.copyWith(
             fontWeight: FontWeight.w400,
-            color: AppColors.tertiaryColor.withOpacity(0.3),
+            color: AppColors.tertiaryColor.withValues(alpha: 0.3),
           ),
           textAlign: TextAlign.justify,
         ),
@@ -99,7 +99,7 @@ class IntroPage extends BaseView<IntroController> {
       curve: Curves.ease,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: i == index ? AppColors.primaryColor : AppColors.primaryColor.withOpacity(0.3),
+        color: i == index ? AppColors.primaryColor : AppColors.primaryColor.withValues(alpha: 0.3),
       ),
       margin: const EdgeInsets.symmetric(horizontal: 4),
     );

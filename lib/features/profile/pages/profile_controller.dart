@@ -24,7 +24,6 @@ class ProfileController extends GetxController with AppUtilsMixin {
   TextEditingController publicKeyTEC = TextEditingController();
   RxBool showQRCode = true.obs;
   RxBool qrAddress = false.obs;
-  double balance = 0;
   RxBool isLoading = RxBool(false);
 
   @override
@@ -34,7 +33,6 @@ class ProfileController extends GetxController with AppUtilsMixin {
       userModel(UserModel.fromJson(json));
       publicKeyTEC.text = userModel.value?.basePublicKey ?? "public Key Not Found";
     }
-    balance = await UserStoreService.to.getBalance() ?? 0;
     super.onInit();
   }
 
@@ -49,7 +47,8 @@ class ProfileController extends GetxController with AppUtilsMixin {
     Get.snackbar(
       'Copied',
       'Public key copied to clipboard',
-      snackPosition: SnackPosition.BOTTOM,
+      snackPosition: SnackPosition.TOP,
+      backgroundColor: AppColors.successColor,
     );
   }
 

@@ -1,6 +1,7 @@
 import 'package:comet_messenger/app/core/app_icons.dart';
 import 'package:comet_messenger/app/core/base/base_view.dart';
 import 'package:comet_messenger/app/theme/app_colors.dart';
+import 'package:comet_messenger/features/home/pages/main/home_controller.dart';
 import 'package:comet_messenger/features/profile/pages/profile_controller.dart';
 import 'package:comet_messenger/features/widgets/fill_button_widget.dart';
 import 'package:comet_messenger/features/widgets/text_form_field_widget.dart';
@@ -85,7 +86,7 @@ class ProfilePage extends BaseView<ProfileController> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            '${controller.balance.toStringAsFixed(9)} SOL',
+                            '${Get.find<HomeController>().balanceString}',
                             textAlign: TextAlign.center,
                             style: Get.textTheme.titleMedium!.copyWith(color: AppColors.tertiaryColor),
                           ),

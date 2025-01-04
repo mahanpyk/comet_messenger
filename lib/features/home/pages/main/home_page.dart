@@ -45,7 +45,7 @@ class HomePage extends BaseView<HomeController> {
                           style: Get.textTheme.titleLarge!.copyWith(color: AppColors.tertiaryColor),
                         ),
                         Text(
-                          '${controller.balance.value.toStringAsFixed(6)} SOL',
+                          '${controller.balanceString}',
                           style: Get.textTheme.bodySmall!.copyWith(color: AppColors.tertiaryColor),
                         ),
                       ],
@@ -56,7 +56,7 @@ class HomePage extends BaseView<HomeController> {
               Expanded(
                 flex: 1,
                 child: Center(
-                  child: Image.asset(AppImages.imgLogoJpeg, height: 48, width: 48),
+                  child: Image.asset(AppImages.imgLogo, height: 48, width: 48),
                 ),
               ),
               Expanded(

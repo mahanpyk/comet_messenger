@@ -34,7 +34,7 @@ class FillButtonWidget extends StatelessWidget {
         height: height,
         width: Get.width,
         decoration: BoxDecoration(
-          color: enable ? AppColors.primaryColor : AppColors.primaryColor.withOpacity(0.3),
+          color: enable ? AppColors.primaryColor : AppColors.primaryColor.withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Padding(
@@ -58,7 +58,7 @@ class FillButtonWidget extends StatelessWidget {
                   child: Text(
                     buttonTitle,
                     style: Get.textTheme.labelLarge!.copyWith(
-                      color: enable ? AppColors.tertiaryColor : AppColors.tertiaryColor.withOpacity(0.3),
+                      color: enable ? AppColors.tertiaryColor : AppColors.tertiaryColor.withValues(alpha: 0.3),
                       fontWeight: FontWeight.w900,
                     ),
                   ),

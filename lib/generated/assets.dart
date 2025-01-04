@@ -2,7 +2,6 @@
 class Assets {
   Assets._();
 
-  static const String assetsImagesImgLogo = 'assets/images/img_logo.png';
   static const String iconsIcAccountsHistory = 'assets/icons/ic_accounts_history.svg';
   static const String iconsIcBack = 'assets/icons/ic_back.svg';
   static const String iconsIcBtc = 'assets/icons/ic_btc.svg';
@@ -34,5 +33,5 @@ class Assets {
   static const String iconsIcWarning = 'assets/icons/ic_warning.svg';
   static const String imagesImgChatBackgroundPage = 'assets/images/img_chat_background_page.png';
   static const String imagesImgCreateMnemonicPage = 'assets/images/img_create_mnemonic_page.png';
-  static const String imagesImgLogo = 'assets/images/img_logo.jpg';
+  static const String imagesImgLogo = 'assets/images/img_logo.png';
 }

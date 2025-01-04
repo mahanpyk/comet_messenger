@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:comet_messenger/app/core/app_dialog.dart';
 import 'package:comet_messenger/app/core/app_icons.dart';
 import 'package:comet_messenger/app/models/request_model.dart';
@@ -19,9 +21,11 @@ class HomeController extends GetxController {
   RxDouble balance = RxDouble(0.0);
   RxBool isLoading = RxBool(true);
 
+  RxString get balanceString => '${balance.value.toStringAsFixed(6)} SOL'.obs;
+
   @override
   void onInit() async {
-    Future.delayed(const Duration(seconds: 1)).then((value) => getBalance());
+    Future.delayed(const Duration(seconds: 1)).then((value) => getBalance()).then((value) => startRefreshingChatList());
     var arguments = Get.arguments;
     if (arguments != null) {
       if (arguments['showAirDropDialog']) {
@@ -42,7 +46,9 @@ class HomeController extends GetxController {
     userModel = UserModel.fromJson(json!);
   }
 
-  void getBalance() {
+  void startRefreshingChatList() => Timer.periodic(const Duration(seconds: 10), (timer) async => await getBalance());
+
+  Future<void> getBalance() async {
     isLoading(true);
     _repo
         .getBalance(
@@ -57,7 +63,6 @@ class HomeController extends GetxController {
       if (response.statusCode == 200) {
         double userBalance = response.data!.result!.value! / 1000000000;
         balance(userBalance);
-        UserStoreService.to.saveBalance(balance.value);
       }
     });
   }

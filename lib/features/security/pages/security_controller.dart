@@ -40,7 +40,7 @@ class SecurityController extends GetxController {
     }
   }
 
-  void onTapChangePin() => Get.toNamed(AppRoutes.PIN, arguments: true);
+  void onTapChangePin() => Get.toNamed(AppRoutes.PIN, arguments: {'isChangePin': true});
 
   Future<bool> checkBiometrics() async {
     bool canCheckBiometrics = false;

@@ -36,7 +36,10 @@ class ProfileController extends GetxController with AppUtilsMixin {
     super.onInit();
   }
 
-  void onTapShowMnemonicAndPrivate() => Get.toNamed(AppRoutes.SHOW_MNEMONIC);
+  void onTapShowMnemonicAndPrivate() => Get.toNamed(
+        AppRoutes.PIN,
+        arguments: {'nextPage': AppRoutes.SHOW_MNEMONIC},
+      );
 
   void onTapSignOut() => logoutFromApp();
 

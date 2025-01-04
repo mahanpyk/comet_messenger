@@ -20,12 +20,14 @@ class PinController extends GetxController {
   final LocalAuthentication auth = LocalAuthentication();
   bool deviceHasFingerPrint = false;
   bool isChangePin = false;
+  String? nextPage;
 
   @override
   void onInit() async {
     var arguments = Get.arguments;
     if (arguments != null) {
-      isChangePin = arguments;
+      isChangePin = arguments['isChangePin'] ?? false;
+      nextPage = arguments['nextPage'];
     }
     savePin = await UserStoreService.to.getPin();
     fingerPrintEnabled(await UserStoreService.to.getFingerPrint() ?? false);
@@ -117,7 +119,7 @@ class PinController extends GetxController {
               pinTEC.text = '';
             } else {
               if (await UserStoreService.to.getMnemonic() != null) {
-                Get.offAndToNamed(AppRoutes.HOME);
+                Get.offAndToNamed(nextPage ?? AppRoutes.HOME);
               } else {
                 Get.offAndToNamed(AppRoutes.AUTHENTICATION);
               }

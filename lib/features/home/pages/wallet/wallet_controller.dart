@@ -5,6 +5,7 @@ import 'package:comet_messenger/features/home/models/transactions_response_model
 import 'package:comet_messenger/features/home/repository/wallet_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:solana/solana.dart';
 
 class WalletController extends GetxController with GetTickerProviderStateMixin {
   WalletController(this._repo);
@@ -14,6 +15,9 @@ class WalletController extends GetxController with GetTickerProviderStateMixin {
   RxList<transactions_model.Result> transactionsList = RxList([]);
   UserModel? userModel;
   late final TabController tabController;
+  final TextEditingController receiverAddressTEC = TextEditingController();
+  final TextEditingController amountTEC = TextEditingController();
+  RpcClient? rpcClient;
 
   @override
   void onInit() async {
@@ -33,14 +37,14 @@ class WalletController extends GetxController with GetTickerProviderStateMixin {
         isLoading(false);
       } else {
         Get.snackbar(
-          'خطا در برقراری ارتباط',
-          "مشکلی پیش آمده است",
+          'Error in creating connection',
+          'Please try again later',
           mainButton: TextButton(
             onPressed: () {
               isLoading(true);
               getTransactions();
             },
-            child: const Text('تلاش مجدد'),
+            child: const Text('Retry'),
           ),
         );
       }
@@ -56,5 +60,37 @@ class WalletController extends GetxController with GetTickerProviderStateMixin {
       AppRoutes.TRANSACTION_DETAIL,
       arguments: {'signature': signature},
     );
+  }
+
+  void onTapTransaction() async {
+    try {
+      final senderPublicKey = Ed25519HDPublicKey.fromBase58(userModel?.id ?? '');
+      final recipientPublicKey = Ed25519HDPublicKey.fromBase58(receiverAddressTEC.text);
+
+      final transferInstruction = SystemInstruction.transfer(
+        fundingAccount: senderPublicKey,
+        recipientAccount: recipientPublicKey,
+        lamports: int.parse(amountTEC.text),
+      );
+      final message = Message(instructions: [transferInstruction]);
+      // final signature = await rpcClient!.signAndSendTransaction(message, [solanaWallet!]);
+
+      Get.snackbar(
+        'تراکنش موفق',
+        'تراکنش با موفقیت انجام شد',
+        colorText: Colors.black,
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.green,
+      );
+
+      debugPrint('*****************');
+      // debugPrint('Transaction signature: $signature');
+      debugPrint('-----------------');
+    } catch (error) {
+      debugPrint('*****************');
+      debugPrint('Error during transaction: $error');
+      debugPrint('-----------------');
+      rethrow;
+    }
   }
 }

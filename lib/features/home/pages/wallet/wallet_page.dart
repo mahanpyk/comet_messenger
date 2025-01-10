@@ -3,6 +3,8 @@ import 'package:comet_messenger/app/core/base/base_view.dart';
 import 'package:comet_messenger/app/theme/app_colors.dart';
 import 'package:comet_messenger/features/home/models/transactions_response_model.dart';
 import 'package:comet_messenger/features/home/pages/wallet/wallet_controller.dart';
+import 'package:comet_messenger/features/widgets/fill_button_widget.dart';
+import 'package:comet_messenger/features/widgets/text_form_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -41,7 +43,7 @@ class WalletPage extends BaseView<WalletController> {
             padding: const EdgeInsets.all(3),
             tabs: const [
               Tab(text: 'Transactions History'),
-              Tab(text: 'Tab'),
+              Tab(text: 'Withdraw'),
             ],
           ),
         ),
@@ -69,11 +71,30 @@ class WalletPage extends BaseView<WalletController> {
                         ),
                 ],
               ),
-              const Column(children: [
-                Expanded(
-                  child: Center(
-                    child: Text('Not set anything yet!'),
-                  ),
+              Column(children: [
+                const SizedBox(height: 40),
+                TextFormFieldWidget(
+                  controller: controller.receiverAddressTEC,
+                  keyboardType: TextInputType.text,
+                  label: const Text('Please enter the wallet address'),
+                  // suffixIcon: IconButton(
+                  //   icon: const Icon(Icons.qr_code_scanner_rounded),
+                  //   onPressed: () => controller.onTapReadQRCode(),
+                  //   tooltip: 'دریافت ادرس از QRCode',
+                  // ),
+                ),
+                const SizedBox(height: 24),
+                TextFormFieldWidget(
+                  controller: controller.amountTEC,
+                  keyboardType: TextInputType.number,
+                  label: const Text('Please enter the amount'),
+                ),
+                const SizedBox(height: 24),
+                FillButtonWidget(
+                  isLoading: false,
+                  enable: controller.isEnable.value,
+                  onTap: () => controller.onTapTransaction(),
+                  buttonTitle: 'ارسال',
                 ),
               ]),
             ],

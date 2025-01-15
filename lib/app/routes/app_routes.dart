@@ -14,4 +14,5 @@ abstract class AppRoutes {
   static const PROFILE = '/PROFILE';
   static const SHOW_MNEMONIC = '/SHOW_MNEMONIC';
   static const SECURITY = '/SECURITY';
+  static const QR_CODE = '/QR_CODE';
 }

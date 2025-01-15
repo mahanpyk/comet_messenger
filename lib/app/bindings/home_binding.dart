@@ -1,7 +1,7 @@
 import 'package:comet_messenger/features/home/pages/chat_list/chat_list_controller.dart';
 import 'package:comet_messenger/features/home/pages/main/home_controller.dart';
 import 'package:comet_messenger/features/home/pages/settings/settings_controller.dart';
-import 'package:comet_messenger/features/home/pages/wallet/wallet_controller.dart';
+import 'package:comet_messenger/features/home/pages/wallet/main/wallet_controller.dart';
 import 'package:comet_messenger/features/home/repository/chat_list_repository.dart';
 import 'package:comet_messenger/features/home/repository/home_repository.dart';
 import 'package:comet_messenger/features/home/repository/wallet_repository.dart';

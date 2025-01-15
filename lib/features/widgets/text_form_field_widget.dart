@@ -13,8 +13,10 @@ class TextFormFieldWidget extends StatelessWidget {
     this.readOnly = false,
     this.onTap,
     this.prefixIcon,
+    this.suffixIcon,
     this.maxLines = 1,
   });
+
   final TextEditingController? controller;
   final TextInputType? keyboardType;
 
@@ -27,6 +29,7 @@ class TextFormFieldWidget extends StatelessWidget {
   final bool readOnly;
   final VoidCallback? onTap;
   final Widget? prefixIcon;
+  final Widget? suffixIcon;
   final int? maxLines;
 
   @override
@@ -57,6 +60,7 @@ class TextFormFieldWidget extends StatelessWidget {
         label: label,
         hintText: hintText,
         counterText: '',
+        suffixIcon: suffixIcon,
       ),
     );
   }

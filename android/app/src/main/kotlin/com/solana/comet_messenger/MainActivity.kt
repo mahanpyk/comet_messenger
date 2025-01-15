@@ -12,13 +12,13 @@ import com.solana.models.buffer.AccountInfo
 import com.solana.models.buffer.MessageModel
 import com.solana.models.buffer.MessageState
 import com.solana.models.buffer.MessageStatus
-import com.solana.models.buffer.SendMessageType
 import com.solana.models.buffer.UserModel
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import org.sol4k.Base58
 import org.sol4k.Keypair
+import java.math.BigDecimal
 import java.util.Locale
 import java.util.UUID
 
@@ -143,8 +143,9 @@ class MainActivity : FlutterFragmentActivity() {
                             // Implement the success logic here
                             val publicKey = keypair.publicKey.toBase58()
                             val privateKey = Base58.encode(keypair.secret)
-                            val charArray :List<CharArray>  = mnemonic.words
-                            val stringWordsList: List<String> = charArray.map { it.concatToString() }
+                            val charArray: List<CharArray> = mnemonic.words
+                            val stringWordsList: List<String> =
+                                charArray.map { it.concatToString() }
                             val words = stringWordsList.joinToString(separator = " ")
                             result.success("${words}*********$publicKey*********$privateKey*********$publicKeyFromUserName")
                             return
@@ -229,6 +230,36 @@ class MainActivity : FlutterFragmentActivity() {
                         indexAvatar,
                         onComplete,
                     )
+                }
+
+                "withdraw" -> {
+                    val receiver: String = call.argument("publicKey") ?: ""
+                    val privateKey: String = call.argument("privateKey") ?: ""
+                    val amount: String = call.argument("amount") ?: ""
+                    try {
+//                    Config.network = "Main"
+                        Config.network = "dev"
+
+                        val onComplete = object : SolanaHelper.OnResponseE {
+                            override fun onSuccess() {
+                                result.success("SUCCESS")
+                            }
+
+                            override fun onFailure(e: Exception?) {
+                                result.success("FAILED")
+                                return
+                            }
+                        }
+                        // convert string to long
+
+                        val amountLong: Long =
+                            (BigDecimal(amount.trim()).multiply(BigDecimal("1000000000"))).toLong()
+                        val publicKey = PublicKey(receiver)
+                        SolanaHelper.sendWithdraw(privateKey, publicKey, amountLong, onComplete)
+                    } catch (e: java.lang.Exception) {
+                        result.error(e.toString(), e.message, null)
+                    }
+
                 }
 
                 else -> result.notImplemented()

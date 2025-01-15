@@ -1,9 +1,12 @@
+import 'package:comet_messenger/app/core/app_constants.dart';
 import 'package:comet_messenger/app/models/user_model.dart';
 import 'package:comet_messenger/app/routes/app_routes.dart';
 import 'package:comet_messenger/app/store/user_store_service.dart';
+import 'package:comet_messenger/app/theme/app_colors.dart';
 import 'package:comet_messenger/features/home/models/transactions_response_model.dart' as transactions_model;
 import 'package:comet_messenger/features/home/repository/wallet_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:solana/solana.dart';
 
@@ -63,34 +66,64 @@ class WalletController extends GetxController with GetTickerProviderStateMixin {
   }
 
   void onTapTransaction() async {
-    try {
-      final senderPublicKey = Ed25519HDPublicKey.fromBase58(userModel?.id ?? '');
-      final recipientPublicKey = Ed25519HDPublicKey.fromBase58(receiverAddressTEC.text);
-
-      final transferInstruction = SystemInstruction.transfer(
-        fundingAccount: senderPublicKey,
-        recipientAccount: recipientPublicKey,
-        lamports: int.parse(amountTEC.text),
-      );
-      final message = Message(instructions: [transferInstruction]);
-      // final signature = await rpcClient!.signAndSendTransaction(message, [solanaWallet!]);
-
+    if (amountTEC.text.isEmpty || receiverAddressTEC.text.isEmpty) {
       Get.snackbar(
-        'تراکنش موفق',
-        'تراکنش با موفقیت انجام شد',
-        colorText: Colors.black,
+        'Error in creating transaction',
+        'Please enter amount and receiver address',
+        colorText: AppColors.tertiaryColor,
         snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.green,
+        backgroundColor: AppColors.errorColor,
       );
+      return;
+    }
+    const MethodChannel platform = MethodChannel(AppConstants.PLATFORM_CHANNEL);
+    try {
+      isLoading(true);
+      final String result = await platform.invokeMethod('withdraw', {
+        "publicKey": receiverAddressTEC.text,
+        "privateKey": userModel?.privateKey ?? '',
+        "amount": amountTEC.text,
+      });
+      debugPrint('*****************');
+      debugPrint(result);
+      debugPrint('-----------------');
+      if (result.isNotEmpty && result == 'SUCCESS') {
+        Get.snackbar(
+          'Transaction successful',
+          'The transaction will be in your account in a few minutes',
+          colorText: AppColors.tertiaryColor,
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: AppColors.successColor,
+        );
+      } else {
+        Get.snackbar(
+          'Error in creating transaction',
+          'Please try again later',
+          colorText: AppColors.tertiaryColor,
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: AppColors.errorColor,
+        );
+      }
+      isLoading(false);
+    } on PlatformException catch (e) {
+      isLoading(false);
+      Get.snackbar(
+        'Field to Create Account',
+        'Failed to encrypt data: \n${e.message}.',
+        colorText: AppColors.tertiaryColor,
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: AppColors.errorColor,
+      );
+      debugPrint('*****************************');
+      debugPrint("Failed to encrypt data: '${e.message}'.");
+      debugPrint('#############################');
+    }
+  }
 
-      debugPrint('*****************');
-      // debugPrint('Transaction signature: $signature');
-      debugPrint('-----------------');
-    } catch (error) {
-      debugPrint('*****************');
-      debugPrint('Error during transaction: $error');
-      debugPrint('-----------------');
-      rethrow;
+  void onTapReadQRCode() async {
+    final result = await Get.toNamed(AppRoutes.QR_CODE);
+    if (result != null) {
+      receiverAddressTEC.text = result;
     }
   }
 }

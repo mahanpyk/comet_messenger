@@ -36,6 +36,7 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
+        coreLibraryDesugaringEnabled true
     }
 
     kotlinOptions {
@@ -110,4 +111,5 @@ dependencies {
     implementation("org.sol4k:sol4k:0.4.0")
     implementation("com.diglol.crypto:crypto:0.1.5")
     implementation("cash.z.ecc.android:kotlin-bip39:1.0.6")
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.0'
 }

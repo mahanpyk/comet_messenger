@@ -2,7 +2,7 @@ import 'package:comet_messenger/app/core/app_icons.dart';
 import 'package:comet_messenger/app/core/base/base_view.dart';
 import 'package:comet_messenger/app/theme/app_colors.dart';
 import 'package:comet_messenger/features/home/models/transactions_response_model.dart';
-import 'package:comet_messenger/features/home/pages/wallet/wallet_controller.dart';
+import 'package:comet_messenger/features/home/pages/wallet/main/wallet_controller.dart';
 import 'package:comet_messenger/features/widgets/fill_button_widget.dart';
 import 'package:comet_messenger/features/widgets/text_form_field_widget.dart';
 import 'package:flutter/material.dart';
@@ -77,11 +77,11 @@ class WalletPage extends BaseView<WalletController> {
                   controller: controller.receiverAddressTEC,
                   keyboardType: TextInputType.text,
                   label: const Text('Please enter the wallet address'),
-                  // suffixIcon: IconButton(
-                  //   icon: const Icon(Icons.qr_code_scanner_rounded),
-                  //   onPressed: () => controller.onTapReadQRCode(),
-                  //   tooltip: 'دریافت ادرس از QRCode',
-                  // ),
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.qr_code_scanner_rounded),
+                    onPressed: () => controller.onTapReadQRCode(),
+                    tooltip: 'دریافت ادرس از QRCode',
+                  ),
                 ),
                 const SizedBox(height: 24),
                 TextFormFieldWidget(
@@ -91,10 +91,10 @@ class WalletPage extends BaseView<WalletController> {
                 ),
                 const SizedBox(height: 24),
                 FillButtonWidget(
-                  isLoading: false,
-                  enable: controller.isEnable.value,
+                  isLoading: controller.isLoading.value,
+                  enable: true,
                   onTap: () => controller.onTapTransaction(),
-                  buttonTitle: 'ارسال',
+                  buttonTitle: 'Send',
                 ),
               ]),
             ],

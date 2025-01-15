@@ -9,6 +9,7 @@ import 'package:comet_messenger/app/bindings/import_wallet_binding.dart';
 import 'package:comet_messenger/app/bindings/intro_binding.dart';
 import 'package:comet_messenger/app/bindings/pin_binding.dart';
 import 'package:comet_messenger/app/bindings/profile_binding.dart';
+import 'package:comet_messenger/app/bindings/qr_code_binding.dart';
 import 'package:comet_messenger/app/bindings/security_binding.dart';
 import 'package:comet_messenger/app/bindings/show_mnemonic_binding.dart';
 import 'package:comet_messenger/app/bindings/splash_binding.dart';
@@ -23,6 +24,7 @@ import 'package:comet_messenger/features/chat/pages/chat_profile/chat_profile_pa
 import 'package:comet_messenger/features/chat/pages/main/chat_page.dart';
 import 'package:comet_messenger/features/constacts/pages/main/contacts_page.dart';
 import 'package:comet_messenger/features/home/pages/main/home_page.dart';
+import 'package:comet_messenger/features/home/pages/wallet/qr_code/qr_code_page.dart';
 import 'package:comet_messenger/features/intro/pages/intro_page.dart';
 import 'package:comet_messenger/features/profile/pages/profile_page.dart';
 import 'package:comet_messenger/features/security/pages/security_page.dart';
@@ -107,6 +109,11 @@ abstract class AppPages {
       name: AppRoutes.SECURITY,
       page: () => const SecurityPage(),
       binding: SecurityBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.QR_CODE,
+      page: () => const QRCodePage(),
+      binding: QRCodeBinding(),
     ),
   ];
 }

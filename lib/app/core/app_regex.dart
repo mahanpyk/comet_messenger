@@ -8,4 +8,5 @@ class AppRegex {
 
   static final RegExp phoneNumberRegex = RegExp(r'^09[0-9]{9}$');
   static final RegExp alphabetRegex = RegExp(r'[a-zA-Z]');
+  static final RegExp solanaAddressRegex = RegExp(r'^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{44}$');
 }

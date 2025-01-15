@@ -5,7 +5,7 @@ import 'package:comet_messenger/app/theme/app_colors.dart';
 import 'package:comet_messenger/features/home/pages/chat_list/chat_list_page.dart';
 import 'package:comet_messenger/features/home/pages/main/home_controller.dart';
 import 'package:comet_messenger/features/home/pages/settings/settings_page.dart';
-import 'package:comet_messenger/features/home/pages/wallet/wallet_page.dart';
+import 'package:comet_messenger/features/home/pages/wallet/main/wallet_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 import 'package:flutter_svg/flutter_svg.dart';

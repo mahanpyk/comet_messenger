@@ -77,11 +77,11 @@ class WalletPage extends BaseView<WalletController> {
                   controller: controller.receiverAddressTEC,
                   keyboardType: TextInputType.text,
                   label: const Text('Please enter the wallet address'),
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.qr_code_scanner_rounded),
-                    onPressed: () => controller.onTapReadQRCode(),
-                    tooltip: 'دریافت ادرس از QRCode',
-                  ),
+                  // suffixIcon: IconButton(
+                  //   icon: const Icon(Icons.qr_code_scanner_rounded),
+                  //   onPressed: () => controller.onTapReadQRCode(),
+                  //   tooltip: 'دریافت ادرس از QRCode',
+                  // ),
                 ),
                 const SizedBox(height: 24),
                 TextFormFieldWidget(

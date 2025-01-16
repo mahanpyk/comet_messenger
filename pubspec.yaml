@@ -47,7 +47,6 @@ dependencies:
   file_picker: ^8.1.5
   uuid: ^4.5.1
   image_gallery_saver: ^2.0.3
-  qr_code_scanner: ^1.0.1
 
 dev_dependencies:
   flutter_test:

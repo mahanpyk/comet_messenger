@@ -117,13 +117,22 @@ class WalletController extends GetxController with GetTickerProviderStateMixin {
       debugPrint('*****************************');
       debugPrint("Failed to encrypt data: '${e.message}'.");
       debugPrint('#############################');
+    } on Exception catch (e) {
+      isLoading(false);
+      Get.snackbar(
+        'Error in creating transaction',
+        'Please try again later',
+        colorText: AppColors.tertiaryColor,
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: AppColors.errorColor,
+      );
     }
   }
 
-  void onTapReadQRCode() async {
-    final result = await Get.toNamed(AppRoutes.QR_CODE);
-    if (result != null) {
-      receiverAddressTEC.text = result;
-    }
-  }
+// void onTapReadQRCode() async {
+//   final result = await Get.toNamed(AppRoutes.QR_CODE);
+//   if (result != null) {
+//     receiverAddressTEC.text = result;
+//   }
+// }
 }
